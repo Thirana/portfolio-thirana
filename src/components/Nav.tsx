@@ -69,7 +69,7 @@ export default function Nav() {
 
         <SheetContent
           side="right"
-          className="w-[82vw] max-w-[320px] border-l-0 bg-[#0b1220]/92 text-neutral-100 backdrop-blur-xl shadow-[-28px_0_52px_-20px_rgba(2,6,23,0.65)] sm:hidden"
+          className="w-[82vw] max-w-[320px] border-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.24)_0%,rgba(11,18,32,0.16)_55%,rgba(8,12,22,0.24)_100%)] text-neutral-100 backdrop-blur-2xl shadow-[-28px_0_52px_-20px_rgba(2,6,23,0.65)] sm:hidden"
         >
           <SheetHeader className="border-b border-border/80 pr-14">
             <SheetTitle className="text-neutral-300">Navigation</SheetTitle>
