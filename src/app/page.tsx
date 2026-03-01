@@ -16,46 +16,48 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="space-y-12">
-      <div className="flex items-center gap-3 text-sm text-neutral-300">
+    <div className="space-y-8 sm:space-y-12">
+      <div className="flex items-center">
         {profile.availableForWork ? (
-          <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200 sm:text-sm">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(74,222,128,0.15)]" />
             Available for work
           </span>
         ) : (
-          <span className="muted">Not available for work</span>
+          <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs text-neutral-300 sm:text-sm">
+            Not available for work
+          </span>
         )}
       </div>
 
       <Card className="border-border/80 bg-panel/40">
-        <CardContent className="flex flex-col items-center gap-6 py-5 sm:flex-row sm:items-center sm:gap-8">
-          <div className="flex-shrink-0">
-            <div className="overflow-hidden rounded-lg">
+        <CardContent className="grid grid-cols-1 items-start gap-4 p-4 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-7 sm:p-6">
+          <div className="hidden flex-shrink-0 sm:block">
+            <div className="overflow-hidden rounded-lg border border-border/80">
               <Image
                 src="/images/square.png"
                 alt={profile.name}
                 width={96}
                 height={96}
-                className="object-cover"
+                className="h-20 w-20 object-cover sm:h-24 sm:w-24"
               />
             </div>
           </div>
-          <div className="space-y-4 text-center sm:text-left">
+          <div className="min-w-0 space-y-4">
             <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-neutral-100">
+              <h1 className="text-xl font-semibold leading-tight text-neutral-100 sm:text-2xl">
                 {profile.name}
               </h1>
               <p className="text-sm text-neutral-400">{profile.handle}</p>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2.5">
                 <span className="h-4 w-1 rounded-full bg-emerald-400/80" />
-                <p className="text-xs uppercase tracking-[0.3em] text-neutral-400">
+                <p className="text-[11px] uppercase tracking-[0.28em] text-neutral-400">
                   Reach Out
                 </p>
               </div>
-              <div className="flex flex-wrap justify-center gap-3 sm:justify-start">
+              <div className="flex flex-wrap gap-2.5">
                 {socials.map((social) => {
                   const Icon = social.icon;
                   return (
@@ -64,7 +66,7 @@ export default async function Home() {
                       href={social.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/80 text-neutral-300 hover:text-neutral-100"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/80 text-neutral-300 transition-colors hover:border-neutral-400/70 hover:text-neutral-100"
                       aria-label={social.label}
                     >
                       <Icon className="h-4 w-4" />

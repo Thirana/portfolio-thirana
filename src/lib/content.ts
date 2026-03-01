@@ -85,7 +85,7 @@ function normalizeProjectMeta(
     "Tech must be an array of strings"
   );
 
-  let normalizedLinks: ProjectLinks = {};
+  const normalizedLinks: ProjectLinks = {};
   if (links && typeof links === "object" && !Array.isArray(links)) {
     const live = (links as { live?: unknown }).live;
     const code = (links as { code?: unknown }).code;
@@ -171,7 +171,7 @@ export async function getBlogPostBySlug(slug: string) {
       meta: normalizeMeta(slug, data),
       Content,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

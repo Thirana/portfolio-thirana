@@ -16,14 +16,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="bg-background text-foreground antialiased">
-        <div className="page flex min-h-screen flex-col gap-10 py-10 sm:py-12">
-          <header className="border-b border-border pb-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="page flex min-h-screen flex-col gap-6 py-10 sm:gap-10 sm:py-12">
+          <header className="border-b border-border pb-5 sm:pb-6">
+            <div className="flex items-center justify-between gap-3">
               <Link
                 href="/"
-                className="text-sm font-bold uppercase tracking-[0.35em] text-neutral-100 hover:text-neutral-200"
+                className="max-w-[16rem] text-[11px] font-bold leading-5 uppercase tracking-[0.2em] text-neutral-100 transition-colors hover:text-neutral-200 sm:max-w-none sm:text-sm sm:tracking-[0.35em]"
               >
-                THIRANA'S PERSONAL BLOG
+                THIRANA&#39;S PERSONAL BLOG
               </Link>
               <Nav />
             </div>
