@@ -1,10 +1,17 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -16,17 +23,6 @@ const links = [
 export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [open]);
 
   const getLinkClasses = (isActive: boolean) =>
     cn(
@@ -58,57 +54,26 @@ export default function Nav() {
         })}
       </nav>
 
-      <div className="sm:hidden">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="h-9 w-9 border-border/80 bg-panel/30 text-neutral-200 hover:bg-panel/50 hover:text-neutral-100"
-          aria-label="Open navigation menu"
-          onClick={() => setOpen(true)}
-        >
-          <Menu className="h-4 w-4" />
-        </Button>
-      </div>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 border-border/80 bg-panel/30 text-neutral-200 hover:bg-panel/50 hover:text-neutral-100 sm:hidden"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+        </SheetTrigger>
 
-      <div
-        className={cn(
-          "fixed inset-0 z-50 sm:hidden",
-          open ? "pointer-events-auto" : "pointer-events-none"
-        )}
-        aria-hidden={!open}
-      >
-        <button
-          type="button"
-          aria-label="Close navigation menu"
-          className={cn(
-            "absolute inset-0 bg-black/55 transition-opacity duration-300",
-            open ? "opacity-100" : "opacity-0"
-          )}
-          onClick={() => setOpen(false)}
-        />
-
-        <aside
-          className={cn(
-            "absolute top-0 right-0 h-full w-full border-l border-border/80 bg-panel/95 transition-transform duration-300",
-            open ? "translate-x-0" : "translate-x-full"
-          )}
+        <SheetContent
+          side="right"
+          className="w-[82vw] max-w-[320px] border-l-0 bg-[#0b1220]/92 text-neutral-100 backdrop-blur-xl shadow-[-28px_0_52px_-20px_rgba(2,6,23,0.65)] sm:hidden"
         >
-          <div className="flex items-center justify-between border-b border-border/80 px-4 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-300">
-              Navigation
-            </p>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-neutral-200 hover:text-neutral-100"
-              aria-label="Close navigation menu"
-              onClick={() => setOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <SheetHeader className="border-b border-border/80 pr-14">
+            <SheetTitle className="text-neutral-300">Navigation</SheetTitle>
+          </SheetHeader>
 
           <nav className="grid gap-1 p-3 text-base">
             {links.map((link) => {
@@ -124,8 +89,9 @@ export default function Nav() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "rounded-md px-4 py-3",
-                    getLinkClasses(isActive),
-                    isActive ? "bg-neutral-800/80" : "hover:bg-neutral-800/40"
+                    isActive
+                      ? "bg-neutral-800/80 text-neutral-100"
+                      : "text-neutral-200 hover:bg-neutral-800/40 hover:text-neutral-100"
                   )}
                 >
                   {link.label}
@@ -133,8 +99,8 @@ export default function Nav() {
               );
             })}
           </nav>
-        </aside>
-      </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
