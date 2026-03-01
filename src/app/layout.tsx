@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import BrandTypewriter from "../components/BrandTypewriter";
 import Nav from "../components/Nav";
 import "./globals.css";
 
@@ -21,9 +22,10 @@ export default function RootLayout({
             <div className="flex items-center justify-between gap-3">
               <Link
                 href="/"
+                aria-label="Thirana's personal site"
                 className="max-w-[16rem] text-[11px] font-bold leading-5 uppercase tracking-[0.2em] text-neutral-100 transition-colors hover:text-neutral-200 sm:max-w-none sm:text-sm sm:tracking-[0.35em]"
               >
-                THIRANA&#39;S PERSONAL BLOG
+                <BrandTypewriter />
               </Link>
               <Nav />
             </div>

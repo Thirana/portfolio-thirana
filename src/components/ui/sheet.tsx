@@ -26,8 +26,7 @@ const SheetOverlay = React.forwardRef<
       className
     )}
     style={{
-      background:
-        "linear-gradient(270deg, rgba(2, 6, 23, 0.68) 0%, rgba(2, 6, 23, 0.44) 42%, rgba(2, 6, 23, 0.20) 74%, rgba(2, 6, 23, 0.04) 100%)",
+      background: "rgba(2, 6, 23, 0.42)",
       backdropFilter: "blur(7px)",
       WebkitBackdropFilter: "blur(7px)",
       ...style,

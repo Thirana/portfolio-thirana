@@ -1,16 +1,16 @@
 import {
   Atom,
-  Boxes,
   Braces,
+  BrickWall,
   Cloud,
   Cog,
   FileCode,
   Github,
+  Goal,
   Layers,
   Linkedin,
   Mail,
   Route,
-  Server,
   Twitter,
 } from "lucide-react";
 
@@ -36,11 +36,11 @@ export const socials = [
 export const skills = [
   { label: "React", icon: Atom },
   { label: "NextJS", icon: Layers },
-  { label: "Tanstack", icon: Boxes },
-  { label: "NodeJS", icon: Server },
   { label: "Express", icon: Route },
   { label: "JavaScript", icon: Braces },
   { label: "TypeScript", icon: FileCode },
+  { label: "Go", icon: Goal },
   { label: "AWS", icon: Cloud },
+  { label: "Backend", icon: BrickWall },
   { label: "DevOps", icon: Cog },
 ];
