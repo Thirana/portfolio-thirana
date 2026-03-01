@@ -48,14 +48,52 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <p className="min-h-[3rem] text-sm text-neutral-300">
           {project.summary}
         </p>
+        {project.domains.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {project.domains.map((domain) => (
+              <Tag key={domain} className="px-2 py-0.5 text-[10px] font-mono">
+                {domain}
+              </Tag>
+            ))}
+          </div>
+        ) : null}
       </CardHeader>
 
-      <CardContent className="flex-1">
+      <CardContent className="flex-1 space-y-3">
+        {project.metrics.length > 0 ? (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {project.metrics.slice(0, 2).map((metric) => (
+              <div
+                key={`${metric.label}-${metric.value}`}
+                className="rounded-md border border-border/70 bg-panel/35 px-2.5 py-2"
+              >
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                  {metric.label}
+                </p>
+                <p className="font-mono text-xs text-neutral-100">{metric.value}</p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
         <div className="flex flex-wrap gap-2">
           {project.tech.map((tech) => (
             <Tag key={tech}>{tech}</Tag>
           ))}
         </div>
+
+        {project.constraints.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {project.constraints.slice(0, 3).map((constraint) => (
+              <span
+                key={constraint}
+                className="rounded-md border border-border/70 bg-transparent px-2 py-1 font-mono text-[10px] text-neutral-300"
+              >
+                {constraint}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </CardContent>
 
       <CardFooter className="mt-auto flex flex-wrap gap-3">
