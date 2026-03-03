@@ -31,6 +31,7 @@ export type ProjectMeta = {
   tech: string[];
   links: ProjectLinks;
   featured: boolean;
+  priority: number;
   domains: string[];
   constraints: string[];
   metrics: ProjectMetric[];
@@ -133,6 +134,7 @@ function normalizeProjectMeta(
   const tech = data.tech;
   const links = data.links;
   const featured = data.featured;
+  const priority = data.priority;
   const domains = data.domains;
   const constraints = data.constraints;
   const metrics = data.metrics;
@@ -146,6 +148,10 @@ function normalizeProjectMeta(
   const normalizedDate = typeof date === "string" ? date : "";
   const normalizedSummary = typeof summary === "string" ? summary : "";
   const normalizedStatus = status as ProjectStatus;
+  const normalizedPriority =
+    typeof priority === "number" && Number.isFinite(priority)
+      ? priority
+      : 100;
 
   assertProjectField(typeof title === "string", fileName, "Missing title");
   assertProjectField(typeof date === "string", fileName, "Missing date");
@@ -187,6 +193,7 @@ function normalizeProjectMeta(
     tech: normalizedTech,
     links: normalizedLinks,
     featured: typeof featured === "boolean" ? featured : false,
+    priority: normalizedPriority,
     domains: toStringArray(domains),
     constraints: toStringArray(constraints),
     metrics: toProjectMetrics(metrics),
@@ -227,7 +234,18 @@ async function readProjectMetaList() {
   );
 
   return entries.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => {
+      if (a.priority !== b.priority) {
+        return a.priority - b.priority;
+      }
+
+      const byDate = new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (byDate !== 0) {
+        return byDate;
+      }
+
+      return a.title.localeCompare(b.title);
+    }
   );
 }
 

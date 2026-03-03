@@ -1,0 +1,94 @@
+---
+title: "Trimly URL Shortener"
+date: "2026-03-01"
+summary: "A production-style URL shortener focused on fast redirects, safe caching, and measurable performance under load."
+status: "Completed"
+tech: ["Go", "PostgreSQL", "Redis", "Docker", "k6"]
+links:
+  code: "https://github.com/Thirana/Trimly"
+featured: true
+priority: 1
+domains: ["Redirect Performance", "Caching Strategy", "Resilience", "Observability"]
+constraints:
+  [
+    "low-latency redirect path under read-heavy traffic",
+    "correct behavior during Redis failure",
+    "safe cache freshness and invalidation",
+    "clear operational visibility for tuning",
+  ]
+metrics:
+  - label: "Throughput Gain"
+    value: "~2.45x (26.61 -> 65.19 req/s)"
+  - label: "Latency Improvement"
+    value: "p50 638ms -> 285.5ms"
+  - label: "Failure Safety"
+    value: "Redis-off fallback validated"
+  - label: "Operational Control"
+    value: "feature toggle + startup fail-fast"
+evidence:
+  - label: "Repository"
+    href: "https://github.com/Thirana/Trimly"
+outcomes:
+  - "Made redirect links much faster under load while keeping behavior stable."
+  - "Added safe fallback logic so links still work if cache services fail."
+  - "Validated improvements with repeatable load tests before and after caching."
+---
+
+# Trimly URL Shortener
+
+> Trimly is my strongest backend project so far. I built it to prove I can design a fast redirect system that remains reliable under load and easy to trust in public.
+
+## Project overview
+
+Trimly is a backend URL shortener focused on one core user experience: when someone clicks a short link, it should resolve quickly and consistently. The project started as a simple short-link service, then evolved into a performance-focused system with caching, fallback controls, and measurable verification.
+
+I used it to practice production-style backend decision making, not just feature delivery. Every optimization in this project was checked against correctness, safety, and operational clarity.
+
+## Tech stack
+
+- **Language:** Go
+- **Data store:** PostgreSQL
+- **Cache layer:** Redis
+- **Runtime workflow:** Docker
+- **Load testing:** k6
+
+## Core platform capabilities
+
+- **Short link creation and resolution:** Accepts source URLs and returns short codes with stable redirect behavior.
+- **High-speed redirect read path:** Uses Redis cache-aside for fast lookups before database fallback.
+- **Negative caching for misses:** Stores short-lived miss keys to reduce repeated database work for invalid or expired codes.
+- **Safe runtime control:** Supports Redis enable/disable toggle for controlled rollout and instant rollback behavior.
+
+## Engineering practices and concepts
+
+I treated Trimly as a backend reliability exercise where speed improvements must never break user-facing correctness.
+
+### Redirect performance strategy
+
+- Kept the redirect hot path minimal with clear command order: positive key check, miss key check, then DB fallback.
+- Used compact cache payloads and bounded Redis operation timeouts to reduce overhead in critical reads.
+- Maintained DB as source of truth while using cache for acceleration.
+
+### Cache safety and data correctness
+
+- Used versioned Redis key prefixes for controlled evolution of cache shape.
+- Applied separate TTL strategy for positive hits and miss keys.
+- Ensured write flows invalidate or refresh related cache keys to avoid stale redirects.
+
+### Resilience and failure handling
+
+- Added startup fail-fast checks when Redis is enabled, including connectivity validation.
+- Ensured graceful fallback to DB-only path when Redis is disabled or unavailable.
+- Preserved stable HTTP behavior across all paths (`302` for valid redirects, `404` for missing or expired links).
+
+### Observability and load validation
+
+- Tracked cache hits, negative-cache hits, timeout/error counts, and fallback-to-DB frequency.
+- Measured latency and throughput with repeatable k6 workloads.
+- Verified Redis-on vs Redis-off performance to confirm real gains instead of assumptions.
+
+## Project Intent
+
+The main intent behind Trimly was to showcase backend engineering quality in a way that both technical reviewers and hiring managers can quickly trust. I wanted this project to show that I can design systems that are fast, resilient, and operationally clear.
+
+The result is not only a working URL shortener. It is a validated backend case study with measurable outcomes, safe rollback behavior, and practical production-style decisions.
