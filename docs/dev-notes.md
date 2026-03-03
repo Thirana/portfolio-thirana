@@ -72,3 +72,20 @@ curl -X POST http://localhost:3000/api/revalidate \
 # Revalidate only blog tag via GET (manual/browser-friendly)
 curl "http://localhost:3000/api/revalidate?scope=blog&secret=YOUR_REVALIDATE_SECRET"
 ```
+
+## About Page Redesign
+
+- `/about` was rebuilt as a proof-first hiring page instead of a generic profile snapshot.
+- New typed source of truth added at `src/content/about.ts`:
+  - `aboutIntro`
+  - `aboutValueProps`
+  - `aboutProof`
+  - `aboutPrinciples`
+  - `aboutCta`
+- `/about` now includes:
+  - compact hero with 3-signal stat strip
+  - `What You Get` section with plain-language value bullets
+  - `Selected Proof` board with full-card clickable evidence links
+  - `How I Work` principles grid
+  - `Open to Conversations` contact CTA (Email + LinkedIn)
+- Route-level metadata for `/about` now includes canonical, Open Graph, and Twitter fields for consistency with other routes.
