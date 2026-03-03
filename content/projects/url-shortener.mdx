@@ -3,7 +3,7 @@ title: "Trimly URL Shortener"
 date: "2026-03-01"
 summary: "A production-style URL shortener focused on fast redirects, safe caching, and measurable performance under load."
 status: "Completed"
-tech: ["Go", "PostgreSQL", "Redis", "Docker", "k6"]
+tech: ["Go", "PostgreSQL", "Redis"]
 links:
   code: "https://github.com/Thirana/Trimly"
 featured: true
@@ -11,16 +11,16 @@ priority: 1
 domains: ["Redirect Performance", "Caching Strategy", "Resilience", "Observability"]
 constraints:
   [
-    "low-latency redirect path under read-heavy traffic",
+    "fast redirects under heavy traffic",
     "correct behavior during Redis failure",
     "safe cache freshness and invalidation",
     "clear operational visibility for tuning",
   ]
 metrics:
-  - label: "Throughput Gain"
-    value: "~2.45x (26.61 -> 65.19 req/s)"
-  - label: "Latency Improvement"
-    value: "p50 638ms -> 285.5ms"
+  - label: "Traffic Capacity"
+    value: "Handled 2.5x more clicks per second"
+  - label: "Redirect Speed"
+    value: "Redirect time dropped from 638ms to 286ms"
   - label: "Failure Safety"
     value: "Redis-off fallback validated"
   - label: "Operational Control"
@@ -49,8 +49,6 @@ I used it to practice production-style backend decision making, not just feature
 - **Language:** Go
 - **Data store:** PostgreSQL
 - **Cache layer:** Redis
-- **Runtime workflow:** Docker
-- **Load testing:** k6
 
 ## Core platform capabilities
 
@@ -75,6 +73,8 @@ I treated Trimly as a backend reliability exercise where speed improvements must
 - Applied separate TTL strategy for positive hits and miss keys.
 - Ensured write flows invalidate or refresh related cache keys to avoid stale redirects.
 
+If you want a step-by-step explanation of how this caching flow works in practice, read [URL Shortener Caching Guide](/blog/url-shortener-caching).
+
 ### Resilience and failure handling
 
 - Added startup fail-fast checks when Redis is enabled, including connectivity validation.
@@ -84,7 +84,7 @@ I treated Trimly as a backend reliability exercise where speed improvements must
 ### Observability and load validation
 
 - Tracked cache hits, negative-cache hits, timeout/error counts, and fallback-to-DB frequency.
-- Measured latency and throughput with repeatable k6 workloads.
+- Measured latency and throughput with repeatable load-test workloads.
 - Verified Redis-on vs Redis-off performance to confirm real gains instead of assumptions.
 
 ## Project Intent
