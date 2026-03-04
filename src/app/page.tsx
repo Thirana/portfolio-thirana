@@ -21,7 +21,7 @@ export default async function Home() {
         {profile.availableForWork ? (
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200 sm:text-sm">
             <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(74,222,128,0.15)]" />
-            Available for work
+            Open to work
           </span>
         ) : (
           <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs text-neutral-300 sm:text-sm">
@@ -84,10 +84,18 @@ export default async function Home() {
           <Quote className="h-5 w-5" />
           <span className="mt-2 h-full w-0.5 bg-neutral-100/70" />
         </div>
-        <div>
+        <div className="space-y-3">
           <p className="text-sm italic font-medium leading-7 text-neutral-200">
             {profile.headline}
           </p>
+          <ul className="space-y-2 text-sm text-neutral-300">
+            {profile.highlights.map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
@@ -105,7 +113,7 @@ export default async function Home() {
         </div>
       </Section>
 
-      <Section title="Systems Portfolio">
+      <Section title="Project Portfolio">
         <ProjectGrid featured={featuredProjects} all={allProjects} />
       </Section>
 

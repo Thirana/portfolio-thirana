@@ -13,7 +13,7 @@ import { siteConfig } from "@/lib/site";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Proof-first profile focused on reliable backend delivery, measurable outcomes, and production ownership.",
+    "Proof first profile focused on reliable backend delivery, measurable outcomes, and production ownership.",
   alternates: {
     canonical: "/about",
   },
@@ -22,13 +22,13 @@ export const metadata: Metadata = {
     url: "/about",
     title: `About | ${siteConfig.name}`,
     description:
-      "Proof-first profile focused on reliable backend delivery, measurable outcomes, and production ownership.",
+      "Proof first profile focused on reliable backend delivery, measurable outcomes, and production ownership.",
   },
   twitter: {
     card: "summary",
     title: `About | ${siteConfig.name}`,
     description:
-      "Proof-first profile focused on reliable backend delivery, measurable outcomes, and production ownership.",
+      "Proof first profile focused on reliable backend delivery, measurable outcomes, and production ownership.",
     creator: siteConfig.authorHandle,
   },
 };
@@ -107,7 +107,7 @@ export default function AboutPage() {
 
       <section className="space-y-4 rounded-xl border border-border/70 bg-panel/25 p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">
-          How I Work
+          My Continuous Learning
         </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {aboutPrinciples.map((item, index) => (

@@ -18,7 +18,13 @@ export const profile = {
   name: "Thirana Embuldeniya",
   handle: "@_Thirana",
   headline:
-    "I am an organized, self-motivated software engineer with 1 year of industry experience. Hands-on practical experience in cloud-native systems, DevOps practices, and full-stack development. Experience working with AWS, Kubernetes-based platforms, and building web applications. Reliable team player with a strong willingness to learn and grow.",
+    "I enjoy taking backend ideas from concept to working systems. I study how real platforms handle reliability, scale, and architecture decisions, then I implement and validate those patterns through practical projects.",
+  highlights: [
+    "Explores real world backend and architecture patterns through self driven learning.",
+    "Keeps current with modern tools, technologies, and engineering concepts.",
+    "Owns responsibilities end to end with clear accountability.",
+    "Collaborates well and adapts quickly when priorities change.",
+  ],
   availableForWork: true,
 };
 

@@ -38,36 +38,37 @@ export const aboutIntro: AboutIntro = {
   eyebrow: "Candidate Snapshot",
   title: "About",
   summary:
-    "I build backend systems that stay reliable when traffic grows and edge cases appear. My focus is simple: ship features that are fast for users, safe in production, and easy for teams to operate.",
+    "I am a curiosity driven software engineer who explores real world backend concepts through hands on learning. I am especially interested in backend systems, distributed systems, and system architecture. I follow a practical cycle: learn, implement, and validate in real working examples.",
   stats: [
-    { label: "Primary Focus", value: "Backend reliability" },
-    { label: "Delivery Style", value: "Measure, then improve" },
-    { label: "Working Model", value: "Clear ownership and communication" },
+    { label: "Interested In", value: "Backend systems" },
+    { label: "Delivery Style", value: "Learn, build, validate" },
+    { label: "Working Model", value: "Ownership with clear collaboration" },
   ],
 };
 
 export const aboutValueProps = [
-  "Reliable backend delivery under real-world constraints.",
-  "Measurable improvements backed by evidence, not guesswork.",
-  "Clear communication with strong operational ownership.",
+  "Curious self learner who explores real world backend systems and architecture.",
+  "Stays up to date with modern tools, technologies, and engineering concepts.",
+  "Takes ownership of responsibilities and delivers with accountability.",
+  "Works well with people and adapts quickly to changing situations.",
 ];
 
 export const aboutProof: AboutProofItem[] = [
   {
     title: "Trimly URL Shortener",
     metric: "Handled 2.5x more clicks per second and cut redirect time from 638ms to 286ms.",
-    note: "Performance and safety validated with before-and-after testing.",
+    note: "Performance and safety validated with before and after testing.",
     href: "/projects/url-shortener",
   },
   {
     title: "Caching Guide from a Real System",
     metric: "Documented request flow, cache strategy, and fallback behavior with measured p95 and p99 improvements.",
-    note: "Technical depth explained in reader-friendly language.",
+    note: "Technical depth explained in reader friendly language.",
     href: "/blog/url-shortener-caching",
   },
   {
-    title: "Production-Grade Portfolio Platform",
-    metric: "Implemented static-first publishing, controlled revalidation, and route-level SEO automation.",
+    title: "Production Grade Portfolio Platform",
+    metric: "Implemented static first publishing, controlled revalidation, and route level SEO automation.",
     note: "Shows delivery quality beyond basic UI implementation.",
     href: "/projects/personal-site",
   },
@@ -75,31 +76,31 @@ export const aboutProof: AboutProofItem[] = [
 
 export const aboutPrinciples: AboutPrinciple[] = [
   {
-    title: "Start from user impact",
+    title: "Discover real world concepts",
     description:
-      "I prioritize what users feel first, then choose architecture that protects that experience.",
+      "I identify curious, high impact concepts and features from practical production systems.",
   },
   {
-    title: "Measure before and after",
+    title: "Learn deeply and intentionally",
     description:
-      "I baseline behavior, apply improvements, and compare results with clear numbers.",
+      "I study how each concept works, why it exists, and where it creates real value.",
   },
   {
-    title: "Design for failure safety",
+    title: "Implement and test independently",
     description:
-      "I add graceful fallback paths so outages in one layer do not break the full journey.",
+      "I build self driven implementations to validate understanding through real behavior.",
   },
   {
-    title: "Keep systems explainable",
+    title: "Integrate with known foundations",
     description:
-      "I favor clear contracts and readable decisions so teams can operate and extend confidently.",
+      "I connect new ideas with what I already know to grow stronger system thinking.",
   },
 ];
 
 export const aboutCta: AboutCTA = {
   title: "Open to Conversations",
   message:
-    "If you are hiring for backend-focused roles, I am open to discussing project scope, ownership, and impact expectations.",
+    "If you are hiring for backend focused roles, I am open to discussing project scope, ownership, and impact expectations.",
   links: [
     { label: "Email", href: "mailto:t.embuldeniya@gmail.com" },
     {
