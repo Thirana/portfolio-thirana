@@ -63,6 +63,7 @@ Code is the source of truth. Keep this file in sync when routing, MDX loading, S
 - Blog detail route: `src/app/blog/[slug]/page.tsx`
 - Project detail route: `src/app/projects/[slug]/page.tsx`
 - Home page pulls typed profile/experience data plus featured/all project metadata.
+- Blog index cards keep whole-card links but now include an explicit `Read article` affordance for clearer clickability.
 - Project cards use explicit `Project overview` actions instead of relying on whole-card hover affordance.
 - Project cards keep the at-rest state lighter and use progressive disclosure for secondary signals and constraints.
 - Mobile navigation remains a right-side drawer implemented with `Nav` + `ui/sheet`.
