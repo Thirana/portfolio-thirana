@@ -69,13 +69,8 @@ export default async function ProjectsPage() {
         </p>
       </div>
       <div className="grid gap-5 sm:gap-6">
-        {projects.map((project, index) => (
-          <ProjectCard
-            key={project.slug}
-            project={project}
-            layout="wide"
-            index={index}
-          />
+        {projects.map((project) => (
+          <ProjectCard key={project.slug} project={project} layout="wide" />
         ))}
       </div>
     </div>

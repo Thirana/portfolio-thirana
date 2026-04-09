@@ -24,32 +24,22 @@ import { Button } from "@/components/ui/button";
 type ProjectCardProps = {
   project: ProjectMeta;
   layout?: "default" | "wide";
-  index?: number;
 };
 
 export default function ProjectCard({
   project,
   layout = "default",
-  index,
 }: ProjectCardProps) {
   const isWide = layout === "wide";
   const [mobileDetailsOpen, setMobileDetailsOpen] = useState(false);
   const projectPath = `/projects/${project.slug}`;
-  const systemLabel =
-    typeof index === "number"
-      ? `SYS-${String(index + 1).padStart(2, "0")}`
-      : "CASE-STUDY";
   const secondaryMetrics = project.metrics.slice(0, 2);
   const visibleConstraints = project.constraints.slice(0, 3);
-  const visibleDomains = project.domains.slice(0, 3);
-  const visibleTech = project.tech.slice(0, 4);
-  const hiddenDomainCount = Math.max(project.domains.length - visibleDomains.length, 0);
-  const hiddenTechCount = Math.max(project.tech.length - visibleTech.length, 0);
   const hasMobileDetails =
     secondaryMetrics.length > 0 || visibleConstraints.length > 0;
 
   const renderDomainTags = (className?: string) => {
-    if (visibleDomains.length === 0) {
+    if (project.domains.length === 0) {
       return null;
     }
 
@@ -59,7 +49,7 @@ export default function ProjectCard({
           Focus Areas
         </p>
         <div className="flex flex-wrap gap-1.5">
-          {visibleDomains.map((domain) => (
+          {project.domains.map((domain) => (
             <Tag
               key={domain}
               className="border-border/60 bg-transparent px-2 py-0.5 font-mono text-[10px] text-neutral-300 hover:border-neutral-400/70 hover:text-neutral-200"
@@ -67,18 +57,13 @@ export default function ProjectCard({
               {domain}
             </Tag>
           ))}
-          {hiddenDomainCount > 0 ? (
-            <Tag className="border-border/50 bg-transparent px-2 py-0.5 font-mono text-[10px] text-neutral-500 hover:border-border/50 hover:text-neutral-400">
-              +{hiddenDomainCount} more
-            </Tag>
-          ) : null}
         </div>
       </div>
     );
   };
 
   const renderTechTags = (className?: string) => {
-    if (visibleTech.length === 0) {
+    if (project.tech.length === 0) {
       return null;
     }
 
@@ -88,7 +73,7 @@ export default function ProjectCard({
           Stack
         </p>
         <div className="flex flex-wrap gap-2">
-          {visibleTech.map((tech) => (
+          {project.tech.map((tech) => (
             <Tag
               key={tech}
               className="border-cyan-300/25 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] text-cyan-100 hover:border-cyan-300/45 hover:text-cyan-50"
@@ -96,11 +81,6 @@ export default function ProjectCard({
               {tech}
             </Tag>
           ))}
-          {hiddenTechCount > 0 ? (
-            <Tag className="border-border/50 bg-transparent px-2.5 py-0.5 text-[11px] text-neutral-500 hover:border-border/50 hover:text-neutral-400">
-              +{hiddenTechCount} more
-            </Tag>
-          ) : null}
         </div>
       </div>
     );
@@ -166,30 +146,20 @@ export default function ProjectCard({
         isWide && "md:grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
       )}
     >
-      <CardHeader className={cn("space-y-4 p-5 sm:p-6", isWide && "md:row-span-2 md:pr-7")}>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-4">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-neutral-500">
-              {systemLabel}
-            </span>
-            <span className="h-1 w-1 rounded-full bg-neutral-600" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-neutral-400">
-              Case Study
-            </span>
-          </div>
+      <CardHeader className={cn("space-y-3 p-5 sm:p-6", isWide && "md:row-span-2 md:pr-7")}>
+        <div className="flex items-start justify-between gap-4 border-b border-border/60 pb-4">
+          <CardTitle className="min-w-0 flex-1 leading-tight">
+            <Link
+              href={projectPath}
+              className="inline-block text-lg text-neutral-100 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-xl"
+            >
+              {project.title}
+            </Link>
+          </CardTitle>
           <StatusBadge status={project.status} />
         </div>
 
         <div className="space-y-3">
-          <CardTitle className="leading-tight">
-            <Link
-              href={projectPath}
-              className="inline-flex items-start gap-2 text-lg text-neutral-100 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-xl"
-            >
-              <span>{project.title}</span>
-              <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-neutral-500 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-neutral-200" />
-            </Link>
-          </CardTitle>
           <p className="text-sm leading-7 text-neutral-300">{project.summary}</p>
         </div>
 
@@ -199,15 +169,11 @@ export default function ProjectCard({
 
       {isWide ? (
         <>
-          <CardContent className="hidden p-5 pt-5 md:flex md:flex-col md:justify-between md:border-l md:border-border/60 md:p-6 md:pl-6 md:pt-6">
+          <CardContent className="hidden p-5 pt-5 md:block md:border-l md:border-border/60 md:p-6 md:pl-6 md:pt-6">
             <div className="space-y-5">
               {renderSecondaryMetrics()}
               {renderConstraintChips(visibleConstraints)}
             </div>
-            <p className="text-xs leading-6 text-neutral-400">
-              Open the project overview for architecture decisions, outcomes,
-              and implementation notes.
-            </p>
           </CardContent>
 
           {hasMobileDetails ? (
@@ -287,7 +253,7 @@ export default function ProjectCard({
             variant="outline"
             size="sm"
             asChild
-            className="min-h-10 border-border/70 bg-panel/20 text-neutral-200 hover:border-neutral-500/70 hover:bg-panel/45 hover:text-white"
+            className="min-h-10 border-[1.5px] border-white/40 bg-panel/20 text-neutral-100 hover:border-white/70 hover:bg-panel/45 hover:text-white"
           >
             <a href={project.links.code} target="_blank" rel="noreferrer">
               Code

@@ -18,13 +18,8 @@ export default function ProjectGrid({ featured, all }: ProjectGridProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-5 sm:gap-6">
-        {projects.map((project, index) => (
-          <ProjectCard
-            key={project.slug}
-            project={project}
-            layout="wide"
-            index={index}
-          />
+        {projects.map((project) => (
+          <ProjectCard key={project.slug} project={project} layout="wide" />
         ))}
       </div>
       {canExpand ? (
