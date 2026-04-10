@@ -61,7 +61,7 @@ That is why order creation needs stronger guarantees than a normal create endpoi
 
 ## The Order-Safety Model
 
-The model I prefer has four parts:
+The practical model has four parts:
 
 1. the client sends an `Idempotency-Key`
 2. the server builds a canonical fingerprint of the effective request
@@ -81,9 +81,12 @@ The retry key alone is not enough.
 
 If a client reuses the same key for a different basket, the backend needs a way to detect that conflict.
 
-That is why I like storing a request fingerprint built from the canonical payload:
+That is why it is best to store a request fingerprint built from the canonical payload:
 
-```ts
+<CodeToggle
+  title="Show TypeScript snippet - order fingerprint"
+  language="typescript"
+  code={`
 const buildCanonicalOrderFingerprintPayload = (
   createOrderDto: CreateOrderDto,
 ) => ({
@@ -106,7 +109,8 @@ export const createOrderRequestFingerprint = (
       "utf8",
     )
     .digest("hex");
-```
+  `}
+/>
 
 This matters because:
 
@@ -122,7 +126,10 @@ Once the fingerprint is created, the server should reserve the idempotency key a
 
 That usually means inserting a row into a dedicated table inside the transaction:
 
-```ts
+<CodeToggle
+  title="Show TypeScript snippet - idempotency reservation"
+  language="typescript"
+  code={`
 private async createIdempotencyRecord(
   manager: EntityManager,
   idempotencyKey: string,
@@ -140,7 +147,8 @@ private async createIdempotencyRecord(
     }),
   );
 }
-```
+  `}
+/>
 
 The important detail is the unique constraint on the key.
 
@@ -162,7 +170,10 @@ That transaction usually includes:
 
 The shape looks like this:
 
-```ts
+<CodeToggle
+  title="Show TypeScript snippet - transactional order workflow"
+  language="typescript"
+  code={`
 const { order, notification } = await this.dataSource.transaction(
   async (manager) => {
     const idempotencyRecord = await this.createIdempotencyRecord(
@@ -194,7 +205,8 @@ const { order, notification } = await this.dataSource.transaction(
     };
   },
 );
-```
+  `}
+/>
 
 This is the point where order creation stops being a plain insert and becomes a controlled business transaction.
 
@@ -204,9 +216,12 @@ Inventory checks are not safe if they are only read first and written later with
 
 Under concurrent load, two requests can both see the same stock and both succeed incorrectly.
 
-That is why I like using a locking query on the product rows involved in the order:
+That is why it is best to use a locking query on the product rows involved in the order:
 
-```ts
+<CodeToggle
+  title="Show TypeScript snippet - inventory row locking"
+  language="typescript"
+  code={`
 const products = await manager
   .getRepository(Product)
   .createQueryBuilder("product")
@@ -215,7 +230,8 @@ const products = await manager
   .andWhere("product.deleted_at IS NULL")
   .orderBy("product.id", "ASC")
   .getMany();
-```
+  `}
+/>
 
 Two things matter here:
 
@@ -240,7 +256,10 @@ If they do not match:
 
 That logic looks like this:
 
-```ts
+<CodeToggle
+  title="Show TypeScript snippet - replay versus conflict"
+  language="typescript"
+  code={`
 private async replayExistingOrderOrThrow(
   idempotencyKey: string,
   requestFingerprint: string,
@@ -266,7 +285,8 @@ private async replayExistingOrderOrThrow(
 
   return loadAndReturnOriginalOrder(idempotencyRecord.orderId);
 }
-```
+  `}
+/>
 
 This gives the client a meaningful contract:
 
@@ -286,7 +306,10 @@ So the safer pattern is:
 
 That often looks like this:
 
-```ts
+<CodeToggle
+  title="Show TypeScript snippet - post-commit notification scheduling"
+  language="typescript"
+  code={`
 this.logger.info({
   event: "notification.created",
   notificationId: notification.id,
@@ -296,7 +319,8 @@ this.logger.info({
 });
 
 this.notificationsService.scheduleDelivery(notification.id);
-```
+  `}
+/>
 
 This separation matters because:
 
