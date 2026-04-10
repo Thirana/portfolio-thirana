@@ -35,6 +35,7 @@ Code is the source of truth. Keep this file in sync when routing, MDX loading, S
 - `src/mdx-components.tsx` maps custom MDX rendering behavior.
 - Current MDX enhancements include:
   - Mermaid diagram rendering from fenced ` ```mermaid ` blocks
+  - Expandable Mermaid diagrams through a shared dialog for larger-chart viewing
   - Collapsible code examples through `CodeToggle`
   - Styled blockquotes, images, and links
 - Detail pages render a `ContentHero` above the article body, and `.content-with-hero > h1:first-child` hides the first MDX `h1` so content can still keep a canonical document heading.
