@@ -1,0 +1,265 @@
+---
+title: "How Cursor Pagination Works in a Product Listing API"
+date: "2026-04-09"
+summary: "A practical guide to stable product-list pagination using opaque cursors, deterministic sort order, continuation predicates, and index-aware query design."
+tags:
+  - "Pagination"
+  - "API Design"
+  - "PostgreSQL"
+  - "Query Design"
+  - "Performance"
+track: "Backend Engineering"
+level: "Intermediate"
+appliesTo:
+  - "Public listing APIs"
+  - "Cursor-based pagination"
+  - "Read-heavy catalogs"
+takeaway: "Stable pagination depends on one deterministic order, one opaque cursor shape, and queries and indexes that match the public read model."
+---
+
+# How Cursor Pagination Works in a Product Listing API
+
+> This guide explains the cursor-pagination model I prefer for product listing APIs. I use the same approach in my [Marketplace Service project](/projects/marketplace-service), where the public catalog needs stable continuation behavior even when the underlying dataset changes over time.
+
+## The Core Problem
+
+Listing APIs look simple at first:
+
+1. load products
+2. return a page
+3. let the client ask for the next page
+
+But paging gets tricky once the dataset is not static.
+
+New products can be added while clients are paging.
+
+Some products can become inactive.
+
+Soft-deleted rows can disappear from the public result set.
+
+If the API relies only on offset-based pagination, those changes can cause:
+
+1. duplicate items across pages
+2. skipped items
+3. unstable page boundaries
+4. slower queries as the offset grows
+
+So the main problem is not only "how do I return page 2?" It is "how do I continue from a stable position in a changing dataset?"
+
+## Why Cursor Pagination Is the Better Fit
+
+Cursor pagination works by continuing from the last item of the previous page instead of skipping a fixed number of rows.
+
+That makes it a better fit when:
+
+1. the dataset changes frequently
+2. the result set is ordered by created time or another sortable position
+3. the API needs stable forward paging
+
+The idea is simple:
+
+1. sort results deterministically
+2. encode the last seen position into a cursor
+3. ask for rows after that position on the next request
+
+The cursor is not a page number. It is a continuation token.
+
+## The Stable Ordering Rule
+
+The first rule of cursor pagination is that the sort order must be deterministic.
+
+If you sort only by `created_at`, ties can happen.
+
+That means two rows can share the same timestamp, which creates ambiguous continuation.
+
+So I prefer:
+
+1. primary sort: `created_at DESC`
+2. tie-breaker: `id DESC`
+
+That gives each row one stable position in the ordered result set.
+
+In SQL, the ordering looks like this:
+
+```sql
+ORDER BY created_at DESC, id DESC
+```
+
+Without a tie-breaker, cursor pagination becomes subtly unsafe.
+
+## The Cursor Should Be Opaque
+
+Clients need a token they can send back, but they should not need to understand the pagination internals.
+
+That is why I like encoding the position into an opaque cursor:
+
+```ts
+export type ProductsCursor = {
+  createdAt: string;
+  id: string;
+};
+
+export const encodeProductsCursor = (cursor: ProductsCursor): string =>
+  Buffer.from(JSON.stringify(cursor)).toString("base64url");
+
+export const decodeProductsCursor = (cursor: string): ProductsCursor => {
+  const decoded = JSON.parse(
+    Buffer.from(cursor, "base64url").toString("utf8"),
+  ) as Partial<ProductsCursor>;
+
+  if (
+    typeof decoded.createdAt !== "string" ||
+    Number.isNaN(Date.parse(decoded.createdAt)) ||
+    typeof decoded.id !== "string"
+  ) {
+    throw new Error("Invalid cursor");
+  }
+
+  return {
+    createdAt: decoded.createdAt,
+    id: decoded.id,
+  };
+};
+```
+
+This helps in two ways:
+
+1. the API can evolve its internal query behavior without exposing raw DB paging rules directly
+2. the client only needs to treat the cursor as an opaque token returned by the server
+
+## The Continuation Predicate
+
+Once the client sends a cursor back, the next page should load rows after that stable position.
+
+For a descending sort on `created_at DESC, id DESC`, the continuation rule becomes:
+
+```sql
+created_at < :cursorCreatedAt
+OR (created_at = :cursorCreatedAt AND id < :cursorId)
+```
+
+In a query builder, it looks like this:
+
+```ts
+const queryBuilder = this.productsRepository
+  .createQueryBuilder("product")
+  .where("product.deleted_at IS NULL")
+  .andWhere("product.is_active = :isActive", { isActive: true })
+  .orderBy("product.created_at", "DESC")
+  .addOrderBy("product.id", "DESC")
+  .take(limit + 1);
+
+if (cursor) {
+  queryBuilder.andWhere(
+    "(product.created_at < :cursorCreatedAt OR (product.created_at = :cursorCreatedAt AND product.id < :cursorId))",
+    {
+      cursorCreatedAt: cursor.createdAt,
+      cursorId: cursor.id,
+    },
+  );
+}
+```
+
+This is the core of stable continuation. The query is not saying "skip 20 rows." It is saying "continue after this exact ordered position."
+
+## The `limit + 1` Pattern
+
+Clients usually want to know whether another page exists.
+
+One simple way to do that is to fetch one extra row:
+
+1. request `limit + 1`
+2. use the extra row only to detect whether another page exists
+3. return only `limit` items to the client
+
+That logic looks like this:
+
+```ts
+const products = await queryBuilder.getMany();
+const hasNextPage = products.length > limit;
+const items = hasNextPage ? products.slice(0, limit) : products;
+const lastItem = items.at(-1);
+
+return {
+  items,
+  pageInfo: {
+    limit,
+    hasNextPage,
+    nextCursor:
+      hasNextPage && lastItem
+        ? encodeProductsCursor({
+            createdAt: lastItem.createdAt.toISOString(),
+            id: lastItem.id,
+          })
+        : null,
+  },
+};
+```
+
+This avoids needing a separate count query just to answer "is there another page?"
+
+## Visibility Rules Still Matter
+
+Cursor pagination should reflect the public read model, not the raw table contents.
+
+That means the listing query should also encode visibility rules such as:
+
+1. exclude soft-deleted rows
+2. exclude inactive products
+
+If those rules are part of the public contract, they belong directly in the listing query.
+
+That is why the pagination cursor should be built from the visible ordered result set, not from a broader internal dataset.
+
+## Indexes Should Match the Read Path
+
+Cursor pagination is strongest when the database index matches the actual listing behavior.
+
+For a public product catalog, that often means indexing only the rows that can actually appear:
+
+```sql
+CREATE INDEX IDX_products_public_listing
+ON products (created_at DESC, id DESC)
+WHERE deleted_at IS NULL AND is_active = true;
+```
+
+This is useful because:
+
+1. the index matches the sort order
+2. the index matches the visibility rules
+3. inactive and deleted rows do not bloat the public-listing index
+
+That makes the read path more intentional and usually more efficient.
+
+## Putting the Flow Together
+
+A good cursor-pagination flow looks like this:
+
+1. client requests the first page with a limit
+2. server loads visible rows in deterministic order
+3. server fetches `limit + 1`
+4. server returns `items`, `hasNextPage`, and `nextCursor`
+5. client sends the opaque cursor back for the next page
+6. server decodes the cursor and applies the continuation predicate
+7. the process repeats until `nextCursor` is `null`
+
+The important point is that each page is anchored to a stable position, not a row count offset.
+
+## Practical Tradeoffs
+
+1. Cursor pagination is more stable than offset pagination, but the implementation is more careful because ordering and continuation rules must match exactly.
+2. Opaque cursors keep the client contract clean, but they require validation and clear server-side encoding rules.
+3. Cursor pagination is excellent for forward scrolling and feeds, but it is less natural than offsets when users need arbitrary page-number jumps.
+4. Index design matters a lot, because the pagination contract and the read-performance story should reinforce each other.
+
+## How This Applies to My Marketplace Service
+
+In my [Marketplace Service project](/projects/marketplace-service), the public catalog uses cursor pagination over `created_at DESC, id DESC` so continuation stays stable even when timestamps tie. The service encodes the last visible item into an opaque cursor, validates the cursor before using it, applies the continuation predicate on the next request, and uses the `limit + 1` pattern to compute `hasNextPage` without adding a separate count query.
+
+The public listing also excludes inactive and soft-deleted rows, and the database index is shaped around that same read model. That keeps the API behavior, the query logic, and the indexing strategy aligned.
+
+## Related Reading
+
+- [How I Set Up a Production-Style NestJS Backend](/blog/production-style-nestjs-backend)
+- [How Safe Order Creation Works with Idempotency and Transactions](/blog/safe-order-creation-idempotency-transactions)
+- [Marketplace Service project overview](/projects/marketplace-service)
