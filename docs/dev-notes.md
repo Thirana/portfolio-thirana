@@ -69,6 +69,13 @@ Code is the source of truth. Keep this file in sync when routing, MDX loading, S
 - Project cards keep the at-rest state lighter and use progressive disclosure for secondary signals and constraints.
 - Mobile navigation remains a right-side drawer implemented with `Nav` + `ui/sheet`.
 
+## Internal Preview Surfaces
+
+- `/internal/blog-covers/[slug]` is a static internal preview route for manual screenshot capture of blog caption cover artwork.
+- Cover content is preset-driven through `src/lib/blog-cover-presets.ts` and rendered by `src/components/BlogCaptionCover.tsx`.
+- The preview route also includes a client-side `Download PNG` action that exports only the cover artwork from the browser.
+- This internal preview is separate from the public social-image pipeline. It is not linked in navigation, not included in `sitemap.ts`, and is marked `noindex`.
+
 ## Caching and Revalidation
 
 - Content cache tags are defined in `src/lib/content.ts`:
