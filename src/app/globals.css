@@ -426,3 +426,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Unlayered — beats @tailwindcss/typography plugin styles regardless of specificity */
+.prose-invert {
+  --tw-prose-invert-bullets: var(--gl-primary);
+}
+
+.prose ul > li::marker,
+.prose-invert ul > li::marker {
+  color: var(--gl-primary);
+}
