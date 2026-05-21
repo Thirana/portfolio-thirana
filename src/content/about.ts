@@ -112,23 +112,6 @@ export const aboutPrinciples: AboutPrinciple[] = [
   },
 ];
 
-export const aboutProjects: AboutProjectItem[] = [
-  {
-    title: "Grow Logs",
-    note: "Full-stack SaaS with session security, token rotation, reuse detection, and production-grade backend patterns.",
-    href: "/projects/grow-logs",
-  },
-  {
-    title: "Personal Site",
-    note: "Static-first publishing platform with tag-based revalidation, social card generation, and route-level SEO automation.",
-    href: "/projects/personal-site",
-  },
-  {
-    title: "Trimly URL Shortener",
-    note: "Cache-aside layer that cut redirect latency from 638ms to 286ms and handled 2.5x more requests per second.",
-    href: "/projects/url-shortener",
-  },
-];
 
 export const aboutCta: AboutCTA = {
   title: "Open to Conversations",
