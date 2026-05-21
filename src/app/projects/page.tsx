@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getAllProjects } from "@/lib/content";
 import MetaStrip from "@/components/MetaStrip";
 import ProjectCard from "@/components/ProjectCard";
+import { FadeIn } from "@/components/FadeIn";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -46,33 +47,37 @@ export default async function ProjectsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-4 rounded-2xl border border-border/80 bg-panel/35 p-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.26em] text-neutral-400">
-          Systems Portfolio
-        </p>
-        <h1 className="text-3xl font-semibold text-neutral-100">Projects</h1>
-        <p className="max-w-2xl text-sm leading-7 text-neutral-300">
-          System-focused work that highlights architecture decisions, reliability
-          controls, and measurable outcomes.
-        </p>
-        <MetaStrip
-          items={[
-            { label: "Total Systems", value: `${projects.length}` },
-            { label: "Active", value: `${activeProjects}` },
-            { label: "Backend/Infra", value: `${backendOrInfra}` },
-            { label: "Evidence Links", value: `${evidenceCount}` },
-          ]}
-        />
-        <p className="text-xs uppercase tracking-[0.18em] text-neutral-500">
-          Open any project below for the overview, implementation notes, and
-          evidence trail.
-        </p>
-      </div>
-      <div className="grid gap-5 sm:gap-6">
-        {projects.map((project) => (
-          <ProjectCard key={project.slug} project={project} layout="wide" />
-        ))}
-      </div>
+      <FadeIn>
+        <div className="space-y-5">
+          <div className="flex items-center gap-4">
+            <p className="shrink-0 font-mono text-[14px] font-bold uppercase tracking-[0.2em] text-gl-primary">
+              Systems Portfolio
+            </p>
+            <div className="flex-1 border-t border-gl-border" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-[-0.024em] text-gl-text sm:text-4xl">Projects</h1>
+          <p className="max-w-2xl text-[16px] leading-[1.7] text-gl-text">
+            System-focused work that highlights architecture decisions, reliability
+            controls, and measurable outcomes.
+          </p>
+          <MetaStrip
+            items={[
+              { label: "Total Systems", value: `${projects.length}` },
+              { label: "Active", value: `${activeProjects}` },
+              { label: "Backend/Infra", value: `${backendOrInfra}` },
+              { label: "Evidence Links", value: `${evidenceCount}` },
+            ]}
+          />
+        </div>
+      </FadeIn>
+
+      <FadeIn delay={120}>
+        <div className="divide-y divide-gl-border">
+          {projects.map((project, index) => (
+            <ProjectCard key={project.slug} project={project} index={index} />
+          ))}
+        </div>
+      </FadeIn>
     </div>
   );
 }
