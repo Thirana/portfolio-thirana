@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export function FadeIn({
   children,
@@ -33,12 +34,15 @@ export function FadeIn({
   return (
     <div
       ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(14px)",
-        transition: `opacity 0.45s ease ${delay}ms, transform 0.45s ease ${delay}ms`,
-      }}
+      className={cn(
+        "transition-[opacity,transform,filter] duration-[700ms] ease-[cubic-bezier(0.25,1,0.5,1)]",
+        "motion-reduce:transition-none motion-reduce:opacity-100 motion-reduce:translate-y-0 motion-reduce:[filter:blur(0px)]",
+        visible
+          ? "opacity-100 translate-y-0 [filter:blur(0px)]"
+          : "opacity-0 translate-y-[14px] [filter:blur(6px)]",
+        className,
+      )}
+      style={delay > 0 ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
     </div>

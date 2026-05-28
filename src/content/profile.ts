@@ -25,18 +25,34 @@ export const profile = {
     "Owns responsibilities end to end with clear accountability.",
     "Collaborates well and adapts quickly when priorities change.",
   ],
-  availableForWork: true,
+  availableForWork: false,
 };
 
 export const socials = [
-  { label: "Email", href: "mailto:t.embuldeniya@gmail.com", icon: Mail },
-  { label: "GitHub", href: "https://github.com/Thirana", icon: Github },
+  {
+    label: "GitHub",
+    href: "https://github.com/Thirana",
+    icon: Github,
+    handle: "Thirana",
+  },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/thirana-embuldeniya/",
     icon: Linkedin,
+    handle: "thirana-embuldeniya",
   },
-  { label: "Twitter", href: "https://x.com/_Thirana", icon: Twitter },
+  {
+    label: "X",
+    href: "https://x.com/_Thirana",
+    icon: Twitter,
+    handle: "@_Thirana",
+  },
+  {
+    label: "Email",
+    href: "mailto:t.embuldeniya@gmail.com",
+    icon: Mail,
+    handle: "t.embuldeniya@gmail.com",
+  },
 ];
 
 export const skills = [
