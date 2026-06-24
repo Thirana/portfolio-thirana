@@ -20,6 +20,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/FadeIn";
+import { EXPERIENCE_FACES } from "@/components/ServerFace";
 
 const SWATCH_COLORS = [
   "#8eceb4",
@@ -113,6 +114,8 @@ export function ExperienceItem({
   const roleDuration = role
     ? formatDuration(role.employmentPeriod.start, role.employmentPeriod.end)
     : null;
+  const ExperienceFace =
+    EXPERIENCE_FACES[Math.min(index, EXPERIENCE_FACES.length - 1)];
 
   return (
     <div className="space-y-4 py-6">
@@ -146,20 +149,23 @@ export function ExperienceItem({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="text-[18px] font-bold leading-snug tracking-[-0.015em] text-gl-text">
-            {experience.companyWebsite ? (
-              <a
-                href={experience.companyWebsite}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-gl-primary"
-              >
-                {experience.companyName}
-              </a>
-            ) : (
-              experience.companyName
-            )}
-          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-[18px] font-bold leading-snug tracking-[-0.015em] text-gl-text">
+              {experience.companyWebsite ? (
+                <a
+                  href={experience.companyWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-gl-primary"
+                >
+                  {experience.companyName}
+                </a>
+              ) : (
+                experience.companyName
+              )}
+            </h3>
+            <ExperienceFace />
+          </div>
 
           {role && (
             <div className="mt-1 space-y-0.5">

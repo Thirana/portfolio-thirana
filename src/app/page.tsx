@@ -21,6 +21,7 @@ import { WorkExperience } from "@/components/work-experience";
 import { HomeBlogSection } from "@/components/HomeBlogSection";
 import { FadeIn } from "@/components/FadeIn";
 import { TypewriterText } from "@/components/TypewriterText";
+import { ServerFaceHappy, ServerFaceThinking } from "@/components/ServerFace";
 
 const GITHUB_USERNAME = "Thirana";
 const GITHUB_PROFILE_URL = "https://github.com/Thirana";
@@ -178,9 +179,12 @@ export default async function Home() {
 
           {/* About — extra breathing room before written content */}
           <div className="space-y-4 pt-2">
-            <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gl-text">
-              About
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gl-text">
+                About
+              </h2>
+              <ServerFaceHappy />
+            </div>
             <ul className="space-y-3">
               {heroBioPoints.map((point) => (
                 <li
@@ -217,10 +221,13 @@ export default async function Home() {
         <ProjectGrid featured={featuredProjects} all={allProjects} />
       </Section>
 
-      {/* Writing */}
-      <Section title="Writing">
-        <HomeBlogSection featured={featuredBlog} compact={compactBlogPosts} />
-      </Section>
+      {/* Writing — pr-9 makes the rule stop before the SVG */}
+      <div className="relative pr-9">
+        <Section title="Writing">
+          <HomeBlogSection featured={featuredBlog} compact={compactBlogPosts} />
+        </Section>
+        <ServerFaceThinking className="pointer-events-none absolute top-0 right-0" />
+      </div>
     </div>
   );
 }

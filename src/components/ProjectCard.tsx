@@ -7,6 +7,7 @@ import type { ProjectMeta } from "@/lib/content";
 import StatusBadge from "./StatusBadge";
 import Tag from "./Tag";
 import { FadeIn } from "@/components/FadeIn";
+import { PROJECT_FACES } from "@/components/ServerFace";
 
 type ProjectCardProps = {
   project: ProjectMeta;
@@ -35,6 +36,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   const projectPath = `/projects/${project.slug}` as Route<string>;
   const visibleConstraints = project.constraints.slice(0, 2);
   const allTags = [...project.domains, ...project.tech];
+  const FaceComp = PROJECT_FACES[index % PROJECT_FACES.length];
 
   return (
     <div className="group py-8 first:pt-2 last:pb-2">
@@ -48,14 +50,17 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
               </span>
             </div>
             <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-x-3 gap-y-1.5">
-              <h2 className="text-[22px] font-bold leading-tight tracking-[-0.02em]">
-                <Link
-                  href={projectPath}
-                  className="text-gl-text transition-colors hover:text-gl-primary"
-                >
-                  {project.title}
-                </Link>
-              </h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-[22px] font-bold leading-tight tracking-[-0.02em]">
+                  <Link
+                    href={projectPath}
+                    className="text-gl-text transition-colors hover:text-gl-primary"
+                  >
+                    {project.title}
+                  </Link>
+                </h2>
+                <FaceComp className="mt-0.5" />
+              </div>
               <StatusBadge status={project.status} />
             </div>
           </div>
