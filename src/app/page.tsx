@@ -187,7 +187,12 @@ export default async function Home() {
                   key={point}
                   className="flex items-start gap-2.5 text-[16px] leading-[1.7] text-gl-text-muted"
                 >
-                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gl-primary" />
+                  <span
+                    className="mt-1 shrink-0 select-none font-mono text-[14px] leading-none text-gl-primary"
+                    aria-hidden
+                  >
+                    ›
+                  </span>
                   <span>{point}</span>
                 </li>
               ))}
