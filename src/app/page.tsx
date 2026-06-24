@@ -21,6 +21,7 @@ import { WorkExperience } from "@/components/work-experience";
 import { HomeBlogSection } from "@/components/HomeBlogSection";
 import { FadeIn } from "@/components/FadeIn";
 import { TypewriterText } from "@/components/TypewriterText";
+import { ServerFaceHappy, ServerFaceThinking } from "@/components/ServerFace";
 
 const GITHUB_USERNAME = "Thirana";
 const GITHUB_PROFILE_URL = "https://github.com/Thirana";
@@ -53,12 +54,7 @@ export default async function Home() {
       ? [
           {
             icon: Briefcase,
-            text: (
-              <>
-                {currentTitle}
-                <span className="text-gl-text-faint"> @ {currentCompany}</span>
-              </>
-            ),
+            text: currentTitle,
           },
         ]
       : []),
@@ -183,16 +179,24 @@ export default async function Home() {
 
           {/* About — extra breathing room before written content */}
           <div className="space-y-4 pt-2">
-            <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gl-text">
-              About
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gl-text">
+                About
+              </h2>
+              <ServerFaceHappy />
+            </div>
             <ul className="space-y-3">
               {heroBioPoints.map((point) => (
                 <li
                   key={point}
                   className="flex items-start gap-2.5 text-[16px] leading-[1.7] text-gl-text-muted"
                 >
-                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gl-primary" />
+                  <span
+                    className="mt-1 shrink-0 select-none font-mono text-[14px] leading-none text-gl-primary"
+                    aria-hidden
+                  >
+                    ›
+                  </span>
                   <span>{point}</span>
                 </li>
               ))}
@@ -200,6 +204,11 @@ export default async function Home() {
           </div>
         </div>
       </FadeIn>
+
+      {/* Experience */}
+      <Section title="Professional Experience">
+        <WorkExperience className="w-full" experiences={WORK_EXPERIENCE} />
+      </Section>
 
       {/* Projects */}
       <Section title="Project Portfolio">
@@ -212,15 +221,13 @@ export default async function Home() {
         <ProjectGrid featured={featuredProjects} all={allProjects} />
       </Section>
 
-      {/* Experience */}
-      <Section title="Experience">
-        <WorkExperience className="w-full" experiences={WORK_EXPERIENCE} />
-      </Section>
-
-      {/* Writing */}
-      <Section title="Writing">
-        <HomeBlogSection featured={featuredBlog} compact={compactBlogPosts} />
-      </Section>
+      {/* Writing — pr-9 makes the rule stop before the SVG */}
+      <div className="relative pr-9">
+        <Section title="Writing">
+          <HomeBlogSection featured={featuredBlog} compact={compactBlogPosts} />
+        </Section>
+        <ServerFaceThinking className="pointer-events-none absolute top-0 right-0" />
+      </div>
     </div>
   );
 }

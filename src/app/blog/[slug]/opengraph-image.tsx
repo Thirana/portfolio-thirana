@@ -33,7 +33,7 @@ export default async function Image({ params }: Props) {
           "radial-gradient(circle at 15% -10%, rgba(148, 163, 184, 0.22), transparent 45%)",
         color: "#f8fafc",
         padding: "56px",
-        fontFamily: "Inter, ui-sans-serif, system-ui",
+        fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui",
       }}
     >
       <div

@@ -20,6 +20,24 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/FadeIn";
+import { EXPERIENCE_FACES } from "@/components/ServerFace";
+
+const SWATCH_COLORS = [
+  "#8eceb4",
+  "#a8abd8",
+  "#ccaabc",
+  "#d4b878",
+  "#cc9888",
+  "#80c8d8",
+];
+
+function getSwatchColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) & 0xffff;
+  }
+  return SWATCH_COLORS[hash % SWATCH_COLORS.length];
+}
 
 const iconMap = {
   code: CodeXmlIcon,
@@ -73,10 +91,12 @@ export function WorkExperience({
   experiences: ExperienceItemType[];
 }) {
   return (
-    <div className={cn("bg-transparent", className)}>
+    <div
+      className={cn("divide-y divide-gl-border/40 bg-transparent", className)}
+    >
       {experiences.map((experience, index) => (
         <FadeIn key={experience.id} delay={index * 160}>
-          <ExperienceItem experience={experience} />
+          <ExperienceItem experience={experience} index={index} />
         </FadeIn>
       ))}
     </div>
@@ -85,22 +105,29 @@ export function WorkExperience({
 
 export function ExperienceItem({
   experience,
+  index = 0,
 }: {
   experience: ExperienceItemType;
+  index?: number;
 }) {
   const role = experience.role;
   const roleDuration = role
     ? formatDuration(role.employmentPeriod.start, role.employmentPeriod.end)
     : null;
+  const ExperienceFace =
+    EXPERIENCE_FACES[Math.min(index, EXPERIENCE_FACES.length - 1)];
 
   return (
-    <div className="space-y-4 py-4">
+    <div className="space-y-4 py-6">
       {/* Company header */}
       <div className="not-prose flex items-start gap-3">
         <div
-          className="mt-0.5 flex size-6 shrink-0 items-center justify-center"
+          className="relative mt-1 flex size-6 shrink-0 items-center justify-center"
           aria-hidden
         >
+          {experience.isCurrentEmployer && !experience.companyLogo && (
+            <span className="absolute size-6 animate-ping rounded-sm bg-gl-primary/10" />
+          )}
           {experience.companyLogo ? (
             <Image
               src={experience.companyLogo}
@@ -112,64 +139,59 @@ export function ExperienceItem({
               unoptimized
             />
           ) : (
-            <span className="relative flex size-3 items-center justify-center">
-              {experience.isCurrentEmployer && (
-                <span className="absolute inline-flex size-3 animate-ping rounded-full bg-gl-primary/40" />
-              )}
-              <span className="relative inline-flex size-2 rounded-full bg-gl-primary" />
-              {experience.isCurrentEmployer && (
-                <span className="sr-only">Current Employer</span>
-              )}
+            <span className="relative font-mono text-[11px] font-bold text-gl-primary">
+              {String(index + 1).padStart(2, "0")}
             </span>
+          )}
+          {experience.isCurrentEmployer && (
+            <span className="sr-only">Current Employer</span>
           )}
         </div>
 
-        <div className="min-w-0">
-          <h3 className="text-[16px] font-bold leading-snug text-gl-text">
-            {experience.companyWebsite ? (
-              <a
-                href={experience.companyWebsite}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors hover:text-gl-primary"
-              >
-                {experience.companyName}
-              </a>
-            ) : (
-              experience.companyName
-            )}
-          </h3>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-[18px] font-bold leading-snug tracking-[-0.015em] text-gl-text">
+              {experience.companyWebsite ? (
+                <a
+                  href={experience.companyWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-gl-primary"
+                >
+                  {experience.companyName}
+                </a>
+              ) : (
+                experience.companyName
+              )}
+            </h3>
+            <ExperienceFace />
+          </div>
 
           {role && (
-            <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[12px] text-gl-text-faint">
-              <span>{role.title}</span>
-              {role.employmentType && (
-                <>
-                  <span className="text-gl-border">·</span>
-                  <span>{role.employmentType}</span>
-                </>
-              )}
-              <span className="text-gl-border">·</span>
-              <span className="flex items-center gap-0.5 tabular-nums">
+            <div className="mt-1 space-y-0.5">
+              <p className="text-[13px] font-medium text-gl-text-muted">
+                {role.title}
+                {role.employmentType && (
+                  <span className="ml-1.5 font-normal text-gl-text-faint">
+                    · {role.employmentType}
+                  </span>
+                )}
+              </p>
+              <p className="flex flex-wrap items-center gap-x-1 font-mono text-[11px] tabular-nums text-gl-text-faint">
                 <span>{role.employmentPeriod.start}</span>
                 <span className="mx-0.5">—</span>
                 {role.employmentPeriod.end ? (
                   <span>{role.employmentPeriod.end}</span>
                 ) : (
-                  <span
-                    aria-label="Present"
-                    className="font-mono text-[13px] leading-none"
-                  >
-                    ∞
-                  </span>
+                  <span>Present</span>
                 )}
-              </span>
-              {roleDuration && (
-                <>
-                  <span className="text-gl-border">·</span>
-                  <span className="tabular-nums">{roleDuration}</span>
-                </>
-              )}
+                {roleDuration && (
+                  <>
+                    <span className="mx-0.5 text-gl-border">·</span>
+                    <span>{roleDuration}</span>
+                  </>
+                )}
+              </p>
             </div>
           )}
         </div>
@@ -252,16 +274,7 @@ export function ExperiencePositionItem({
                 <dd className="flex items-center gap-0.5 tabular-nums">
                   <span>{start}</span>
                   <span className="mx-0.5">—</span>
-                  {isOngoing ? (
-                    <span
-                      aria-label="Present"
-                      className="font-mono text-[13px] leading-none"
-                    >
-                      ∞
-                    </span>
-                  ) : (
-                    <span>{end}</span>
-                  )}
+                  {isOngoing ? <span>Present</span> : <span>{end}</span>}
                 </dd>
               </div>
               {duration && (
@@ -292,7 +305,7 @@ export function ExperiencePositionItem({
           <ul className="not-prose flex flex-wrap gap-1.5 pt-2 pl-6">
             {position.skills.map((skill, index) => (
               <li key={index} className="flex">
-                <Skill>{skill}</Skill>
+                <Skill color={getSwatchColor(skill)}>{skill}</Skill>
               </li>
             ))}
           </ul>
@@ -317,15 +330,27 @@ function Prose({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function Skill({ className, ...props }: React.ComponentProps<"span">) {
+function Skill({
+  className,
+  children,
+  color,
+  ...props
+}: React.ComponentProps<"span"> & { color?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border border-gl-border bg-gl-surface-2 px-2 py-0.5 font-mono text-[10px] text-gl-text-muted",
+        "inline-flex items-center gap-1.5 rounded-full border border-gl-border bg-gl-surface-2 px-2 py-0.5 font-mono text-[10px] text-gl-text-muted",
         className,
       )}
       {...props}
-    />
+    >
+      <span
+        className="size-[5px] shrink-0 rounded-full"
+        style={{ background: color }}
+        aria-hidden
+      />
+      {children}
+    </span>
   );
 }
 

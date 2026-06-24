@@ -31,7 +31,7 @@ export default async function Image({ params }: Props) {
         backgroundColor: "#0b0f14",
         color: "#f8fafc",
         padding: "56px",
-        fontFamily: "Inter, ui-sans-serif, system-ui",
+        fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui",
       }}
     >
       <div
