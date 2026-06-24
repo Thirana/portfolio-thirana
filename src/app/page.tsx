@@ -53,12 +53,7 @@ export default async function Home() {
       ? [
           {
             icon: Briefcase,
-            text: (
-              <>
-                {currentTitle}
-                <span className="text-gl-text-faint"> @ {currentCompany}</span>
-              </>
-            ),
+            text: currentTitle,
           },
         ]
       : []),
@@ -201,6 +196,11 @@ export default async function Home() {
         </div>
       </FadeIn>
 
+      {/* Experience */}
+      <Section title="Professional Experience">
+        <WorkExperience className="w-full" experiences={WORK_EXPERIENCE} />
+      </Section>
+
       {/* Projects */}
       <Section title="Project Portfolio">
         <FadeIn>
@@ -210,11 +210,6 @@ export default async function Home() {
           </p>
         </FadeIn>
         <ProjectGrid featured={featuredProjects} all={allProjects} />
-      </Section>
-
-      {/* Experience */}
-      <Section title="Experience">
-        <WorkExperience className="w-full" experiences={WORK_EXPERIENCE} />
       </Section>
 
       {/* Writing */}

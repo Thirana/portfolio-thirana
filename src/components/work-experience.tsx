@@ -156,12 +156,7 @@ export function ExperienceItem({
                 {role.employmentPeriod.end ? (
                   <span>{role.employmentPeriod.end}</span>
                 ) : (
-                  <span
-                    aria-label="Present"
-                    className="font-mono text-[13px] leading-none"
-                  >
-                    ∞
-                  </span>
+                  <span>Present</span>
                 )}
               </span>
               {roleDuration && (
@@ -252,16 +247,7 @@ export function ExperiencePositionItem({
                 <dd className="flex items-center gap-0.5 tabular-nums">
                   <span>{start}</span>
                   <span className="mx-0.5">—</span>
-                  {isOngoing ? (
-                    <span
-                      aria-label="Present"
-                      className="font-mono text-[13px] leading-none"
-                    >
-                      ∞
-                    </span>
-                  ) : (
-                    <span>{end}</span>
-                  )}
+                  {isOngoing ? <span>Present</span> : <span>{end}</span>}
                 </dd>
               </div>
               {duration && (

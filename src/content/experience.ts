@@ -2,12 +2,36 @@ import type { ExperienceItemType } from "@/components/work-experience";
 
 export const WORK_EXPERIENCE: ExperienceItemType[] = [
   {
+    id: "mo-marketplace",
+    companyName: "MO Marketplace",
+    isCurrentEmployer: true,
+    positions: [
+      {
+        id: "mo-backend-platform",
+        title: "Backend & Platform Engineer",
+        employmentPeriod: { start: "06.2026" },
+        employmentType: "Full-time",
+        icon: "code",
+        isExpanded: true,
+        description:
+          "- Responsible for the design, development, and operational ownership of MO Marketplace's backend API systems and cloud infrastructure on GCP.\n- Own the full backend platform from NestJS API development and PostgreSQL database management to Cloud Run deployments, CI/CD pipelines, caching, search infrastructure, and production observability.",
+        skills: [
+          "NestJS",
+          "TypeScript",
+          "PostgreSQL",
+          "GCP",
+          "Cloud Run",
+          "CI/CD",
+        ],
+      },
+    ],
+  },
+  {
     id: "zoomi-softlab",
     companyName: "ZOOMi Softlab",
-    isCurrentEmployer: true,
     role: {
-      title: "Software Engineer Trainee",
-      employmentPeriod: { start: "09.2025" },
+      title: "Associate Software Engineer",
+      employmentPeriod: { start: "09.2025", end: "06.2026" },
       employmentType: "Full-time",
     },
     positions: [

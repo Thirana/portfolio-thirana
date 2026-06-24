@@ -110,8 +110,8 @@ export const aboutSummary =
 
 export const heroBioPoints = [
   "Software engineer with 1.5 years of industry experience and a BSc (Hons) in Computer Engineering from the University of Sri Jayewardenepura.",
-  "Hands-on with cloud-native systems, DevOps practices, and full-stack development across AWS, Kubernetes-based platforms, and modern web frameworks.",
-  "Studies real production patterns and applies them through self-driven projects. Currently building Grow Logs, a full-stack SaaS.",
+  "Currently engineering MO Marketplace's backend platform end-to-end, spanning NestJS APIs, PostgreSQL, GCP Cloud Run deployments, CI/CD pipelines, and production observability.",
+  "Experienced across cloud-native infrastructure and DevOps - AWS EKS, Kubernetes, Terraform, and GitOps-driven multi-tenant platform delivery.",
 ];
 
 export type AboutPrinciple = {
