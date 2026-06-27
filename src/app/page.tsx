@@ -211,15 +211,17 @@ export default async function Home() {
       </Section>
 
       {/* Projects */}
-      <Section title="Project Portfolio">
-        <FadeIn>
-          <p className="text-[16px] leading-[1.7] text-gl-text-muted">
-            Each entry gives a quick project overview and links to the full
-            implementation notes, constraints, and outcomes.
-          </p>
-        </FadeIn>
-        <ProjectGrid featured={featuredProjects} all={allProjects} />
-      </Section>
+      <div className="relative">
+        <Section title="Project Portfolio">
+          <FadeIn>
+            <p className="text-[16px] leading-[1.7] text-gl-text-muted">
+              Each entry gives a quick project overview and links to the full
+              implementation notes, constraints, and outcomes.
+            </p>
+          </FadeIn>
+          <ProjectGrid featured={featuredProjects} all={allProjects} />
+        </Section>
+      </div>
 
       {/* Writing — pr-9 makes the rule stop before the SVG */}
       <div className="relative pr-9">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import StickyHeader from "@/components/StickyHeader";
+import { BackgroundGrid } from "@/components/BackgroundGrid";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -64,40 +65,43 @@ export default function RootLayout({
       className={`dark ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-gl-bg text-gl-text antialiased">
-        <StickyHeader />
-        <div className="page flex min-h-screen flex-col pt-6 pb-10">
-          <main className="flex-1">{children}</main>
+        <div className="relative">
+          <BackgroundGrid />
+          <StickyHeader />
+          <div className="page flex min-h-screen flex-col pt-6 pb-10">
+            <main className="flex-1">{children}</main>
 
-          <footer className="mt-16 border-t border-gl-border/40 py-8">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-[13px] font-bold text-gl-text">
-                Thirana Embuldeniya
-              </span>
-              <div className="flex gap-4">
-                <a
-                  href="https://github.com/Thirana/personal-site"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
-                >
-                  GitHub
-                </a>
-                <Link
-                  href="/blog"
-                  className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
-                >
-                  Blog
-                </Link>
-                <Link
-                  href="/about"
-                  className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
-                >
-                  About
-                </Link>
+            <footer className="mt-16 border-t border-gl-border/40 py-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <span className="text-[13px] font-bold text-gl-text">
+                  Thirana Embuldeniya
+                </span>
+                <div className="flex gap-4">
+                  <a
+                    href="https://github.com/Thirana/personal-site"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
+                  >
+                    GitHub
+                  </a>
+                  <Link
+                    href="/blog"
+                    className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
+                  >
+                    Blog
+                  </Link>
+                  <Link
+                    href="/about"
+                    className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
+                  >
+                    About
+                  </Link>
+                </div>
+                <span className="text-[12px] text-gl-text-faint">© 2026</span>
               </div>
-              <span className="text-[12px] text-gl-text-faint">© 2026</span>
-            </div>
-          </footer>
+            </footer>
+          </div>
         </div>
         <Analytics />
         <SpeedInsights />
