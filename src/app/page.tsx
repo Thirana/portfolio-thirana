@@ -155,8 +155,6 @@ export default async function Home() {
               })}
             </div>
 
-            <div className="h-px bg-gl-border" />
-
             <div className="flex flex-wrap gap-2">
               {heroSocials.map((social) => {
                 const Icon = social.icon;

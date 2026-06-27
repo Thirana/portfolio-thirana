@@ -71,7 +71,7 @@ export default function RootLayout({
           <div className="page flex min-h-screen flex-col pt-6 pb-10">
             <main className="flex-1">{children}</main>
 
-            <footer className="mt-16 border-t border-gl-border/40 py-8">
+            <footer className="mt-16 py-8">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-[13px] font-bold text-gl-text">
                   Thirana Embuldeniya

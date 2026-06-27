@@ -17,13 +17,13 @@ export default function ProjectGrid({ featured, all }: ProjectGridProps) {
 
   return (
     <div>
-      <div className="divide-y divide-gl-border">
+      <div>
         {projects.map((project, index) => (
           <ProjectCard key={project.slug} project={project} index={index} />
         ))}
       </div>
       {canExpand ? (
-        <div className="border-t border-gl-border pt-6 mt-2">
+        <div className="pt-6 mt-2">
           <button
             type="button"
             onClick={() => setShowAll(true)}
