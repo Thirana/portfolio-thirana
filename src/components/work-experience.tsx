@@ -91,9 +91,7 @@ export function WorkExperience({
   experiences: ExperienceItemType[];
 }) {
   return (
-    <div
-      className={cn("divide-y divide-gl-border/40 bg-transparent", className)}
-    >
+    <div className={cn("bg-transparent", className)}>
       {experiences.map((experience, index) => (
         <FadeIn key={experience.id} delay={index * 160}>
           <ExperienceItem experience={experience} index={index} />

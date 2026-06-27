@@ -10,7 +10,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
 import { FadeIn } from "@/components/FadeIn";
 
 const SWATCH_COLORS = [
@@ -90,7 +89,7 @@ export function HomeBlogSection({ featured, compact }: Props) {
       )}
 
       {compact.length > 0 && (
-        <div className="divide-y divide-gl-border border-t border-gl-border">
+        <div>
           {compact.map((post, index) => (
             <FadeIn key={post.slug} delay={(index + 1) * 90}>
               <CompactBlogRow post={post} />
@@ -100,12 +99,7 @@ export function HomeBlogSection({ featured, compact }: Props) {
       )}
 
       <FadeIn delay={(compact.length + 1) * 90}>
-        <div
-          className={cn(
-            "flex items-center pt-5",
-            compact.length > 0 ? "border-t border-gl-border" : "",
-          )}
-        >
+        <div className="flex items-center pt-5">
           <Link
             href="/blog"
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gl-primary transition-colors hover:text-gl-primary-hover"

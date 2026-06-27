@@ -299,6 +299,37 @@ body {
   animation-delay: 700ms;
 }
 
+/* ─── Engineering coordinate grid — homepage ambient texture ─── */
+.page-bg-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* Break out of the max-width page container to span full viewport */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  z-index: 0;
+  pointer-events: none;
+  /* Crosshair marks: 6px arms at each 20px grid intersection */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='1' fill='%239488c2'/%3E%3C/svg%3E");
+  background-size: 20px 20px;
+  opacity: 0.65;
+  /* Graduated mask: faint at top, stronger toward bottom */
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.35) 25%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.35) 25%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
 @layer components {
   .page {
     position: relative;
