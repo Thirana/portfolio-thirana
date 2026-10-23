@@ -1,15 +1,7 @@
 "use client";
 
-import { differenceInMonths, parse } from "date-fns";
-import {
-  BriefcaseBusinessIcon,
-  ChevronDownIcon,
-  CodeXmlIcon,
-  DraftingCompassIcon,
-  GraduationCapIcon,
-} from "lucide-react";
-import Image from "next/image";
-import React from "react";
+import { differenceInMonths, format, parse } from "date-fns";
+import { ChevronDownIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 import {
@@ -17,36 +9,16 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Separator } from "@/components/ui/separator";
+import { CompanyMark } from "@/components/CompanyMark";
+import Tag from "@/components/Tag";
+import { getSwatchColor } from "@/lib/swatch";
 import { cn } from "@/lib/utils";
-import { FadeIn } from "@/components/FadeIn";
-import { EXPERIENCE_FACES } from "@/components/ServerFace";
 
-const SWATCH_COLORS = [
-  "#8eceb4",
-  "#a8abd8",
-  "#ccaabc",
-  "#d4b878",
-  "#cc9888",
-  "#80c8d8",
-];
-
-function getSwatchColor(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = (hash * 31 + name.charCodeAt(i)) & 0xffff;
-  }
-  return SWATCH_COLORS[hash % SWATCH_COLORS.length];
-}
-
-const iconMap = {
-  code: CodeXmlIcon,
-  design: DraftingCompassIcon,
-  business: BriefcaseBusinessIcon,
-  education: GraduationCapIcon,
-} as const;
-
-export type ExperiencePositionIconType = keyof typeof iconMap;
+export type ExperiencePositionIconType =
+  | "code"
+  | "design"
+  | "business"
+  | "education";
 
 export type ExperiencePositionItemType = {
   id: string;
@@ -83,6 +55,8 @@ export type ExperienceItemType = {
   isCurrentEmployer?: boolean;
 };
 
+type Period = { start: string; end?: string };
+
 export function WorkExperience({
   className,
   experiences,
@@ -91,288 +65,178 @@ export function WorkExperience({
   experiences: ExperienceItemType[];
 }) {
   return (
-    <div className={cn("bg-transparent", className)}>
+    <ol className={cn("relative", className)}>
       {experiences.map((experience, index) => (
-        <FadeIn key={experience.id} delay={index * 160}>
-          <ExperienceItem experience={experience} index={index} />
-        </FadeIn>
+        <ExperienceItem
+          key={experience.id}
+          experience={experience}
+          isLast={index === experiences.length - 1}
+        />
       ))}
-    </div>
+    </ol>
   );
 }
 
-export function ExperienceItem({
+function companyPeriod(experience: ExperienceItemType): Period | null {
+  if (experience.role) return experience.role.employmentPeriod;
+  const periods = experience.positions
+    .map((p) => p.employmentPeriod)
+    .filter((p): p is Period => !!p);
+  if (periods.length === 0) return null;
+  const byStart = [...periods].sort(
+    (a, b) =>
+      parsePeriodDate(a.start, "first").getTime() -
+      parsePeriodDate(b.start, "first").getTime(),
+  );
+  const start = byStart[0].start;
+  if (periods.some((p) => !p.end)) return { start };
+  const byEnd = [...periods].sort(
+    (a, b) =>
+      parsePeriodDate(b.end!, "last").getTime() -
+      parsePeriodDate(a.end!, "last").getTime(),
+  );
+  return { start, end: byEnd[0].end };
+}
+
+function ExperienceItem({
   experience,
-  index = 0,
+  isLast,
 }: {
   experience: ExperienceItemType;
-  index?: number;
+  isLast: boolean;
 }) {
-  const role = experience.role;
-  const roleDuration = role
-    ? formatDuration(role.employmentPeriod.start, role.employmentPeriod.end)
-    : null;
-  const ExperienceFace =
-    EXPERIENCE_FACES[Math.min(index, EXPERIENCE_FACES.length - 1)];
-
-  return (
-    <div className="space-y-4 py-6">
-      {/* Company header */}
-      <div className="not-prose flex items-start gap-3">
-        <div
-          className="relative mt-1 flex size-6 shrink-0 items-center justify-center"
-          aria-hidden
-        >
-          {experience.isCurrentEmployer && !experience.companyLogo && (
-            <span className="absolute size-6 animate-ping rounded-sm bg-gl-primary/10" />
-          )}
-          {experience.companyLogo ? (
-            <Image
-              src={experience.companyLogo}
-              alt={experience.companyName}
-              width={24}
-              height={24}
-              quality={100}
-              className="rounded-full"
-              unoptimized
-            />
-          ) : (
-            <span className="relative font-mono text-[11px] font-bold text-gl-primary">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-          )}
-          {experience.isCurrentEmployer && (
-            <span className="sr-only">Current Employer</span>
-          )}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[18px] font-bold leading-snug tracking-[-0.015em] text-gl-text">
-              {experience.companyWebsite ? (
-                <a
-                  href={experience.companyWebsite}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-gl-primary"
-                >
-                  {experience.companyName}
-                </a>
-              ) : (
-                experience.companyName
-              )}
-            </h3>
-            <ExperienceFace />
-          </div>
-
-          {role && (
-            <div className="mt-1 space-y-0.5">
-              <p className="text-[13px] font-medium text-gl-text-muted">
-                {role.title}
-                {role.employmentType && (
-                  <span className="ml-1.5 font-normal text-gl-text-faint">
-                    · {role.employmentType}
-                  </span>
-                )}
-              </p>
-              <p className="flex flex-wrap items-center gap-x-1 font-mono text-[11px] tabular-nums text-gl-text-faint">
-                <span>{role.employmentPeriod.start}</span>
-                <span className="mx-0.5">—</span>
-                {role.employmentPeriod.end ? (
-                  <span>{role.employmentPeriod.end}</span>
-                ) : (
-                  <span>Present</span>
-                )}
-                {roleDuration && (
-                  <>
-                    <span className="mx-0.5 text-gl-border">·</span>
-                    <span>{roleDuration}</span>
-                  </>
-                )}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Positions / project rows */}
-      <div className="relative space-y-6 before:absolute before:left-3 before:h-full before:w-px before:bg-gl-border">
-        {experience.positions.map((position) => (
-          <ExperiencePositionItem key={position.id} position={position} />
-        ))}
-      </div>
-    </div>
+  const period = companyPeriod(experience);
+  const subtitle = experience.role
+    ? experience.role.title
+    : experience.positions.length === 1
+      ? experience.positions[0].title
+      : `${experience.positions.length} roles`;
+  const hasDetails = experience.positions.some(
+    (p) => p.description || (p.skills && p.skills.length > 0),
   );
-}
-
-export function ExperiencePositionItem({
-  position,
-}: {
-  position: ExperiencePositionItemType;
-}) {
-  const ExperienceIcon = iconMap[position.icon || "business"];
-  const hasPeriod = !!position.employmentPeriod;
-  const isCollapsible = !!position.description;
-
-  const start = position.employmentPeriod?.start;
-  const end = position.employmentPeriod?.end;
-  const isOngoing = hasPeriod && !end;
-  const duration = hasPeriod && start ? formatDuration(start, end) : null;
+  const showPositionTitles = !!experience.role || experience.positions.length > 1;
 
   return (
-    <Collapsible
-      defaultOpen={position.isExpanded}
-      disabled={!isCollapsible}
-      asChild
-    >
-      <div className="relative last:before:absolute last:before:h-full last:before:w-4 last:before:bg-gl-bg">
+    <li className="relative pb-7 last:pb-0">
+      {!isLast ? (
+        <span
+          aria-hidden
+          className="absolute top-12 bottom-1 left-[17.5px] w-px bg-[repeating-linear-gradient(to_bottom,var(--gl-border-strong)_0,var(--gl-border-strong)_3px,transparent_3px,transparent_6px)]"
+        />
+      ) : null}
+      <Collapsible defaultOpen={experience.isCurrentEmployer} disabled={!hasDetails}>
         <CollapsibleTrigger
           className={cn(
-            "group not-prose block w-full select-none text-left",
-            "relative before:absolute before:-top-1 before:-right-1 before:-bottom-1.5 before:left-7 before:rounded-lg",
-            isCollapsible && "hover:before:bg-gl-surface",
+            "group flex w-full items-start gap-4 text-left",
+            hasDetails ? "cursor-pointer" : "cursor-default",
           )}
         >
-          <div className="relative z-10 mb-1 flex items-center gap-3">
-            <div
-              className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-gl-surface-2 text-gl-text-muted"
-              aria-hidden
-            >
-              <ExperienceIcon className="size-4" />
+          <CompanyMark name={experience.companyName} size={36} />
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <div className="min-w-0">
+              <h3 className="font-sans text-[17px] leading-snug font-semibold tracking-[-0.015em] text-gl-text">
+                {experience.companyName}
+                {experience.isCurrentEmployer ? (
+                  <span className="sr-only"> (current employer)</span>
+                ) : null}
+              </h3>
+              <p className="font-sans text-[13px] text-gl-text-muted">
+                {subtitle}
+              </p>
             </div>
-
-            <h4 className="flex-1 text-balance text-[15px] font-semibold text-gl-text">
-              {position.title}
-            </h4>
-
-            {isCollapsible && (
-              <div className="shrink-0 text-gl-primary" aria-hidden>
-                <ChevronDownIcon className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </div>
-            )}
+            <div className="flex shrink-0 items-center gap-2 pt-0.5 font-sans text-[13px] tabular-nums text-gl-text-muted">
+              {period ? <PeriodLabel period={period} /> : null}
+              {hasDetails ? (
+                <ChevronDownIcon
+                  className="size-4 text-gl-text-faint transition-transform duration-200 group-hover:text-gl-text group-data-[state=open]:rotate-180"
+                  aria-hidden
+                />
+              ) : null}
+            </div>
           </div>
-
-          {/* Metadata row — only when the position has its own employment period */}
-          {hasPeriod && (
-            <dl className="relative z-10 flex items-center gap-2 pl-9 text-[12px] text-gl-text-faint">
-              {position.employmentType && (
-                <>
-                  <div>
-                    <dt className="sr-only">Employment Type</dt>
-                    <dd>{position.employmentType}</dd>
-                  </div>
-                  <Separator
-                    className="bg-gl-border data-[orientation=vertical]:h-4"
-                    orientation="vertical"
-                  />
-                </>
-              )}
-              <div>
-                <dt className="sr-only">Employment Period</dt>
-                <dd className="flex items-center gap-0.5 tabular-nums">
-                  <span>{start}</span>
-                  <span className="mx-0.5">—</span>
-                  {isOngoing ? <span>Present</span> : <span>{end}</span>}
-                </dd>
-              </div>
-              {duration && (
-                <>
-                  <Separator
-                    className="bg-gl-border data-[orientation=vertical]:h-4"
-                    orientation="vertical"
-                  />
-                  <div>
-                    <dt className="sr-only">Duration</dt>
-                    <dd className="tabular-nums">{duration}</dd>
-                  </div>
-                </>
-              )}
-            </dl>
-          )}
         </CollapsibleTrigger>
 
         <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-          {position.description && (
-            <Prose className="pt-2 pl-6">
-              <ReactMarkdown>{position.description}</ReactMarkdown>
-            </Prose>
-          )}
-        </CollapsibleContent>
-
-        {Array.isArray(position.skills) && position.skills.length > 0 && (
-          <ul className="not-prose flex flex-wrap gap-1.5 pt-2 pl-6">
-            {position.skills.map((skill, index) => (
-              <li key={index} className="flex">
-                <Skill color={getSwatchColor(skill)}>{skill}</Skill>
-              </li>
+          <div className="space-y-6 pt-4 pl-[52px]">
+            {experience.positions.map((position) => (
+              <ExperiencePosition
+                key={position.id}
+                position={position}
+                showTitle={showPositionTitles}
+              />
             ))}
-          </ul>
-        )}
-      </div>
-    </Collapsible>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </li>
   );
 }
 
-function Prose({ className, ...props }: React.ComponentProps<"div">) {
+function ExperiencePosition({
+  position,
+  showTitle,
+}: {
+  position: ExperiencePositionItemType;
+  showTitle: boolean;
+}) {
   return (
-    <div
-      className={cn(
-        "prose max-w-none text-gl-text-muted [&_ul>li::marker]:text-gl-primary",
-        "prose-h4:text-gl-text prose-h4:font-semibold prose-h4:tracking-tight prose-h4:mt-4 prose-h4:mb-2",
-        "prose-a:font-medium prose-a:break-words prose-a:text-gl-primary prose-a:underline prose-a:underline-offset-4",
-        "prose-code:rounded-md prose-code:border prose-code:border-gl-border prose-code:bg-gl-surface-2 prose-code:text-gl-primary prose-code:px-[0.3rem] prose-code:py-[0.2rem] prose-code:text-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none",
-        className,
-      )}
-      {...props}
-    />
+    <div className="space-y-2">
+      {showTitle ? (
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+          <h4 className="font-sans text-[15px] font-semibold text-gl-text">
+            {position.title}
+          </h4>
+          {position.employmentPeriod ? (
+            <span className="font-sans text-[13px] tabular-nums text-gl-text-faint">
+              <PeriodLabel period={position.employmentPeriod} />
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+      {position.description ? (
+        <div className="space-y-2 text-[15px] leading-[1.7] text-gl-text-muted [&_li]:relative [&_li]:pl-4 [&_li]:before:absolute [&_li]:before:top-[0.8em] [&_li]:before:left-0 [&_li]:before:h-px [&_li]:before:w-2 [&_li]:before:bg-gl-border-strong [&_ul]:space-y-1.5">
+          <ReactMarkdown>{position.description}</ReactMarkdown>
+        </div>
+      ) : null}
+      {position.skills && position.skills.length > 0 ? (
+        <ul className="flex flex-wrap gap-1.5 pt-1">
+          {position.skills.map((skill) => (
+            <li key={skill}>
+              <Tag dot={getSwatchColor(skill)}>{skill}</Tag>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
-function Skill({
-  className,
-  children,
-  color,
-  ...props
-}: React.ComponentProps<"span"> & { color?: string }) {
+function PeriodLabel({ period }: { period: Period }) {
+  const duration = formatDuration(period.start, period.end);
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-gl-border bg-gl-surface-2 px-2 py-0.5 font-mono text-[10px] text-gl-text-muted",
-        className,
-      )}
-      {...props}
-    >
-      <span
-        className="size-[5px] shrink-0 rounded-full"
-        style={{ background: color }}
-        aria-hidden
-      />
-      {children}
+    <span>
+      {formatPeriodDate(period.start)} - {period.end ? formatPeriodDate(period.end) : "Present"}
+      {duration ? <span className="text-gl-text-faint"> · {duration}</span> : null}
     </span>
   );
 }
 
+function formatPeriodDate(str: string): string {
+  if (!str.includes(".")) return str;
+  return format(parse(str, "MM.yyyy", new Date()), "MMM yyyy");
+}
+
 function formatDuration(start: string, end?: string): string {
-  const startHasMonth = start.includes(".");
-  const endHasMonth = end ? end.includes(".") : true;
-
-  if (!startHasMonth && end && !endHasMonth) {
-    const years = parseInt(end, 10) - parseInt(start, 10);
-    if (years <= 0) return "";
-    return `${years}y`;
-  }
-
   const startDate = parsePeriodDate(start, "first");
   const endDate = end ? parsePeriodDate(end, "last") : new Date();
 
   const totalMonths = differenceInMonths(endDate, startDate) + 1;
   if (totalMonths <= 0) return "";
-  if (totalMonths < 12) return `${totalMonths}m`;
-
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
-  if (months === 0) return `${years}y`;
-  return `${years}y ${months}m`;
+  const y = years ? `${years} yr${years > 1 ? "s" : ""}` : "";
+  const m = months ? `${months} mo${months > 1 ? "s" : ""}` : "";
+  return [y, m].filter(Boolean).join(" ");
 }
 
 function parsePeriodDate(str: string, fallbackMonth: "first" | "last"): Date {

@@ -65,14 +65,14 @@ sequenceDiagram
   participant API as API
   participant DB as Postgres
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     C->>API: POST /v1/links (intent X)
     API->>DB: INSERT intent X
     DB-->>API: success
     API-->>C: 201 Created
   end
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     C->>API: Retry same POST (intent X)
     API->>DB: FIND by intent X
     DB-->>API: existing row
@@ -215,14 +215,14 @@ sequenceDiagram
   participant S as Service
   participant DB as Postgres
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     A->>S: Create(intent X)
     S->>DB: INSERT intent X
     DB-->>S: success
     S-->>A: created=true
   end
 
-  rect rgb(61, 49, 20)
+  rect rgb(247, 237, 216)
     B->>S: Create(intent X)
     S->>DB: INSERT intent X
     DB-->>S: unique violation (23505)

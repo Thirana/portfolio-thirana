@@ -1,18 +1,36 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
-import Link from "next/link";
+import { JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import StickyHeader from "@/components/StickyHeader";
-import { BackgroundGrid } from "@/components/BackgroundGrid";
+import SiteFooter from "@/components/SiteFooter";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
+// Satoshi and Erode are self-hosted from Fontshare (ITF Free Font License).
+const satoshi = localFont({
+  src: "./fonts/Satoshi-Variable.woff2",
+  variable: "--font-satoshi",
+  weight: "300 900",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const erode = localFont({
+  src: [
+    {
+      path: "./fonts/Erode-Variable.woff2",
+      weight: "300 700",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Erode-VariableItalic.woff2",
+      weight: "300 700",
+      style: "italic",
+    },
+  ],
+  variable: "--font-erode",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -62,46 +80,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
+      className={`${satoshi.variable} ${erode.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="bg-gl-bg text-gl-text antialiased">
-        <div className="relative">
-          <BackgroundGrid />
-          <StickyHeader />
-          <div className="page flex min-h-screen flex-col pt-6 pb-10">
-            <main className="flex-1">{children}</main>
-
-            <footer className="mt-16 py-8">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <span className="text-[13px] font-bold text-gl-text">
-                  Thirana Embuldeniya
-                </span>
-                <div className="flex gap-4">
-                  <a
-                    href="https://github.com/Thirana/personal-site"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
-                  >
-                    GitHub
-                  </a>
-                  <Link
-                    href="/blog"
-                    className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
-                  >
-                    Blog
-                  </Link>
-                  <Link
-                    href="/about"
-                    className="text-[13px] font-medium text-gl-text-muted transition-colors hover:text-gl-text"
-                  >
-                    About
-                  </Link>
-                </div>
-                <span className="text-[12px] text-gl-text-faint">© 2026</span>
-              </div>
-            </footer>
-          </div>
+      <body className="bg-gl-bg text-gl-text">
+        <StickyHeader />
+        <div className="page flex min-h-screen flex-col pt-8 pb-12 sm:pt-12">
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
         </div>
         <Analytics />
         <SpeedInsights />

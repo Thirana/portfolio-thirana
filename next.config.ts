@@ -7,7 +7,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import type { Options as PrettyCodeOptions } from "rehype-pretty-code";
 
 const prettyCodeOptions: PrettyCodeOptions = {
-  theme: "github-dark-dimmed",
+  theme: "github-light",
   keepBackground: false,
   defaultLang: "plaintext",
 };

@@ -1,10 +1,9 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { ArrowUpRight, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -12,12 +11,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { contactHref } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
-  { href: "/blog", label: "Blog" },
+  { href: "/blog", label: "Writing" },
   { href: "/about", label: "About" },
 ] as const;
 
@@ -25,75 +24,68 @@ export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const getLinkClasses = (isActive: boolean) =>
-    cn(
-      "text-[14px] font-medium transition-colors",
-      isActive ? "text-gl-text" : "text-gl-text-muted hover:text-gl-text",
-    );
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <>
-      <nav className="hidden items-center gap-6 sm:flex">
-        {links.map((link) => {
-          const isHome = link.href === "/";
-          const isActive = isHome
-            ? pathname === "/"
-            : pathname === link.href || pathname.startsWith(`${link.href}/`);
-
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn("relative pb-1", getLinkClasses(isActive))}
-            >
-              {link.label}
-              {isActive ? (
-                <span className="absolute inset-x-0 -bottom-0.5 h-px bg-gl-primary" />
-              ) : null}
-            </Link>
-          );
-        })}
+      <nav className="hidden items-center gap-1 sm:flex" aria-label="Main">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            aria-current={isActive(link.href) ? "page" : undefined}
+            className={cn(
+              "rounded-full px-3 py-1.5 text-[14px] transition-colors",
+              isActive(link.href)
+                ? "text-gl-text"
+                : "text-gl-text-muted hover:text-gl-text",
+            )}
+          >
+            {link.label}
+          </Link>
+        ))}
+        <a href={contactHref} className="pill-ink ml-2">
+          Work with me
+        </a>
       </nav>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button
+          <button
             type="button"
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 border-gl-border bg-gl-surface text-gl-text-muted hover:bg-gl-surface-2 hover:text-gl-text sm:hidden"
+            className="pill size-10 justify-center p-0 sm:hidden"
             aria-label="Open navigation menu"
           >
-            <Menu className="h-4 w-4" />
-          </Button>
+            <Menu className="size-4" />
+          </button>
         </SheetTrigger>
 
         <SheetContent
           side="right"
-          className="w-[82vw] max-w-[320px] border-0 border-l border-gl-border bg-gl-bg-subtle/90 text-gl-text backdrop-blur-2xl shadow-[-28px_0_52px_-20px_rgba(0,0,0,0.65)] sm:hidden"
+          className="w-[82vw] max-w-[320px] border-l border-gl-border bg-gl-bg text-gl-text shadow-gl-lg sm:hidden"
         >
-          <SheetHeader className="border-b border-gl-border pr-14">
-            <SheetTitle className="text-gl-text-muted">Navigation</SheetTitle>
+          <SheetHeader className="pr-14">
+            <SheetTitle className="font-sans text-[17px] font-semibold tracking-[-0.03em] normal-case">
+              thirana
+            </SheetTitle>
           </SheetHeader>
 
-          <nav className="grid gap-1 p-3 text-base">
-            {links.map((link) => {
-              const isHome = link.href === "/";
-              const isActive = isHome
-                ? pathname === "/"
-                : pathname === link.href ||
-                  pathname.startsWith(`${link.href}/`);
-
+          <nav className="grid gap-1 px-3" aria-label="Main">
+            {[{ href: "/", label: "Home" } as const, ...links].map((link) => {
+              const active =
+                link.href === "/" ? pathname === "/" : isActive(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "rounded-lg px-4 py-3 text-[15px] font-medium transition-colors",
-                    isActive
-                      ? "bg-gl-surface-2 text-gl-text"
-                      : "text-gl-text-muted hover:bg-gl-surface text-gl-text",
+                    "rounded-xl px-4 py-3 text-[16px] transition-colors",
+                    active
+                      ? "bg-gl-surface text-gl-text shadow-gl"
+                      : "text-gl-text-muted hover:text-gl-text",
                   )}
                 >
                   {link.label}
@@ -101,6 +93,16 @@ export default function Nav() {
               );
             })}
           </nav>
+
+          <div className="mt-auto p-4">
+            <a
+              href={contactHref}
+              className="pill-ink w-full justify-center py-3 text-[14px]"
+            >
+              Work with me
+              <ArrowUpRight className="size-3.5" />
+            </a>
+          </div>
         </SheetContent>
       </Sheet>
     </>

@@ -78,14 +78,14 @@ sequenceDiagram
   participant DB as Postgres
   participant N as Notification Worker
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     C->>API: POST /v1/orders with Idempotency Key
     API->>API: Build canonical fingerprint
     API->>DB: Begin transaction
     API->>DB: Insert idempotency record
   end
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     API->>DB: Lock product rows
     API->>DB: Create order and order items
     API->>DB: Persist notification intent
@@ -94,7 +94,7 @@ sequenceDiagram
     API-->>C: Return successful order response
   end
 
-  rect rgb(61, 49, 20)
+  rect rgb(247, 237, 216)
     API->>N: Schedule notification delivery
     N->>DB: Update notification status
   end
@@ -284,19 +284,19 @@ sequenceDiagram
   participant API as Order Service
   participant DB as Postgres
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     A->>API: Create order for product X
     API->>DB: Lock product X row
     DB-->>API: Lock granted
   end
 
-  rect rgb(61, 49, 20)
+  rect rgb(247, 237, 216)
     B->>API: Create order for product X
     API->>DB: Try to lock product X row
     DB-->>API: Wait for existing lock
   end
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     A->>DB: Deduct stock and commit
     DB-->>A: Transaction committed
     DB-->>API: Lock released for request B
@@ -370,30 +370,30 @@ sequenceDiagram
   participant Idem as Idempotency Store
   participant Orders as Order Read Model
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     Client->>API: Retry order creation with idempotency key
     API->>Idem: Load existing idempotency record
   end
 
   alt Record missing or replay is unsafe
-    rect rgb(61, 49, 20)
+    rect rgb(247, 237, 216)
       Idem-->>API: No safe replay record
       API-->>Client: Return 409 conflict
     end
   else Record exists
-    rect rgb(18, 58, 39)
+    rect rgb(229, 241, 232)
       Idem-->>API: Stored fingerprint and order reference
       API->>API: Compare stored fingerprint with new fingerprint
     end
 
     alt Same logical request
-      rect rgb(18, 58, 39)
+      rect rgb(229, 241, 232)
         API->>Orders: Load original order
         Orders-->>API: Original order payload
         API-->>Client: Replay original success response
       end
     else Different logical request
-      rect rgb(61, 49, 20)
+      rect rgb(247, 237, 216)
         API-->>Client: Return 409 conflict
       end
     end

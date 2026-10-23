@@ -1,300 +1,308 @@
 ---
 name: Thirana Embuldeniya Portfolio
-description: Engineer portfolio built on restraint; the work speaks, the surface stays quiet
+description: A quiet personal notebook on warm paper - one column, pill headings, a cap-wearing mascot beside a lowercase name
 colors:
-  chalk-lavender: "#9488c2"
-  chalk-lavender-hover: "#a39ad0"
-  chalk-lavender-soft: "#16143a"
-  forest-black: "#161918"
-  forest-black-deep: "#101210"
-  surface: "#1d201e"
-  surface-raised: "#252924"
-  border-subtle: "#2c312d"
-  border-input: "#383d39"
-  border-strong: "#d8ddd6"
-  text-primary: "#ffffff"
-  text-muted: "#f5f7f5"
-  text-faint: "#8c9690"
-  success: "#69b598"
-  success-soft: "#0d2419"
-  warning: "#c4a05e"
-  warning-soft: "#231a07"
-  danger: "#b87060"
-  danger-soft: "#261009"
-  swatch-sage: "#8eceb4"
-  swatch-lavender: "#a8abd8"
-  swatch-rose: "#ccaabc"
-  swatch-amber: "#d4b878"
-  swatch-salmon: "#cc9888"
-  swatch-sky: "#80c8d8"
+  rust: "#a45740"
+  rust-deep: "#8a4532"
+  paper: "#faf9f7"
+  paper-white: "#ffffff"
+  paper-shade: "#f3f1ed"
+  ink: "#17150f"
+  ink-hover: "#36322a"
+  ink-muted: "#6b6862"
+  ink-faint: "#767268"
+  hairline: "#e6e3dd"
+  hairline-strong: "#cdc8bf"
+  hairline-input: "#d9d5ce"
+  stamp-cream: "#efe6d8"
+  selection-blush: "#f1dcd2"
+  swatch-moss: "#33805a"
+  swatch-indigo: "#5258ad"
+  swatch-plum: "#9a5574"
+  swatch-ochre: "#95691a"
+  swatch-brick: "#b2553a"
+  swatch-teal: "#257a91"
+  success: "#23683c"
+  danger: "#a2412e"
+  contribution-0: "#ebe8e2"
+  contribution-1: "#c5e1c9"
+  contribution-2: "#8fc59a"
+  contribution-3: "#4f9e64"
+  contribution-4: "#2a7341"
 typography:
   display:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.875rem, 5vw, 2.25rem)"
-    fontWeight: 700
-    lineHeight: 1.2
-    letterSpacing: "-0.024em"
-    fontFeature: '"cv02", "cv03", "cv04", "cv11"'
+    fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "60px"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "-0.03em"
   headline:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.375rem"
-    fontWeight: 700
-    lineHeight: 1.3
-    letterSpacing: "-0.02em"
+    fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "44px"
+    fontWeight: 600
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
+  title:
+    fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "22px"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.025em"
   body:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.9375rem"
+    fontFamily: "Erode, ui-serif, Georgia, serif"
+    fontSize: "17px"
     fontWeight: 400
-    lineHeight: 1.65
+    lineHeight: 1.7
+    letterSpacing: "normal"
+  body-compact:
+    fontFamily: "Erode, ui-serif, Georgia, serif"
+    fontSize: "15px"
+    fontWeight: 400
+    lineHeight: 1.6
     letterSpacing: "normal"
   label:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
-    fontSize: "0.875rem"
-    fontWeight: 700
-    lineHeight: 1
-    letterSpacing: "0.2em"
-  caption:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "0.8125rem"
+    fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "13px"
     fontWeight: 500
-    lineHeight: 1.5
-    letterSpacing: "normal"
+    lineHeight: 1.2
+    letterSpacing: "0"
+  code:
+    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontSize: "13px"
+    fontWeight: 400
+    lineHeight: 1.625
 rounded:
-  sm: "6px"
-  md: "8px"
-  lg: "10px"
-  xl: "14px"
-  "2xl": "18px"
-  full: "9999px"
+  inline-code: "6px"
+  tag: "8px"
+  inset: "10px"
+  card: "14px"
+  pill: "999px"
 spacing:
-  xs: "6px"
-  sm: "10px"
-  md: "16px"
-  lg: "24px"
-  xl: "40px"
-  "2xl": "48px"
+  gutter: "24px"
+  card-pad: "20px"
+  card-pad-lg: "24px"
+  section-inner: "28px"
+  section-inner-lg: "36px"
+  section-gap: "40px"
+  section-gap-lg: "48px"
+  column: "672px"
 components:
-  button-primary:
-    backgroundColor: "{colors.chalk-lavender}"
-    textColor: "{colors.text-primary}"
-    rounded: "{rounded.xl}"
-    padding: "11px 20px"
-  button-primary-hover:
-    backgroundColor: "{colors.chalk-lavender-hover}"
-    textColor: "{colors.text-primary}"
-    rounded: "{rounded.xl}"
-    padding: "11px 20px"
-  button-secondary:
+  pill-ink:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
+    typography: "{typography.label}"
+    rounded: "{rounded.pill}"
+    padding: "7px 13px"
+  pill-ink-hover:
+    backgroundColor: "{colors.ink-hover}"
+  pill:
     backgroundColor: "transparent"
-    textColor: "{colors.text-primary}"
-    rounded: "{rounded.xl}"
-    padding: "11px 20px"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.pill}"
+    padding: "7px 13px 7px 11px"
+  pill-hover:
+    backgroundColor: "{colors.paper-white}"
+  chip-heading:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-muted}"
+    typography: "{typography.label}"
+    rounded: "{rounded.pill}"
+    padding: "5px 12px 6px"
+  link-arrow:
+    textColor: "{colors.rust}"
+    typography: "{typography.label}"
+  link-arrow-hover:
+    textColor: "{colors.rust-deep}"
+  card:
+    backgroundColor: "{colors.paper-white}"
+    rounded: "{rounded.card}"
+    padding: "{spacing.card-pad}"
   tag:
-    backgroundColor: "#2f3530"
-    textColor: "{colors.text-primary}"
-    rounded: "{rounded.full}"
-    padding: "6px 12px"
-  social-icon:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.text-muted}"
-    rounded: "{rounded.full}"
-    size: "36px"
+    backgroundColor: "{colors.paper-white}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.tag}"
+    padding: "3px 8px"
+  status-badge:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-muted}"
+    rounded: "{rounded.pill}"
+    padding: "3px 10px"
+  stamp:
+    backgroundColor: "{colors.stamp-cream}"
+    padding: "4px"
+    size: "64px"
 ---
 
 # Design System: Thirana Embuldeniya Portfolio
 
-## 1. Overview
+## Overview
 
-**Creative North Star: "The Quiet Workshop"**
+**Creative North Star: "The Paper Notebook"**
 
-This is the surface where an engineer puts their work out for inspection, not for sale. The atmosphere is what you might find at 9pm in a well-run engineering org's internal wiki: dense without being cluttered, functional without being sterile. Dark surfaces that absorb rather than compete. A single lavender accent used narrowly as a structural signal, the way a good editor uses italics: rarely, so it means something when it appears. Monospace section labels that feel like file headers in a terminal session.
+The site reads like a personal notebook left open on a desk: warm off-white paper, near-black warm ink, one narrow column, and a small cap-wearing mascot that follows the cursor beside a lowercase handwritten-feeling name. Nothing glows, nothing is dark, nothing competes. Sections are opened by small outlined pill labels and separated by dashed seams, the way a notebook is ruled and tabbed rather than boxed. The few raised things - white cards - sit on the paper with a soft, low shadow, like index cards laid on top.
 
-The color strategy is Restrained. Forest Black is the ground: a near-black with a faint green undertone that prevents the coldness of pure black without announcing itself as a design choice. Two surface tiers lift content off that ground through tonal layering, not shadows doing the work alone. Chalk Lavender appears on perhaps 8% of any screen; its role is navigation and emphasis, not branding. It earns its place each time by marking something actionable or structurally significant.
+Density is calm and editorial. Interface text (headings, labels, nav, meta) is set in Satoshi; anything meant to be read at length is set in Erode, a warm serif; code alone uses JetBrains Mono. Color is almost entirely ink-on-paper. The single chromatic voice is a rust link color, and the single solid fill is the black ink pill that carries the one primary action, "Work with me". Small swatch dots and monogram tiles add quiet categorical color without ever becoming decoration.
 
-This system explicitly rejects generic dev portfolio templates with rainbow skill bars, animated counters, and typewriter hero effects. It rejects startup landing-page energy, gradient CTAs, and "helping teams ship faster" copy. It rejects over-designed portfolios that read as designer-not-engineer. If it starts to feel like a Webflow template or a Dribbble shot, something has gone wrong.
+The world is light only, by the owner's decision. It deliberately retires the dark terminal-dashboard portfolio this site used to be: no near-black grounds, no neon accents, no monospace-as-personality.
 
 **Key Characteristics:**
+- Warm paper ground with white soft-shadow cards; light only.
+- One 42rem (672px) column on every page, header included.
+- Pill-shaped section headings (13px Satoshi, hairline outline) and dashed seams between sections.
+- Satoshi for UI and headings, Erode for reading, JetBrains Mono for code only.
+- Rust is the only accent and it is never a fill; black ink is the only solid button.
+- A cursor-following "cap" mascot is the identity image; a stamp-framed static frame of it closes every page.
 
-- Dark ground with a faint organic tint; neither cold tech-dark nor warm editorial-dark
-- One accent color, used with discipline across the full site
-- Monospace uppercase labels as structural markers, not decorative elements
-- Typography hierarchy through weight and tight letter-spacing; no display typefaces
-- Motion is minimal: fade-up entrances with staggered delays, no choreography
-- Lists and ruled lines as layout primitives; cards only when containment is the affordance
+## Colors
 
-## 2. Colors: The Forest-Lavender System
-
-The palette is a single-accent Restrained system: tinted near-blacks and grays with one muted lavender that serves as the only chromatic statement. The six decorative swatches are dot identifiers for tags only, never used as surface colors.
+Ink on warm paper, with one rust voice for links and a muted set of categorical swatches for data.
 
 ### Primary
-
-- **Chalk Lavender** (`#9488c2`): The site's sole accent. Active navigation states, interactive link text, bullet markers, section label text, focus rings, and the vertical stripe on the profile card. Appears at roughly 8% surface coverage.
-- **Chalk Lavender (hover)** (`#a39ad0`): Hover and active-press shift. Same hue, 10% lighter. Used exclusively as the hover state for Chalk Lavender elements.
-- **Chalk Lavender Soft** (`#16143a`): Tinted background for primary-context fills (the "open to work" badge, selected states). Near-invisible; only readable at close range.
+- **Workshop Rust** (rust): every inline link in prose, the arrowed "All projects" / "Read the overview" links, capability evidence text, and the focus ring. Hover deepens to **Kiln Rust** (rust-deep). Rust is text and outline only.
 
 ### Neutral
+- **Warm Paper** (paper): the page ground and the text color on the ink pill.
+- **Card White** (paper-white): cards, tags, inline code chips, hovered pills and post rows - anything that sits on the paper.
+- **Paper Shade** (paper-shade): rare inset fills (code-toggle hover, loading skeletons).
+- **Warm Ink** (ink): headings, body text, and the solid fill of the primary pill. Hover lifts to **Ink Hover** (ink-hover).
+- **Muted Ink** (ink-muted): ledes, summaries, secondary nav links, card body copy.
+- **Faint Ink** (ink-faint): dates, years, meta lines, icon tints. Still passes AA on paper; do not go lighter.
+- **Hairline** (hairline): chip and pill outlines, card-adjacent dividers, post-list rules, seams, tag borders.
+- **Strong Hairline** (hairline-strong): hovered pill outlines, the dotted experience timeline rail, list bullets, table header rules.
+- **Input Hairline** (hairline-input): form control borders.
+- **Stamp Cream** (stamp-cream): the perforated stamp frame around the mascot only.
+- **Selection Blush** (selection-blush): text selection highlight.
 
-- **Forest Black** (`#161918`): The page ground. Near-black with a subtle green undertone (approximately oklch 12% L, 0.007 chroma). Applied to `<body>` background and the deepest surface layer.
-- **Forest Black Deep** (`#101210`): Below-ground: scrollbar track, sidebar background in shell layouts. Slightly darker than Forest Black.
-- **Surface** (`#1d201e`): Cards, panels, the profile block. The primary container background, one tonal step above the ground.
-- **Surface Raised** (`#252924`): Hover backgrounds, secondary surfaces, the mobile nav sheet. Second tonal step above the ground.
-- **Border Subtle** (`#2c312d`): Default divider and card border. Low contrast, structural only.
-- **Border Input** (`#383d39`): Form input strokes. Slightly stronger than Border Subtle to signal interactivity.
-- **Border Strong** (`#d8ddd6`): High-contrast divider used for the hard-offset shadow and emphasis borders. Used sparingly.
-- **Text Primary** (`#ffffff`): Headings and primary body text. Pure white but softened by the dark surface behind it; no perceptible harshness.
-- **Text Muted** (`#f5f7f5`): Secondary body text, captions, muted-foreground labels. Near-white, visually distinct from Text Primary only when adjacent.
-- **Text Faint** (`#8c9690`): Tertiary text, timestamps, decorative punctuation. The lowest legible text tier.
-
-### Semantic
-
-- **Success** (`#69b598`) / **Success Soft** (`#0d2419`): Status chips and "open to work" indicators. Warm teal-green.
-- **Warning** (`#c4a05e`) / **Warning Soft** (`#231a07`): WIP and pending state chips. Muted amber.
-- **Danger** (`#b87060`) / **Danger Soft** (`#261009`): Destructive states. Muted terracotta.
-
-### Decorative Swatches (tag identifiers only)
-
-`#8eceb4` (sage), `#a8abd8` (lavender), `#ccaabc` (rose), `#d4b878` (amber), `#cc9888` (salmon), `#80c8d8` (sky). These are assigned deterministically by tag name hash. They appear only as 7px dots inside tag chips. Never use them as surface colors, backgrounds, or typographic accents.
+### Categorical swatches
+- **Moss, Indigo, Plum, Ochre, Brick, Teal** (swatch-moss ... swatch-teal): assigned deterministically by name hash. Used as 6px dots inside tags, as status-dot colors, and as the fill of company monogram tiles (white initials). Never as text color on paper, never as backgrounds of large areas.
+- **Contribution scale** (contribution-0 through contribution-4): a GitHub-green ramp used only by the contributions heatmap; level 0 is a warm paper-grey so empty days sit in the paper rather than on it.
+- **Success** (success) and **Danger** (danger): the "Live" status dot and error text respectively.
 
 ### Named Rules
+**The Rust Is Ink Rule.** Rust appears only as text, underline, or focus outline. It never fills a button, badge, or surface. If something needs to be a solid call to action, it is the black ink pill.
 
-**The One Voice Rule.** Chalk Lavender is the system's only chromatic statement. It appears on at most 10% of any given screen. Its rarity is the signal; every new lavender element is a question about whether that use is load-bearing.
+**The One Ink Pill Rule.** Each view carries exactly one solid ink action in its header ("Work with me") and one in the closing Work-with-me card ("Send me a note"). Every other action is an outlined pill or a rust arrow link.
 
-**The Swatch Quarantine Rule.** The six decorative swatches exist solely as tag-dot identifiers. Prohibited on any other surface: backgrounds, text, borders, hover states, icons.
+**The Light Only Rule.** There is no dark theme. Do not add `dark:` variants, a theme toggle, or a prefers-color-scheme branch.
 
-## 3. Typography: The Technical Stack
+## Typography
 
-**UI/Body Font:** Inter (ui-sans-serif, system-ui fallback)
-**Label/Code Font:** JetBrains Mono (ui-monospace fallback)
+**Display Font:** Satoshi (variable 300-900, self-hosted) with ui-sans-serif, system-ui fallback
+**Body Font:** Erode (variable 300-700 plus italic, self-hosted) with ui-serif, Georgia fallback
+**Label/Mono Font:** JetBrains Mono, for code only
 
-**Character:** A working pairing, not an expressive one. Inter at tight tracking handles hierarchy through weight and size alone. JetBrains Mono at uppercase with wide tracking creates the system's one distinctive visual voice: section labels and eyebrow text that read like file headers. The combination signals technical credibility without aesthetic performance.
+**Character:** A clean geometric-humanist sans for everything you scan, paired with a warm, slightly bookish serif for everything you read. The body element defaults to Erode; headings, buttons, nav, labels and form controls switch to Satoshi in the base layer.
 
 ### Hierarchy
-
-- **Display** (700 weight, 30–36px responsive, -0.024em tracking, line-height 1.2): Page titles only. One per page. Tight tracking converts size into authority.
-- **Headline** (700 weight, 22px, -0.02em tracking, line-height 1.3): Article and project titles in list views. Card-level emphasis.
-- **Body** (400 weight, 15px, normal tracking, line-height 1.65): Primary reading text, summaries, prose content. Maximum line length 72ch. Line height is generous because content is dense.
-- **Body Large** (400 weight, 16–17px, line-height 1.7): Hero summaries, intro text, profile headlines. Italic weight for the profile headline specifically.
-- **Label** (JetBrains Mono, 700, uppercase, 0.2em tracking): Section titles, eyebrow markers. This is the system's signature; it signals structure, not decoration. Do not apply to interactive elements.
-- **Caption** (Inter, 500 or medium, 12–13px): Tag text, timestamps, metadata. Tight and functional.
+- **Display** (Satoshi 600, 60px desktop / 48px mobile, line-height 1, -0.03em): the lowercase "thirana" wordmark on home only. Index page titles (PageIntro) use the same treatment one step down at 52px / 40px.
+- **Headline** (Satoshi 600, 44px desktop / 34px mobile, line-height 1.1, -0.03em): article and project detail titles.
+- **Title** (Satoshi 600, 22px, line-height 1.2, -0.025em): project and blog card titles. Prose h2 is 22px at weight 600, h3 18px; experience company names (17px) and post titles (15px) are also weight 600. Titles are semibold, never medium - the reference world reads through firm Satoshi titles over soft Erode text.
+- **Body** (Erode 400, 17px, line-height 1.7): long-form prose and page ledes (home and index ledes at 18px, line-height 1.625, max-width 34rem). **Body Compact** (Erode 400, 15px, line-height 1.6-1.7) carries card summaries, post-list summaries, and experience bullets.
+- **Rendering:** text uses the browser default font smoothing and text-rendering. Never set `-webkit-font-smoothing: antialiased` or `optimizeLegibility`: on macOS antialiased thins Satoshi and Erode and loses the reference's full, warm text color.
+- **Label** (Satoshi 500, 13px, line-height 1.2, no tracking): chips, pills, the ink pill (weight 600), arrow links, meta lines, dates, footer links. Tags are 12.5px, status badges 12px.
+- **Code** (JetBrains Mono 400, 13px, line-height 1.625): fenced code blocks, highlighted with the github-light theme; inline code is 0.8125em in a white hairline chip.
 
 ### Named Rules
+**The Two Voices Rule.** Satoshi is for what you scan, Erode is for what you read. Never set a paragraph of reading text in Satoshi or a label in Erode.
 
-**The Mono-Label Rule.** Section labels and eyebrow markers always use JetBrains Mono in uppercase with 0.2em letter-spacing, rendered in Chalk Lavender, followed by a full-width ruled line. This is the system's one visual signature; it creates hierarchy across sections without adding mass.
+**The Lowercase Name Rule.** The identity is the lowercase Satoshi word "thirana" - in the hero at display size and in the sticky header at 17px weight 600, -0.03em. It is not replaced by an all-caps logotype or a monospace handle.
 
-**The Tight-Header Rule.** Headings carry negative letter-spacing (-0.018em to -0.024em by size). At Display size this is mandatory; at Headline size it is expected. Never zero-track a heading; optical weight is the point.
+**The No Mono Personality Rule.** JetBrains Mono appears inside code and nowhere else - not in labels, dates, nav, or headings.
 
-## 4. Elevation
+## Layout
 
-The system uses a hybrid strategy: tonal layering establishes the primary depth hierarchy, and shadows add structural emphasis on cards and panels. Flat surfaces are the default; shadows are reserved for contained blocks that need to read as lifted from the ground.
+A single centered column, 42rem (672px) max-width with 24px side gutters, used by the header, main content, and footer alike. There is no multi-column page grid; the only internal grids are small (the capability matrix's three columns from 640px up, post rows that put the date beside the title from 640px up).
 
-Three tonal levels create the base hierarchy without a single shadow: Forest Black (ground), Surface (one step up), Surface Raised (two steps up). Most layout elements live at one of these three levels; only interactive cards and panels use shadows.
+Vertical rhythm is section-based: page sections stack 40px apart on mobile and 48px from 640px up, each separated by a dashed seam; inside a section the pill heading sits 28px (mobile) / 36px (desktop) above its content. Cards stack 16px apart. The page starts 32px below the header (48px from 640px up), and the footer sits 96px below the last section.
+
+The one breakpoint that matters is 640px (`sm`). Below it: the hero mascot shrinks from 208px to 160px and stacks above the wordmark, the desktop nav hides behind a menu pill that opens a right-side sheet drawer (82vw, max 320px), post-list dates move above titles, and the Work-with-me card stacks its button under the text. Dense content uses progressive disclosure (collapsible experience entries, code toggles), never hidden content.
+
+The sticky header is transparent at rest and, after 16px of scroll, becomes 90% paper with a backdrop blur and a 1px hairline underline. On home, the header wordmark stays invisible until scroll, because the hero already shows the name.
+
+### Named Rules
+**The One Column Rule.** Every page lives in the 672px column. Do not break out to full-bleed bands, sidebars, or two-up layouts.
+
+## Elevation & Depth
+
+Depth is a hybrid of ruled paper and lifted cards. Most structure is flat: hairlines, dashed seams and outlined pills on the paper. Cards, tables, images, diagrams, the active pill tab and the active mobile nav item are lifted by one soft, warm-tinted ambient shadow - an index card on a desk, never a floating panel. Shadows never respond to hover on cards; hover is expressed through outline and fill shifts on pills and rows.
 
 ### Shadow Vocabulary
-
-- **Ambient** (`0 1px 3px rgba(0,0,0,0.45), 0 6px 20px -8px rgba(0,0,0,0.5)`): Default card shadow. Applied to profile blocks, about CTAs, and primary content panels. Creates lift without drama.
-- **Ambient Large** (`0 2px 6px rgba(0,0,0,0.5), 0 16px 40px -12px rgba(0,0,0,0.6)`): Elevated panels at scroll or on high-emphasis surfaces. Stronger falloff at larger radius.
-- **Hard Offset** (`4px 4px 0 #d8ddd6`): Structural emphasis; signals a "pinned" or high-priority surface. Used rarely; its geometric hardness contrasts with the ambient softness everywhere else.
+- **Card rest** (`box-shadow: 0 1px 2px rgba(23, 21, 15, 0.05), 0 10px 28px -14px rgba(23, 21, 15, 0.14)`): cards, prose images, tables, code blocks, blockquotes, mermaid frames, active pill tabs.
+- **Sheet** (`box-shadow: 0 1px 2px rgba(23, 21, 15, 0.06), 0 18px 40px -16px rgba(23, 21, 15, 0.2)`): the mobile nav drawer only.
+- **Header rule** (`box-shadow: 0 1px 0 #e6e3dd`): the scrolled sticky header's hairline.
 
 ### Named Rules
+**The Soft Card Rule.** One ambient shadow for every lifted surface. No hard offset shadows, no colored glows, no stacked elevation levels beyond card and sheet.
 
-**The Tonal-First Rule.** Depth is established by surface color before shadows are added. If you can distinguish a container from its ground without a shadow, the tonal layering is working. Shadows amplify, they do not substitute.
+## Shapes
 
-**The Flat-By-Default Rule.** Interactive list items, navigation links, section labels, and tag chips are flat at rest. Elevation (shadow or surface shift) is a state response: hover, focus, active, or containment. A shadow on a resting list item is always wrong.
+Two silhouettes dominate: the fully rounded pill (999px) for every small interactive or labeling element - chips, pills, the ink button, status badges, tabs - and the gently rounded card (14px) for every raised surface. Smaller radii step down for smaller objects: tags 8px, inset code panels and toggles 10px, inline code 6px. Company monograms are squircle-like tiles at 22% radius; the hero mascot sits in an 18px rounded frame.
 
-## 5. Components
+Lines are either a solid 1px hairline or a dashed seam (5px dash, 4px gap). The experience timeline rail is a finer dotted line (3px dash, 3px gap) in the strong hairline. The stamp is the one decorative edge: a 4px cream frame with a perforated, postage-stamp mask around a 56px mascot frame.
+
+## Components
 
 ### Buttons
+Tactile and quiet: everything is a pill, and only one is solid.
+- **Shape:** fully rounded (999px).
+- **Primary (ink pill):** warm ink fill, paper text, Satoshi 13px weight 600, 7px 13px padding (10px 16px in the Work-with-me card, full-width 12px tall-padded in the mobile drawer). Hover lifts the fill to ink hover; press scales to 0.97 over 150ms.
+- **Secondary (outlined pill):** transparent with a hairline outline, ink text, Satoshi 13px weight 500, a 14px leading icon. Hover strengthens the outline and fills it with card white (150ms). Used for social links, evidence links, the mermaid "Expand" control, and the mobile menu trigger (40px square).
+- **Tertiary (arrow link):** rust Satoshi 13px weight 500 with a trailing arrow that nudges 2px right on hover (200ms, cubic-bezier(0.22, 1, 0.36, 1)) while the text deepens to kiln rust.
+- **Focus:** a 2px rust outline offset 2px on every focusable element.
 
-Structural and restrained. Shape does the work; no decoration.
+### Chips (section headings)
+- **Style:** the h2 of every section is an outlined pill - hairline border, transparent fill, muted ink text, Satoshi 13px weight 500 at +0.01em, 5px 12px 6px padding, with an optional 14px muted icon.
+- **State:** static; chips are labels, not controls.
 
-- **Shape:** Gently curved (14px radius). Not pill-shaped; not sharp.
-- **Primary:** Solid Chalk Lavender fill (`#9488c2`), white text, 11px vertical / 20px horizontal padding. Minimum tap target 44px. Transitions on background and border-color at 120ms.
-- **Hover / Focus:** Background shifts to Chalk Lavender hover (`#a39ad0`). Focus ring: 2px solid Chalk Lavender, 2px offset.
-- **Active:** Scale down to 0.97 on press. Instant; no easing.
-- **Secondary:** Transparent background, `rgba(255,255,255,0.15)` border. Hover fills Surface Raised. Same radius and padding as Primary.
+### Tags and status badges
+- **Tag:** card-white fill, hairline border, 8px radius, Satoshi 12.5px weight 500, with a 6px swatch dot chosen by name hash. Used for tech and domain lists on cards, heroes, and experience entries.
+- **Status badge:** outlined pill, muted Satoshi 12px, with a 6px status dot (success for Live, ochre for WIP/Ongoing, teal for Completed, faint for Paused).
 
-### Tags / Chips
+### Cards / Containers
+- **Corner Style:** 14px.
+- **Background:** card white on paper.
+- **Shadow Strategy:** card rest shadow (see Elevation & Depth); no border.
+- **Border:** none; internal dividers are hairlines.
+- **Internal Padding:** 20px mobile, 24px from 640px up (16px for compact cards like Work with me and diagrams).
+- **Project card:** status badge and year on top, 22px title whose link stretches over the whole card, Erode summary, up to six tags, then a rust "Read the overview" arrow link plus muted Code / Live links.
 
-Color-dotted, rounded-full chips used for technology labels and topic tags across blog, project, and list views.
-
-- **Style:** `#2f3530` background (forest-tinted dark, between Surface and Surface Raised), white text at 12–13px, 500 weight.
-- **Shape:** Full pill radius (9999px). 6px vertical / 10–12px horizontal padding.
-- **Dot identifier:** 7px circle with a deterministic swatch color (hash of tag name). Appears before the text, vertically centered. The dot is the only color on the chip; the chip body is always neutral.
-
-### Cards / Surfaces
-
-Used when content needs containment: the profile block, the about CTA, and similar structural anchors. Not the default for list items.
-
-- **Corner Style:** Large radius (18px). Signals a "block" rather than a row.
-- **Background:** Surface (`#1d201e`), one tonal step above the ground.
-- **Shadow Strategy:** Ambient shadow as default. Large ambient for high-emphasis cards.
-- **Border:** Border Subtle (`#2c312d`), 1px solid.
-- **Internal Padding:** 20px (1.25rem) default; 24px (1.5rem) on larger viewports.
-
-### Inputs / Fields
-
-- **Style:** 1px Border Input stroke (`#383d39`), Surface background, 10px radius.
-- **Focus:** 2px Chalk Lavender outline, 2px offset. No fill change on focus.
-- **Disabled:** Text Faint color, no border change.
+### Lists
+- **Post list:** hairline-ruled rows (top, bottom, and between). Title in Satoshi 15px weight 600, Erode 15px summary clamped to two lines, Satoshi 13px faint date right-aligned on desktop and above the title on mobile. Hover fills the row with card white at 14px radius.
+- **Experience timeline:** monogram tile, company and role, date range with a chevron; entries collapse open (240ms, cubic-bezier(0.22, 1, 0.36, 1)) to reveal short-dash bullets and tags, connected by a dotted rail.
 
 ### Navigation
+- **Desktop:** right-aligned Satoshi 14px links, muted at rest and ink when active or hovered, followed by the ink "Work with me" pill. The left slot holds the 17px lowercase wordmark.
+- **Mobile:** a 40px outlined menu pill opens a right-side sheet drawer on paper with the sheet shadow; links are 16px rows at 14px radius, the active row lifted as a white card; the ink pill sits full-width at the bottom.
+- **Tabs:** pill tabs - muted Satoshi 13px labels; the active tab becomes a white, hairline-outlined, card-shadowed pill.
 
-Flat, low-chrome navigation. The active state is a 1px Chalk Lavender underline below the link, not a background fill or bold weight change.
+### Mascot and stamp (signature)
+The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card that closes every page. The mascot stands in for a portrait; do not add a photo beside it.
 
-- **Desktop:** Horizontal link row, 14px Inter medium. Inactive: Text Muted; active: Text Primary with 1px lavender underline at -0.5px offset. Hover transitions color only at 150ms.
-- **Mobile:** Right-side sheet drawer (82vw, max 320px). Backdrop blur on the sheet background. Active link gets Surface Raised background fill instead of underline. Links at 15px with 12px / 16px padding.
-- **Logo area:** `Thirana Embuldeniya` in bold Inter + hard offset shadow class. The name is the logo; no icon.
+### Company monograms
+Squircle tiles (22% radius) filled with the name's swatch color, white Satoshi bold initials, a faint inset ink ring. They stand in for logos at 30px in the hero row and 36px in the timeline.
 
-### Section Header (Signature Component)
+### Prose
+Erode 17px at line-height 1.7 with Satoshi semibold headings (h2 22px, h3 18px, tight negative tracking). Links are rust with a 35%-rust underline offset 3px that becomes solid on hover. Code blocks, tables, blockquotes, images and diagrams are all cards. Horizontal rules are dashed seams. Mermaid diagrams use the paper palette (white nodes, strong-hairline borders, ink text, Satoshi labels).
 
-The system's primary layout primitive for named content groups. Used across every page to separate sections.
-
-- **Pattern:** JetBrains Mono label in Chalk Lavender (uppercase, 0.2em tracking, 14px, 700 weight) followed by a 1px horizontal rule in Border Subtle that fills remaining width.
-- **Spacing:** 24px (space-y-6) below the header before content.
-- **Rule:** Never use a plain heading for a section that could use this pattern. The mono-label + rule is the system's answer to H2s outside of MDX prose.
-
-### Content Hero (Signature Component)
-
-The page header for blog posts and project detail pages.
-
-- **Eyebrow:** Section Header pattern (mono label + rule) at the top. Optional badge (StatusBadge) aligned to the right end of the rule.
-- **Title:** Display level (700, 30–36px, -0.024em tracking).
-- **Summary:** Body Large (16px, 1.7 line-height).
-- **Chips:** Tag components, full-width flex-wrap row.
-- **Meta:** Flex-wrap row for date, read time, and external links.
-
-### Status Badges
-
-Semantic rounded-full chips for project lifecycle states.
-
-- **Live:** `#1a3a28` background, `#a0dcb8` text.
-- **WIP / Ongoing:** `#362a08` background, `#dfc070` text.
-- **Paused:** `#28213a` background, `#c0b4e0` text.
-- **Completed:** `#102840` background, `#88d0e8` text.
-- **Typography:** 11px Inter, 700 weight, uppercase, 0.06em tracking. Never sentence case.
-
-## 6. Do's and Don'ts
+## Do's and Don'ts
 
 ### Do:
-
-- **Do** use Chalk Lavender exclusively for interactive affordances, active states, and Section Header labels. Every new lavender element must be functionally significant.
-- **Do** establish depth through tonal surface layering first (Forest Black → Surface → Surface Raised), then add Ambient shadow only if containment requires it.
-- **Do** use Section Header (mono label + ruled line) for all named content groups outside of MDX prose. This is the system's answer to H2-level structure.
-- **Do** use negative letter-spacing on headings: -0.018em at 22px, -0.024em at 30px and above.
-- **Do** cap body text line length at 72ch. The `.page` container (max-width 48rem) does this automatically; do not override it with unconstrained prose widths.
-- **Do** use Tag chips with deterministic swatch dots for technology and topic labels. The dot is the only color on the chip.
-- **Do** animate with opacity and transform only. Ease-out curves (cubic-bezier(0.22, 1, 0.36, 1) or equivalent). No layout property animation.
-- **Do** respect `prefers-reduced-motion`: all FadeIn animations should be skipped or instant when the user has requested reduced motion.
+- **Do** open every section with a pill chip heading and separate sections with a dashed seam (5px dash, 4px gap, hairline color).
+- **Do** keep every page inside the 672px column with 24px gutters.
+- **Do** put reading text in Erode and every label, heading, button and meta line in Satoshi.
+- **Do** lift surfaces only with the single soft card shadow on card white at 14px radius.
+- **Do** use rust for links and focus only, and the black ink pill for the one primary action.
+- **Do** pick categorical color through the name-hash swatch set so a tag or company always gets the same dot.
+- **Do** use ASCII punctuation in copy; a hyphen, never an em or en dash.
+- **Do** keep the mobile nav as a right-side sheet drawer.
 
 ### Don't:
-
-- **Don't** add a second accent color. Chalk Lavender is the system's only chromatic statement. A second accent color destroys the rarity that makes the first one useful.
-- **Don't** use the six decorative swatches (`#8eceb4`, `#a8abd8`, `#ccaabc`, `#d4b878`, `#cc9888`, `#80c8d8`) on any surface other than 7px tag dots. They are not a color palette.
-- **Don't** use side-stripe borders (border-left or border-right > 1px in a colored accent) on cards, list items, or callout blocks. Use full borders, background tints, or leading dot/number markers instead.
-- **Don't** use gradient text (`background-clip: text` with a gradient). Use solid Chalk Lavender or Text Primary. Weight and size carry emphasis; color does not.
-- **Don't** build identical card grids: same-size cards with icon + heading + body text repeated in rows. Project lists use an indexed vertical layout with leading monospace numbers, not card grids.
-- **Don't** use rainbow skill bars, animated percentage counters, typewriter "I am a [role]" effects, or any pattern from generic developer portfolio templates.
-- **Don't** add startup landing-page elements: hero metric blocks (big number, small label, gradient accent), social proof banners, or gradient CTA sections.
-- **Don't** use blur-and-glass as decoration. The mobile nav sheet uses backdrop-blur purposefully because it overlays page content; this is the one intentional use. Elsewhere: prohibited.
-- **Don't** add shadows to flat list items or navigation links at rest. Shadows are state responses (hover, elevation), not default styling.
-- **Don't** use a modal as a first solution. The system uses sheets (right-side drawer) for navigation and inline disclosure for progressive content. Exhaust these before reaching for a modal.
+- **Don't** add a dark theme, theme toggle, or `dark:` variants.
+- **Don't** fill a button, badge or surface with rust.
+- **Don't** add a second solid button style or a second accent hue.
+- **Don't** use JetBrains Mono outside code, or uppercase letter-spaced labels anywhere in the UI.
+- **Don't** use hard offset shadows, colored glows, or gradient color fills on surfaces.
+- **Don't** break the column with full-bleed bands, sidebars, or multi-column page grids.
+- **Don't** replace the mobile drawer with a full-screen takeover.
+- **Don't** introduce colors outside the tokens in `src/app/globals.css`; extend the token set there first.

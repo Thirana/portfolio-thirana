@@ -33,19 +33,24 @@ async function getMermaid() {
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: "loose",
-      theme: "dark",
+      theme: "base",
       themeVariables: {
-        fontSize: "16px",
-        lineColor: "#4a5450",
-        textColor: "#e2e8e4",
-        primaryColor: "#1d201e",
-        primaryTextColor: "#e2e8e4",
-        primaryBorderColor: "#2c312d",
-        secondaryColor: "#252924",
-        tertiaryColor: "#1a1e1c",
-        background: "#161918",
-        mainBkg: "#1d201e",
-        nodeBorder: "#2c312d",
+        fontSize: "15px",
+        fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
+        lineColor: "#a39e94",
+        textColor: "#17150f",
+        primaryColor: "#ffffff",
+        primaryTextColor: "#17150f",
+        primaryBorderColor: "#cdc8bf",
+        secondaryColor: "#f3f1ed",
+        tertiaryColor: "#faf9f7",
+        background: "#ffffff",
+        mainBkg: "#ffffff",
+        nodeBorder: "#cdc8bf",
+        actorBkg: "#faf9f7",
+        actorBorder: "#cdc8bf",
+        noteBkgColor: "#f6ebe5",
+        noteBorderColor: "#e3c9bc",
       },
     });
     mermaidConfigured = true;
@@ -103,7 +108,7 @@ function MermaidCanvas({
   if (error) {
     return (
       <div className="space-y-3">
-        <p className="text-xs text-rose-300">Mermaid render failed: {error}</p>
+        <p className="font-sans text-xs text-gl-danger">Mermaid render failed: {error}</p>
         <pre className="overflow-x-auto rounded-xl border border-gl-border bg-gl-bg p-4 text-xs text-gl-text-muted">
           <code>{chart}</code>
         </pre>
@@ -134,14 +139,14 @@ export default function MermaidDiagram({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div className={cn("not-prose my-6", className)}>
-        <div className="rounded-xl border border-gl-primary/30 bg-gl-bg p-4">
+        <div className="card p-4">
           <div className="mb-3 flex justify-end">
             <DialogTrigger asChild>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-8 border-gl-border bg-gl-surface px-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-gl-text-muted hover:border-gl-border-strong/20 hover:bg-gl-surface-2 hover:text-gl-text"
+                className="pill h-8 px-3 shadow-none"
               >
                 <Maximize2 className="h-3.5 w-3.5" />
                 Expand
@@ -165,15 +170,15 @@ export default function MermaidDiagram({
           Larger view of the current Mermaid diagram.
         </DialogDescription>
 
-        <div className="border-b border-white/10 px-5 py-4 pr-14">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-400">
+        <div className="border-b border-gl-border px-5 py-4 pr-14">
+          <p className="font-sans text-[14px] font-medium text-gl-text">
             Expanded diagram
           </p>
         </div>
 
         <div className="min-h-0 flex-1 p-4 sm:p-6">
           {open ? (
-            <div className="h-full overflow-auto overscroll-contain rounded-xl border border-gl-border bg-gl-bg p-4 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gl-border [&::-webkit-scrollbar-track]:bg-gl-bg-subtle">
+            <div className="h-full overflow-auto overscroll-contain rounded-[14px] bg-gl-surface p-4 shadow-gl [scrollbar-width:thin]">
               <MermaidCanvas
                 chart={chart}
                 renderId={`${renderBaseId}-dialog`}

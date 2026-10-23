@@ -6,6 +6,7 @@ import {
   getBlogPostBySlug,
 } from "@/lib/content";
 import ContentHero from "@/components/ContentHero";
+import { Seam } from "@/components/Section";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 type PageProps = {
@@ -96,25 +97,37 @@ export default async function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
       />
 
       <ContentHero
-        eyebrow="Blog"
+        back={{ href: "/blog", label: "All writing" }}
         title={meta.title}
         summary={meta.summary}
         meta={
-          <span className="inline-flex items-center rounded-full border border-gl-border bg-gl-surface-2 px-2.5 py-1 font-mono text-[11px] text-gl-text-muted">
-            Published: {meta.date || "n/a"}
-          </span>
+          <>
+            {meta.date ? (
+              <time dateTime={meta.date} className="tabular-nums">
+                {new Date(meta.date).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </time>
+            ) : null}
+            {meta.level ? <span>· {meta.level}</span> : null}
+            {meta.track ? <span>· {meta.track}</span> : null}
+          </>
         }
         chips={meta.tags}
       />
 
-      <article className="prose prose-invert max-w-none content-with-hero">
+      <Seam />
+
+      <article className="prose max-w-none content-with-hero">
         <Content />
       </article>
     </div>

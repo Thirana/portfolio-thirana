@@ -1,5 +1,22 @@
 import type { Metadata } from "next";
-import { aboutCta, aboutPrinciples, aboutSummary } from "@/content/about";
+import Image from "next/image";
+import {
+  Briefcase,
+  Compass,
+  GraduationCap,
+  Layers,
+  MapPin,
+  Phone,
+  UserRound,
+  Wrench,
+} from "lucide-react";
+import {
+  aboutPrinciples,
+  aboutSummary,
+  heroBioPoints,
+} from "@/content/about";
+import { WORK_EXPERIENCE } from "@/content/experience";
+import { profile } from "@/content/profile";
 import {
   getBlogMetaBySlug,
   getProjectMetaBySlug,
@@ -8,8 +25,7 @@ import {
 } from "@/lib/content";
 import TechTabs from "@/components/TechTabs";
 import FeaturedWorkTabs from "@/components/FeaturedWorkTabs";
-import { FadeIn } from "@/components/FadeIn";
-import Section from "@/components/Section";
+import Section, { Seam } from "@/components/Section";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -51,90 +67,125 @@ export default async function AboutPage() {
     (p): p is ContentMeta => p != null,
   );
 
+  const currentEmployer = WORK_EXPERIENCE.find((e) => e.isCurrentEmployer);
+  const currentTitle =
+    currentEmployer?.role?.title ?? currentEmployer?.positions[0]?.title;
+
+  const facts = [
+    ...(currentTitle && currentEmployer
+      ? [
+          {
+            icon: Briefcase,
+            text: `${currentTitle} at ${currentEmployer.companyName}`,
+          },
+        ]
+      : []),
+    { icon: GraduationCap, text: "BSc (Hons) in Computer Engineering" },
+    { icon: MapPin, text: "Colombo, Sri Lanka" },
+    {
+      icon: Phone,
+      text: (
+        <a
+          href="tel:+94714594040"
+          className="transition-colors hover:text-gl-text"
+        >
+          +94 71 459 4040
+        </a>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-12">
-      {/* Page header */}
-      <FadeIn>
-        <div className="space-y-5">
-          <div className="flex items-center gap-4">
-            <p className="shrink-0 font-mono text-[14px] font-bold uppercase tracking-[0.2em] text-gl-primary">
-              Engineer Profile
+    <div className="space-y-10 sm:space-y-12">
+      <header className="space-y-6">
+        <div className="flex items-center gap-5">
+          <Image
+            src="/images/square.png"
+            alt={profile.name}
+            width={88}
+            height={88}
+            priority
+            className="size-[72px] rounded-2xl object-cover object-top shadow-gl sm:size-[88px]"
+          />
+          <div className="space-y-1.5">
+            <h1 className="font-sans text-[40px] leading-none font-semibold tracking-[-0.03em] text-gl-text sm:text-[52px]">
+              About
+            </h1>
+            <p className="font-sans text-[14px] text-gl-text-muted">
+              {profile.name}
             </p>
-            <div className="flex-1 border-t border-gl-border" />
           </div>
-          <h1 className="text-3xl font-bold tracking-[-0.024em] text-gl-text sm:text-4xl">
-            About
-          </h1>
-          <p className="max-w-2xl text-[16px] leading-[1.7] text-gl-text">
-            {aboutSummary}
-          </p>
         </div>
-      </FadeIn>
-
-      {/* Technologies & Tools */}
-      <FadeIn delay={120}>
-        <Section title="Technologies & Tools">
-          <TechTabs />
-        </Section>
-      </FadeIn>
-
-      {/* Featured Work */}
-      <FadeIn delay={200}>
-        <Section title="Featured Work">
-          <FeaturedWorkTabs projects={projects} posts={posts} />
-        </Section>
-      </FadeIn>
-
-      {/* How I Work */}
-      <FadeIn delay={280}>
-        <Section title="How I Work">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {aboutPrinciples.map((item, index) => (
-              <article
-                key={item.title}
-                className="space-y-1.5 rounded-xl border border-gl-border bg-gl-surface p-4"
+        <p className="text-[18px] leading-[1.6] text-gl-text">{aboutSummary}</p>
+        <ul className="grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+          {facts.map((fact, i) => {
+            const Icon = fact.icon;
+            return (
+              <li
+                key={i}
+                className="flex items-center gap-2.5 font-sans text-[14px] text-gl-text-muted"
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-gl-text-faint">
-                  {`0${index + 1}`}
-                </p>
-                <h3 className="text-[15px] font-semibold tracking-[-0.015em] text-gl-text">
-                  {item.title}
-                </h3>
-                <p className="text-[15px] leading-[1.65] text-gl-text-muted">
-                  {item.description}
-                </p>
-              </article>
-            ))}
-          </div>
-        </Section>
-      </FadeIn>
+                <Icon
+                  className="size-4 shrink-0 text-gl-text-faint"
+                  aria-hidden
+                />
+                <span>{fact.text}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </header>
 
-      {/* CTA */}
-      <FadeIn delay={340}>
-        <div className="rounded-2xl border border-gl-border bg-gl-surface p-6 shadow-gl">
-          <div className="space-y-4">
-            <h2 className="text-[17px] font-bold tracking-[-0.015em] text-gl-text">
-              {aboutCta.title}
-            </h2>
-            <p className="text-[16px] leading-[1.65] text-gl-text-muted">
-              {aboutCta.message}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {aboutCta.links.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noreferrer" : undefined}
-                  className="glass-btn-primary inline-flex min-h-11 items-center justify-center rounded-[10px] px-5 text-[14px] font-semibold"
-                >
-                  {link.label}
-                </a>
-              ))}
+      <Seam />
+
+      <Section title="In short" icon={UserRound}>
+        <ul className="space-y-3">
+          {heroBioPoints.map((point) => (
+            <li
+              key={point}
+              className="flex gap-3 text-[17px] leading-[1.6] text-gl-text"
+            >
+              <span
+                className="mt-[0.8em] h-px w-2.5 shrink-0 bg-gl-border-strong"
+                aria-hidden
+              />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Seam />
+
+      <Section title="Technologies and tools" icon={Wrench}>
+        <TechTabs />
+      </Section>
+
+      <Seam />
+
+      <Section title="Featured work" icon={Layers}>
+        <FeaturedWorkTabs projects={projects} posts={posts} />
+      </Section>
+
+      <Seam />
+
+      <Section title="How I work" icon={Compass}>
+        <dl className="divide-y divide-gl-border border-y border-gl-border">
+          {aboutPrinciples.map((item) => (
+            <div
+              key={item.title}
+              className="grid gap-1 py-4 sm:grid-cols-[13rem_1fr] sm:gap-6"
+            >
+              <dt className="font-sans text-[15px] font-semibold tracking-[-0.01em] text-gl-text">
+                {item.title}
+              </dt>
+              <dd className="text-[16px] leading-[1.55] text-gl-text-muted">
+                {item.description}
+              </dd>
             </div>
-          </div>
-        </div>
-      </FadeIn>
+          ))}
+        </dl>
+      </Section>
     </div>
   );
 }

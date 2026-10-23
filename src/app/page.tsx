@@ -1,233 +1,176 @@
 import { Suspense } from "react";
-import Image from "next/image";
-import { Briefcase, GraduationCap, MapPin, Phone } from "lucide-react";
-import { heroBioPoints } from "@/content/about";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BookOpen,
+  Briefcase,
+  FolderGit2,
+  Github,
+} from "lucide-react";
 import { profile, socials } from "@/content/profile";
 import { WORK_EXPERIENCE } from "@/content/experience";
 import {
+  getAllBlogPosts,
   getAllProjects,
   getFeaturedProjects,
-  getFeaturedBlogPost,
-  getBlogMetaBySlug,
 } from "@/lib/content";
 import { getCachedContributions } from "@/lib/get-cached-contributions";
 import {
   GitHubContributions,
   GitHubContributionsFallback,
 } from "@/components/github-contributions";
-import ProjectGrid from "@/components/ProjectGrid";
-import Section from "@/components/Section";
+import { Mascot } from "@/components/Mascot";
+import ProjectCard from "@/components/ProjectCard";
+import Section, { Seam } from "@/components/Section";
 import { WorkExperience } from "@/components/work-experience";
-import { HomeBlogSection } from "@/components/HomeBlogSection";
-import { FadeIn } from "@/components/FadeIn";
-import { TypewriterText } from "@/components/TypewriterText";
-import { ServerFaceHappy, ServerFaceThinking } from "@/components/ServerFace";
+import { CompanyMark } from "@/components/CompanyMark";
+import { PostList } from "@/components/PostList";
 
 const GITHUB_USERNAME = "Thirana";
 const GITHUB_PROFILE_URL = "https://github.com/Thirana";
 
-const heroSocials = socials.filter((s) =>
-  ["GitHub", "LinkedIn", "Email"].includes(s.label),
-);
-
 export default async function Home() {
-  const [featuredProjects, allProjects, featuredBlog, ...compactBlogs] =
-    await Promise.all([
-      getFeaturedProjects(4),
-      getAllProjects(),
-      getFeaturedBlogPost(),
-      getBlogMetaBySlug("safe-order-creation-idempotency-transactions"),
-      getBlogMetaBySlug("cursor-pagination-product-listing-api"),
-      getBlogMetaBySlug("url-shortener-caching"),
-    ]);
-  const compactBlogPosts = compactBlogs.filter((p) => p != null);
+  const [featuredProjects, allProjects, allPosts] = await Promise.all([
+    getFeaturedProjects(3),
+    getAllProjects(),
+    getAllBlogPosts(),
+  ]);
+  const recentPosts = allPosts.slice(0, 4);
 
   const contributions = getCachedContributions(GITHUB_USERNAME);
 
   const currentEmployer = WORK_EXPERIENCE.find((e) => e.isCurrentEmployer);
   const currentTitle =
     currentEmployer?.role?.title ?? currentEmployer?.positions[0]?.title;
-  const currentCompany = currentEmployer?.companyName;
-
-  const infoRows = [
-    ...(currentTitle && currentCompany
-      ? [
-          {
-            icon: Briefcase,
-            text: currentTitle,
-          },
-        ]
-      : []),
-    {
-      icon: GraduationCap,
-      text: "BSc (Hons) in Computer Engineering",
-    },
-    { icon: MapPin, text: "Colombo, Sri Lanka" },
-    {
-      icon: Phone,
-      text: (
-        <a
-          href="tel:+94714594040"
-          className="transition-colors hover:text-gl-text"
-        >
-          +94 71 459 4040
-        </a>
-      ),
-    },
-  ];
 
   return (
-    <div className="space-y-16">
-      {/* Hero — no card, direct on page ground */}
-      <FadeIn>
-        <div className="space-y-6">
-          {/* Visual identity cluster: graph and photo/name are one unit */}
-          <div className="space-y-4">
-            {/* Mobile: full-bleed cover zone flush with navbar */}
-            <div className="max-sm:-mx-6 max-sm:-mt-6 max-sm:overflow-hidden">
-              <Suspense fallback={<GitHubContributionsFallback />}>
-                <GitHubContributions
-                  contributions={contributions}
-                  githubProfileUrl={GITHUB_PROFILE_URL}
-                  hideFooter
-                  hideMonthLabels
-                  blockSize={14}
-                  blockMargin={3}
-                />
-              </Suspense>
-            </div>
-
-            <div className="flex items-center gap-5 sm:gap-6">
-              <div
-                className="shrink-0 overflow-hidden rounded-full"
-                style={{
-                  boxShadow:
-                    "0 0 0 2px var(--gl-bg), 0 0 0 4px var(--gl-primary)",
-                }}
-              >
-                <Image
-                  src="/images/square.png"
-                  alt={profile.name}
-                  width={80}
-                  height={80}
-                  className="h-20 w-20 object-cover object-top"
-                />
-              </div>
-
-              <div className="min-w-0 space-y-1">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-[22px] font-bold leading-tight tracking-[-0.02em] text-gl-text sm:text-[24px]">
-                    {profile.name}
-                  </h1>
-                  {profile.availableForWork && (
-                    <span className="inline-flex items-center rounded-full bg-[#1a3a28] px-2.5 py-1 text-[11px] font-bold tracking-[0.06em] uppercase text-[#a0dcb8]">
-                      Open to work
-                    </span>
-                  )}
-                </div>
-                <p className="text-[15px] text-gl-text-faint">
-                  <TypewriterText
-                    text="Turning ideas into working software."
-                    delay={500}
-                    speed={48}
-                  />
-                </p>
-              </div>
+    <div className="space-y-10 sm:space-y-12">
+      {/* Identity: mascot beside the handle */}
+      <header className="space-y-7">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-6">
+            <Mascot
+              size={208}
+              className="-my-6 -ml-8 max-sm:-mt-4 max-sm:-mb-3 max-sm:-ml-7 max-sm:size-[188px]!"
+            />
+            <div className="space-y-2.5">
+              <h1 className="font-sans text-[48px] leading-none font-semibold tracking-[-0.03em] text-gl-text sm:text-[60px]">
+                thirana
+              </h1>
+              <p className="flex flex-wrap items-baseline gap-x-1.5 text-[17px] text-gl-text-faint">
+                <span aria-hidden className="text-gl-border-strong">
+                  /
+                </span>
+                <span>{profile.name}</span>
+                <span aria-hidden className="text-gl-border-strong">
+                  /
+                </span>
+                <span className="italic">noun</span>
+              </p>
             </div>
           </div>
 
-          {/* Facts and links cluster: info rows, divider, social pills */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {infoRows.map((row, i) => {
-                const Icon = row.icon;
-                return (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2.5 text-[14px] text-gl-text-muted"
-                  >
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-gl-border bg-gl-surface-2">
-                      <Icon className="h-3.5 w-3.5 text-gl-text-faint" />
-                    </div>
-                    <span>{row.text}</span>
-                  </div>
-                );
-              })}
-            </div>
+          <p className="max-w-[34rem] text-[18px] leading-[1.625] text-gl-text-muted">
+            {profile.headline}
+          </p>
+        </div>
 
-            <div className="flex flex-wrap gap-2">
-              {heroSocials.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={social.label}
-                    className="inline-flex items-center gap-2 rounded-full border border-gl-border bg-gl-surface-2 px-3.5 py-1.5 text-[12px] font-medium text-gl-text-muted transition-colors hover:border-[rgba(255,255,255,0.15)] hover:text-gl-text"
-                  >
-                    <Icon className="h-3.5 w-3.5 shrink-0" />
-                    {social.label}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* About — extra breathing room before written content */}
-          <div className="space-y-4 pt-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gl-text">
-                About
-              </h2>
-              <ServerFaceHappy />
-            </div>
-            <ul className="space-y-3">
-              {heroBioPoints.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-start gap-2.5 text-[16px] leading-[1.7] text-gl-text-muted"
-                >
-                  <span
-                    className="mt-1 shrink-0 select-none font-mono text-[14px] leading-none text-gl-primary"
-                    aria-hidden
-                  >
-                    ›
-                  </span>
-                  <span>{point}</span>
+        <div className="max-w-[30rem]">
+          <hr className="border-gl-border" />
+          <div className="flex flex-wrap items-center gap-3 py-4">
+            <span className="font-sans text-[13px] text-gl-text-muted">
+              I&apos;ve worked at:
+            </span>
+            <ul className="flex flex-wrap gap-1.5">
+              {WORK_EXPERIENCE.map((exp) => (
+                <li key={exp.id}>
+                  <CompanyMark name={exp.companyName} size={30} withTooltip />
                 </li>
               ))}
             </ul>
           </div>
+          <hr className="border-gl-border" />
         </div>
-      </FadeIn>
 
-      {/* Experience */}
-      <Section title="Professional Experience">
-        <WorkExperience className="w-full" experiences={WORK_EXPERIENCE} />
+        {currentTitle && currentEmployer ? (
+          <p className="flex items-start gap-2.5 font-sans text-[14px] text-gl-text-muted">
+            <Briefcase
+              className="mt-0.5 size-4 shrink-0 text-gl-text-faint"
+              aria-hidden
+            />
+            <span>
+              Currently {currentTitle} at{" "}
+              <span className="text-gl-text">{currentEmployer.companyName}</span>
+              , Colombo
+            </span>
+          </p>
+        ) : null}
+      </header>
+
+      <Seam />
+
+      <ul className="flex flex-wrap gap-2">
+        {socials.map((social) => {
+          const Icon = social.icon;
+          const external = social.href.startsWith("http");
+          return (
+            <li key={social.label}>
+              <a
+                href={social.href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noreferrer" : undefined}
+                className="pill"
+              >
+                <Icon className="size-3.5 shrink-0" aria-hidden />
+                {social.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+
+      <Seam />
+
+      <Section title="Contributions" icon={Github}>
+        <div className="card p-5 pb-6">
+          <Suspense fallback={<GitHubContributionsFallback />}>
+            <GitHubContributions
+              contributions={contributions}
+              githubProfileUrl={GITHUB_PROFILE_URL}
+            />
+          </Suspense>
+        </div>
       </Section>
 
-      {/* Projects */}
-      <div className="relative">
-        <Section title="Project Portfolio">
-          <FadeIn>
-            <p className="text-[16px] leading-[1.7] text-gl-text-muted">
-              Each entry gives a quick project overview and links to the full
-              implementation notes, constraints, and outcomes.
-            </p>
-          </FadeIn>
-          <ProjectGrid featured={featuredProjects} all={allProjects} />
-        </Section>
-      </div>
+      <Seam />
 
-      {/* Writing — pr-9 makes the rule stop before the SVG */}
-      <div className="relative pr-9">
-        <Section title="Writing">
-          <HomeBlogSection featured={featuredBlog} compact={compactBlogPosts} />
-        </Section>
-        <ServerFaceThinking className="pointer-events-none absolute top-0 right-0" />
-      </div>
+      <Section title="Experience" icon={Briefcase}>
+        <WorkExperience experiences={WORK_EXPERIENCE} />
+      </Section>
+
+      <Seam />
+
+      <Section title="Projects" icon={FolderGit2}>
+        <div className="space-y-4">
+          {featuredProjects.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
+          ))}
+        </div>
+        <Link href="/projects" className="link-arrow">
+          All {allProjects.length} projects
+          <ArrowRight className="size-3.5" />
+        </Link>
+      </Section>
+
+      <Seam />
+
+      <Section title="Writing" icon={BookOpen}>
+        <PostList posts={recentPosts} />
+        <Link href="/blog" className="link-arrow">
+          All {allPosts.length} articles
+          <ArrowRight className="size-3.5" />
+        </Link>
+      </Section>
     </div>
   );
 }

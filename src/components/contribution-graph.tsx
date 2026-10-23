@@ -4,7 +4,9 @@ import {
   createContext,
   Fragment,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
@@ -69,13 +71,13 @@ const DEFAULT_LABELS: Labels = {
   legend: { less: "Less", more: "More" },
 };
 
-// GL-themed lavender scale: surface-2 → Chalk Lavender
+// Warm paper -> GitHub-style green scale
 const THEME = cn(
-  'data-[level="0"]:fill-[#252924]',
-  'data-[level="1"]:fill-[#2d2850]',
-  'data-[level="2"]:fill-[#4a4283]',
-  'data-[level="3"]:fill-[#7166a8]',
-  'data-[level="4"]:fill-[#9488c2]',
+  'data-[level="0"]:fill-[#ebe8e2]',
+  'data-[level="1"]:fill-[#c5e1c9]',
+  'data-[level="2"]:fill-[#8fc59a]',
+  'data-[level="3"]:fill-[#4f9e64]',
+  'data-[level="4"]:fill-[#2a7341]',
 );
 
 type ContributionGraphContextType = {
@@ -335,21 +337,31 @@ export const ContributionGraphCalendar = ({
     () => getMonthLabels(weeks, labels.months),
     [weeks, labels.months],
   );
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  // On narrow screens the graph scrolls; start at the most recent weeks.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || el.scrollWidth <= el.clientWidth) return;
+    // Snap to a whole week column so the first visible column is never cut.
+    const column = el.scrollWidth / weeks.length;
+    const max = el.scrollWidth - el.clientWidth;
+    el.scrollLeft = Math.ceil(max / column) * column;
+  }, [weeks.length]);
 
   return (
     <div
+      ref={scrollerRef}
       className={cn("max-w-full overflow-x-auto overflow-y-hidden", className)}
       {...props}
     >
       <svg
-        className="block overflow-visible"
-        height={height}
+        className="block h-auto w-full min-w-[34rem] overflow-visible"
         viewBox={`0 0 ${width} ${height}`}
-        width={width}
       >
         <title>{title}</title>
         {!hideMonthLabels && (
-          <g className="fill-[#8c9690] text-[11px]">
+          <g className="fill-gl-text-faint font-sans text-[11px]">
             {monthLabels.map(({ label, weekIndex }) => (
               <text
                 dominantBaseline="hanging"
@@ -410,7 +422,7 @@ export const ContributionGraphTotalCount = ({
   }
 
   return (
-    <div className={cn("text-[#8c9690]", className)} {...props}>
+    <div className={cn("text-gl-text-faint", className)} {...props}>
       {labels.totalCount
         ? labels.totalCount
             .replace("{{count}}", String(totalCount))
@@ -439,7 +451,7 @@ export const ContributionGraphLegend = ({
       className={cn("ml-auto flex items-center gap-0.5", className)}
       {...props}
     >
-      <span className="mr-1 text-[#8c9690]">
+      <span className="mr-1 text-gl-text-faint">
         {labels.legend?.less ?? "Less"}
       </span>
       {new Array(maxLevel + 1).fill(undefined).map((_, level) =>
@@ -459,7 +471,7 @@ export const ContributionGraphLegend = ({
           </svg>
         ),
       )}
-      <span className="ml-1 text-[#8c9690]">
+      <span className="ml-1 text-gl-text-faint">
         {labels.legend?.more ?? "More"}
       </span>
     </div>

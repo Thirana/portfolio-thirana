@@ -11,8 +11,8 @@ import {
   Linkedin,
   Mail,
   Route,
-  Twitter,
 } from "lucide-react";
+import { XLogo } from "@/components/icons/XLogo";
 
 export const profile = {
   name: "Thirana Embuldeniya",
@@ -44,7 +44,7 @@ export const socials = [
   {
     label: "X",
     href: "https://x.com/_Thirana",
-    icon: Twitter,
+    icon: XLogo,
     handle: "@_Thirana",
   },
   {

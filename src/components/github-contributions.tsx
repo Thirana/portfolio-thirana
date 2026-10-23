@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { format } from "date-fns";
+import { Github } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
@@ -27,7 +28,7 @@ export function GitHubContributions({
   className,
   hideFooter = false,
   hideMonthLabels = false,
-  blockSize = 11,
+  blockSize = 9,
   blockMargin = 3,
 }: {
   contributions: Promise<Activity[]>;
@@ -44,18 +45,42 @@ export function GitHubContributions({
   const fontSize = hideMonthLabels ? 0 : 14;
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={200}>
       <ContributionGraph
-        className={cn("mx-auto py-2", className)}
+        className={cn("w-full gap-4", className)}
         data={data}
         blockSize={blockSize}
         blockMargin={blockMargin}
         blockRadius={2}
         fontSize={fontSize}
       >
+        {!hideFooter && (
+          <ContributionGraphTotalCount>
+            {({ totalCount }) => (
+              <div className="flex items-baseline justify-between gap-4 font-sans text-[14px] text-gl-text-muted">
+                <p>
+                  <span className="font-semibold text-gl-text tabular-nums">
+                    {totalCount.toLocaleString("en")}
+                  </span>{" "}
+                  contributions in the last year
+                </p>
+                <a
+                  className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-gl-text"
+                  href={githubProfileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="size-3.5" aria-hidden />
+                  Thirana
+                </a>
+              </div>
+            )}
+          </ContributionGraphTotalCount>
+        )}
+
         <ContributionGraphCalendar
-          className="no-scrollbar sm:px-2"
-          title="GitHub Contributions"
+          className="no-scrollbar"
+          title="GitHub contributions in the last year"
           hideMonthLabels={hideMonthLabels}
         >
           {({ activity, dayIndex, weekIndex }) => (
@@ -81,23 +106,7 @@ export function GitHubContributions({
         </ContributionGraphCalendar>
 
         {!hideFooter && (
-          <ContributionGraphFooter className="px-2">
-            <ContributionGraphTotalCount>
-              {({ totalCount, year }) => (
-                <div className="text-[12px] text-gl-text-faint">
-                  {totalCount.toLocaleString("en")} contributions in {year} on{" "}
-                  <a
-                    className="text-gl-text underline underline-offset-2 hover:text-gl-primary transition-colors"
-                    href={githubProfileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    GitHub
-                  </a>
-                </div>
-              )}
-            </ContributionGraphTotalCount>
-
+          <ContributionGraphFooter className="justify-end font-sans text-[12px]">
             <ContributionGraphLegend />
           </ContributionGraphFooter>
         )}
@@ -108,8 +117,8 @@ export function GitHubContributions({
 
 export function GitHubContributionsFallback() {
   return (
-    <div className="flex h-[124px] w-full items-center justify-center">
-      <Spinner className="text-[#8c9690]" />
+    <div className="flex h-[160px] w-full items-center justify-center">
+      <Spinner className="text-gl-text-faint" />
     </div>
   );
 }

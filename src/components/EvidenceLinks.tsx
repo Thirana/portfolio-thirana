@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type EvidenceItem = {
@@ -20,19 +20,15 @@ export default function EvidenceLinks({
   }
 
   return (
-    <div className={cn("flex flex-wrap gap-2", className)}>
+    <ul className={cn("flex flex-wrap gap-2", className)}>
       {items.map((item) => (
-        <a
-          key={`${item.label}-${item.href}`}
-          href={item.href}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-gl-border-strong/50 bg-gl-surface px-2.5 py-2.5 font-mono text-[11px] font-semibold text-gl-text transition-colors hover:border-gl-border-strong hover:bg-gl-surface-2"
-        >
-          {item.label}
-          <ExternalLink className="h-3 w-3" />
-        </a>
+        <li key={`${item.label}-${item.href}`}>
+          <a href={item.href} target="_blank" rel="noreferrer" className="pill">
+            {item.label}
+            <ArrowUpRight className="size-3.5 text-gl-text-muted" aria-hidden />
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

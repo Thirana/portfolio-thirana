@@ -1,54 +1,54 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 @plugin "tailwindcss-animate";
 @config "../../tailwind.config.mts";
 
 :root {
-  /* GL Design Tokens — forest-charcoal dark system */
-  --gl-bg: #161918;
-  --gl-bg-subtle: #101210;
-  --gl-surface: #1d201e;
-  --gl-surface-2: #252924;
-  --gl-border: #2c312d;
-  --gl-border-strong: #d8ddd6;
-  --gl-border-input: #383d39;
-  --gl-text: #ffffff;
-  --gl-text-muted: #f5f7f5;
-  --gl-text-faint: #8c9690;
-  --gl-primary: #9488c2;
-  --gl-primary-hover: #a39ad0;
-  --gl-primary-soft: #16143a;
+  /* GL Design Tokens - warm paper notebook (light only) */
+  --gl-bg: #faf9f7;
+  --gl-bg-subtle: #f3f1ed;
+  --gl-surface: #ffffff;
+  --gl-surface-2: #f3f1ed;
+  --gl-border: #e6e3dd;
+  --gl-border-strong: #cdc8bf;
+  --gl-border-input: #d9d5ce;
+  --gl-text: #17150f;
+  --gl-text-muted: #6b6862;
+  --gl-text-faint: #767268;
+  --gl-primary: #a45740;
+  --gl-primary-hover: #8a4532;
+  --gl-primary-soft: #f6ebe5;
   --gl-primary-ink: #ffffff;
-  --gl-swatch-1: #8eceb4;
-  --gl-swatch-2: #a8abd8;
-  --gl-swatch-3: #ccaabc;
-  --gl-swatch-4: #d4b878;
-  --gl-swatch-5: #cc9888;
-  --gl-swatch-6: #80c8d8;
-  --gl-success: #69b598;
-  --gl-success-soft: #0d2419;
-  --gl-warning: #c4a05e;
-  --gl-warning-soft: #231a07;
-  --gl-danger: #b87060;
-  --gl-danger-soft: #261009;
+  --gl-ink: #17150f;
+  --gl-ink-fg: #faf9f7;
+  --gl-swatch-1: #33805a;
+  --gl-swatch-2: #5258ad;
+  --gl-swatch-3: #9a5574;
+  --gl-swatch-4: #95691a;
+  --gl-swatch-5: #b2553a;
+  --gl-swatch-6: #257a91;
+  --gl-success: #23683c;
+  --gl-success-soft: #e5f1e8;
+  --gl-warning: #855a12;
+  --gl-warning-soft: #f7edd8;
+  --gl-danger: #a2412e;
+  --gl-danger-soft: #f8e6e1;
   --gl-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.45), 0 6px 20px -8px rgba(0, 0, 0, 0.5);
+    0 1px 2px rgba(23, 21, 15, 0.05), 0 10px 28px -14px rgba(23, 21, 15, 0.14);
   --gl-shadow-lg:
-    0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 40px -12px rgba(0, 0, 0, 0.6);
-  --gl-shadow-hard: 4px 4px 0 #d8ddd6;
+    0 1px 2px rgba(23, 21, 15, 0.06), 0 18px 40px -16px rgba(23, 21, 15, 0.2);
 
-  /* Shadcn semantic variables → GL tokens */
+  /* Shadcn semantic variables -> GL tokens */
   --background: var(--gl-bg);
   --foreground: var(--gl-text);
   --card: var(--gl-surface);
   --card-foreground: var(--gl-text);
   --popover: var(--gl-surface);
   --popover-foreground: var(--gl-text);
-  --primary: var(--gl-primary);
-  --primary-foreground: var(--gl-primary-ink);
+  --primary: var(--gl-ink);
+  --primary-foreground: var(--gl-ink-fg);
   --secondary: var(--gl-surface-2);
   --secondary-foreground: var(--gl-text);
   --muted: var(--gl-surface-2);
@@ -60,22 +60,15 @@
   --input: var(--gl-border-input);
   --ring: var(--gl-primary);
   --panel: var(--gl-surface);
-  --radius: 0.625rem;
-  --sidebar: var(--gl-bg-subtle);
-  --sidebar-foreground: var(--gl-text);
-  --sidebar-primary: var(--gl-primary);
-  --sidebar-primary-foreground: var(--gl-primary-ink);
-  --sidebar-accent: var(--gl-surface-2);
-  --sidebar-accent-foreground: var(--gl-text);
-  --sidebar-border: var(--gl-border);
-  --sidebar-ring: var(--gl-primary);
+  --radius: 0.875rem;
 }
 
 @theme inline {
-  /* Font families */
+  /* Font families: Satoshi carries UI and headings, Erode carries reading text */
   --font-sans:
-    var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    var(--font-satoshi), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     sans-serif;
+  --font-serif: var(--font-erode), ui-serif, Georgia, serif;
   --font-mono:
     var(--font-jetbrains-mono), ui-monospace, "JetBrains Mono", monospace;
 
@@ -94,6 +87,8 @@
   --color-gl-primary-hover: var(--gl-primary-hover);
   --color-gl-primary-soft: var(--gl-primary-soft);
   --color-gl-primary-ink: var(--gl-primary-ink);
+  --color-gl-ink: var(--gl-ink);
+  --color-gl-ink-fg: var(--gl-ink-fg);
   --color-gl-swatch-1: var(--gl-swatch-1);
   --color-gl-swatch-2: var(--gl-swatch-2);
   --color-gl-swatch-3: var(--gl-swatch-3);
@@ -127,129 +122,60 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-panel: var(--panel);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   /* Shadow utilities */
   --shadow-gl: var(--gl-shadow);
   --shadow-gl-lg: var(--gl-shadow-lg);
-  --shadow-gl-hard: var(--gl-shadow-hard);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 6px);
+  --radius-lg: calc(var(--radius) - 4px);
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) + 4px);
+}
+
+html {
+  background-color: var(--gl-bg);
+  color-scheme: light;
 }
 
 body {
   background-color: var(--gl-bg);
   color: var(--gl-text);
-  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.5;
   min-height: 100vh;
 }
 
 ::selection {
-  background-color: rgba(148, 136, 194, 0.22);
+  background-color: #f1dcd2;
   color: var(--gl-text);
 }
 
+html {
+  scrollbar-color: var(--gl-border-strong) transparent;
+}
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--gl-bg-subtle);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--gl-border);
-  border-radius: 3px;
+  border-radius: 999px;
+  border: 2px solid var(--gl-bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gl-text-faint);
+  background: var(--gl-border-strong);
 }
 
 :focus-visible {
   outline: 2px solid var(--gl-primary);
   outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* GL animation keyframes */
-@keyframes gl-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes gl-fade-up-lg {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes gl-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes gl-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.78);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes gl-cursor-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-.animate-fade-up {
-  animation: gl-fade-up 0.4s ease both;
-}
-.animate-fade-up-lg {
-  animation: gl-fade-up-lg 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.animate-fade-in {
-  animation: gl-fade-in 0.25s ease both;
-}
-.animate-scale-in {
-  animation: gl-scale-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-.animate-cursor-blink {
-  animation: gl-cursor-blink 1s steps(2) infinite;
+  border-radius: 6px;
 }
 
 @keyframes collapsible-down {
@@ -269,7 +195,7 @@ body {
   }
 }
 .animate-collapsible-down {
-  animation: collapsible-down 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: collapsible-down 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .animate-collapsible-up {
   animation: collapsible-up 180ms ease-out;
@@ -283,51 +209,32 @@ body {
   scrollbar-width: none;
 }
 
-.animation-delay-100 {
-  animation-delay: 100ms;
-}
-.animation-delay-200 {
-  animation-delay: 200ms;
-}
-.animation-delay-300 {
-  animation-delay: 300ms;
-}
-.animation-delay-500 {
-  animation-delay: 500ms;
-}
-.animation-delay-700 {
-  animation-delay: 700ms;
-}
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  button,
+  nav,
+  label,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-sans);
+  }
 
-/* ─── Engineering coordinate grid — homepage ambient texture ─── */
-.page-bg-grid {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  /* Break out of the max-width page container to span full viewport */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  z-index: 0;
-  pointer-events: none;
-  /* Crosshair marks: 6px arms at each 20px grid intersection */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='1' fill='%239488c2'/%3E%3C/svg%3E");
-  background-size: 20px 20px;
-  opacity: 0.65;
-  /* Graduated mask: faint at top, stronger toward bottom */
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.18) 0%,
-    rgba(0, 0, 0, 0.35) 25%,
-    rgba(0, 0, 0, 0.6) 50%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.18) 0%,
-    rgba(0, 0, 0, 0.35) 25%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
 }
 
 @layer components {
@@ -335,222 +242,234 @@ body {
     position: relative;
     margin: 0 auto;
     width: 100%;
-    max-width: 48rem;
+    max-width: 42rem;
     padding: 0 1.5rem;
   }
 
-  .panel {
+  /* Pill heading that opens every section */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     border: 1px solid var(--gl-border);
-    border-radius: 0.75rem;
-    background-color: var(--gl-surface);
-    padding: 1.25rem;
+    border-radius: 999px;
+    padding: 5px 12px 6px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    color: var(--gl-text-muted);
+    background: transparent;
+  }
+
+  /* Dashed seam between sections */
+  .seam {
+    height: 1px;
+    width: 100%;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--gl-border) 0,
+      var(--gl-border) 5px,
+      transparent 5px,
+      transparent 9px
+    );
+  }
+
+  /* White paper card */
+  .card {
+    border-radius: 14px;
+    background: var(--gl-surface);
     box-shadow: var(--gl-shadow);
   }
 
-  /* Solid panel — clear border, no gradient */
-  .glass-panel {
-    background-image: none;
-    border-color: var(--gl-border) !important;
+  /* Postage-stamp frame: solid content box, perforated 4px edge (64px total) */
+  .stamp {
+    display: inline-block;
+    padding: 4px;
+    background: #efe6d8;
+    -webkit-mask:
+      conic-gradient(#000 0 0) content-box,
+      radial-gradient(circle 2.6px, #0000 95%, #000) -4px -4px / 8px 8px;
+    mask:
+      conic-gradient(#000 0 0) content-box,
+      radial-gradient(circle 2.6px, #0000 95%, #000) -4px -4px / 8px 8px;
   }
 
-  /* Solid chip */
-  .glass-chip {
-    background: var(--gl-surface-2);
-    background-image: none;
-    border-color: var(--gl-border) !important;
-    box-shadow: none;
-  }
-
-  /* Status chips — solid colored */
-  .glass-chip-success {
-    background: var(--gl-success-soft);
-    background-image: none;
-    border-color: rgba(105, 181, 152, 0.28) !important;
-    box-shadow: none;
-    color: var(--gl-success);
-  }
-  .glass-chip-warning {
-    background: var(--gl-warning-soft);
-    background-image: none;
-    border-color: rgba(196, 160, 94, 0.28) !important;
-    box-shadow: none;
-    color: var(--gl-warning);
-  }
-  .glass-chip-muted {
-    background: var(--gl-surface-2);
-    background-image: none;
-    border-color: var(--gl-border) !important;
-    box-shadow: none;
-    color: var(--gl-text-muted);
-  }
-  .glass-chip-sky {
-    background: rgba(98, 174, 191, 0.1);
-    background-image: none;
-    border-color: rgba(98, 174, 191, 0.25) !important;
-    box-shadow: none;
-    color: var(--gl-swatch-6);
-  }
-
-  /* Primary button — solid teal fill */
-  .glass-btn-primary {
-    background: var(--gl-primary);
-    background-image: none;
-    border: 1px solid var(--gl-primary);
-    box-shadow: none;
-    color: var(--gl-primary-ink);
-    transition:
-      background 120ms,
-      border-color 120ms;
-  }
-  .glass-btn-primary:hover {
-    background: var(--gl-primary-hover);
-    border-color: var(--gl-primary-hover);
-    color: var(--gl-primary-ink);
-  }
-  .glass-btn-primary:active {
-    transform: scale(0.97);
-  }
-
-  /* Secondary button — outlined */
-  .glass-btn-secondary {
-    background: transparent;
-    background-image: none;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: none;
+  /* Outlined pill used for socials and secondary actions */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--gl-border);
+    border-radius: 999px;
+    padding: 7px 13px 7px 11px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
     color: var(--gl-text);
+    background: transparent;
     transition:
-      background 120ms,
-      border-color 120ms;
+      border-color 150ms ease,
+      background-color 150ms ease;
   }
-  .glass-btn-secondary:hover {
-    background: var(--gl-surface-2);
-    border-color: rgba(255, 255, 255, 0.22);
+  .pill:hover {
+    border-color: var(--gl-border-strong);
+    background: var(--gl-surface);
   }
-  .glass-btn-secondary:active {
+
+  /* Solid ink pill - the one primary action */
+  .pill-ink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--gl-ink-fg);
+    background: var(--gl-ink);
+    transition:
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+  .pill-ink:hover {
+    background: #36322a;
+  }
+  .pill-ink:active {
     transform: scale(0.97);
+  }
+
+  /* Rust text link with trailing arrow */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gl-primary);
+    transition: color 150ms ease;
+  }
+  .link-arrow:hover {
+    color: var(--gl-primary-hover);
+  }
+  .link-arrow svg {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-arrow:hover svg {
+    transform: translateX(2px);
   }
 }
 
-@layer base {
-  .prose :where(h1) {
-    letter-spacing: -0.022em;
-    color: var(--gl-text);
-  }
+/* Long-form reading: Erode body, Satoshi headings.
+   Unlayered so it beats @tailwindcss/typography defaults. */
+.prose {
+  --tw-prose-body: var(--gl-text);
+  --tw-prose-headings: var(--gl-text);
+  --tw-prose-links: var(--gl-primary);
+  --tw-prose-bold: var(--gl-text);
+  --tw-prose-counters: var(--gl-text-faint);
+  --tw-prose-bullets: var(--gl-border-strong);
+  --tw-prose-hr: var(--gl-border);
+  --tw-prose-quotes: var(--gl-text);
+  --tw-prose-captions: var(--gl-text-faint);
+  --tw-prose-code: var(--gl-text);
+  --tw-prose-th-borders: var(--gl-border-strong);
+  --tw-prose-td-borders: var(--gl-border);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
 
-  .prose :where(h2) {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-family: var(--font-sans);
-    font-size: 1.25rem;
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: -0.018em;
-    color: var(--gl-text);
-    margin-top: 2.5rem;
-    margin-bottom: 1.25rem;
-  }
+.prose :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--gl-text);
+}
 
-  .prose :where(h2)::after {
-    content: "";
-    flex: 1;
-    display: block;
-    height: 1px;
-    background-color: var(--gl-border);
-  }
+.prose :where(h1) {
+  letter-spacing: -0.025em;
+}
 
-  .prose :where(h3) {
-    letter-spacing: -0.018em;
-    color: var(--gl-text);
-  }
+.prose :where(h2) {
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+  margin-top: 2.75rem;
+  margin-bottom: 1rem;
+}
 
-  .prose :where(h4, h5, h6) {
-    color: var(--gl-text);
-  }
+.prose :where(h3) {
+  font-size: 1.125rem;
+  letter-spacing: -0.015em;
+  margin-top: 2rem;
+}
 
-  .prose :where(p, li, ol, ul) {
-    color: var(--gl-text);
-  }
+.prose :where(th) {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
 
-  .prose ul > li::marker,
-  .prose ol > li::marker {
-    color: var(--gl-primary);
-  }
+.prose a {
+  color: var(--gl-primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--gl-primary) 35%, transparent);
+  text-underline-offset: 3px;
+  transition:
+    color 0.15s,
+    text-decoration-color 0.15s;
+}
 
-  .prose :where(strong) {
-    color: var(--gl-text);
-  }
+.prose a:hover {
+  color: var(--gl-primary-hover);
+  text-decoration-color: currentColor;
+}
 
-  .prose a {
-    color: var(--gl-primary);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    transition: color 0.15s;
-  }
+.prose :where(code):not(:where(pre code)) {
+  border: 1px solid var(--gl-border);
+  border-radius: 0.375rem;
+  background: var(--gl-surface);
+  color: var(--gl-text);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.8125em;
+  font-weight: 400;
+}
 
-  .prose a:hover {
-    color: var(--gl-primary-hover);
-  }
+.prose :where(code):not(:where(pre code))::before,
+.prose :where(code):not(:where(pre code))::after {
+  content: none;
+}
 
-  .prose code {
-    border: 1px solid var(--gl-border);
-    border-radius: 0.375rem;
-    background: var(--gl-surface-2);
-    color: var(--gl-text-muted);
-    padding: 0.15rem 0.4rem;
-    font-size: 0.8125rem;
-  }
+.prose pre code {
+  border: none;
+  background: transparent;
+  color: var(--gl-text);
+  padding: 0;
+  font-size: inherit;
+}
 
-  .prose pre code {
-    border: none;
-    background: transparent;
-    color: var(--gl-text);
-    padding: 0;
-    font-size: inherit;
-  }
+.prose :where(hr) {
+  border: 0;
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--gl-border) 0,
+    var(--gl-border) 5px,
+    transparent 5px,
+    transparent 9px
+  );
+}
 
-  .prose blockquote {
-    border-left: 3px solid var(--gl-primary);
-    border-top: none;
-    border-right: none;
-    border-bottom: none;
-    background: var(--gl-surface);
-    color: var(--gl-text);
-    font-style: normal;
-    padding: 1rem 1.25rem;
-    border-radius: 0 0.75rem 0.75rem 0;
-  }
-
-  .prose :where(hr) {
-    border-color: var(--gl-border);
-  }
-
-  .content-with-hero > h1:first-child {
-    display: none;
-  }
+.content-with-hero > h1:first-child {
+  display: none;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* Unlayered — beats @tailwindcss/typography plugin styles regardless of specificity */
-.prose-invert {
-  --tw-prose-invert-bullets: var(--gl-primary);
-}
-
-.prose-invert {
-  --tw-prose-invert-counters: var(--gl-primary);
-}
-
-.prose ul > li::marker,
-.prose-invert ul > li::marker,
-.prose ol > li::marker,
-.prose-invert ol > li::marker {
-  color: var(--gl-primary);
 }

@@ -1,137 +1,83 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Route } from "next";
 import type { ProjectMeta } from "@/lib/content";
+import { getSwatchColor } from "@/lib/swatch";
 import StatusBadge from "./StatusBadge";
 import Tag from "./Tag";
-import { FadeIn } from "@/components/FadeIn";
-import { PROJECT_FACES } from "@/components/ServerFace";
 
 type ProjectCardProps = {
   project: ProjectMeta;
-  layout?: "default" | "wide";
-  index?: number;
 };
 
-const SWATCH_COLORS = [
-  "#8eceb4",
-  "#a8abd8",
-  "#ccaabc",
-  "#d4b878",
-  "#cc9888",
-  "#80c8d8",
-];
-
-function getSwatchColor(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = (hash * 31 + name.charCodeAt(i)) & 0xffff;
-  }
-  return SWATCH_COLORS[hash % SWATCH_COLORS.length];
+function formatYear(iso: string): string {
+  if (!iso) return "";
+  return String(new Date(iso).getFullYear());
 }
 
-export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
+export default function ProjectCard({ project }: ProjectCardProps) {
   const projectPath = `/projects/${project.slug}` as Route<string>;
-  const visibleConstraints = project.constraints.slice(0, 2);
-  const allTags = [...project.domains, ...project.tech];
-  const FaceComp = PROJECT_FACES[index % PROJECT_FACES.length];
+  const tags = [...project.domains, ...project.tech].slice(0, 6);
+  const year = formatYear(project.date);
 
   return (
-    <div className="group py-8 first:pt-2 last:pb-2">
-      <FadeIn delay={Math.min(index * 110, 360)}>
-        <div className="space-y-4">
-          {/* Number + title + status */}
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-gl-border bg-gl-surface-2">
-              <span className="font-mono text-[11px] font-semibold text-[#b8b0e0]">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-            </div>
-            <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-x-3 gap-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-[22px] font-bold leading-tight tracking-[-0.02em]">
-                  <Link
-                    href={projectPath}
-                    className="text-gl-text transition-colors hover:text-gl-primary"
-                  >
-                    {project.title}
-                  </Link>
-                </h2>
-                <FaceComp className="mt-0.5" />
-              </div>
-              <StatusBadge status={project.status} />
-            </div>
-          </div>
+    <article className="card group relative p-5 sm:p-6">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-[13px] text-gl-text-faint">
+        <StatusBadge status={project.status} />
+        {year ? <span className="tabular-nums">{year}</span> : null}
+      </div>
 
-          {/* Summary */}
-          <p className="sm:pl-10 text-[16px] leading-[1.7] text-gl-text">
-            {project.summary}
-          </p>
+      <h3 className="mt-3 text-[22px] leading-[1.2] font-semibold tracking-[-0.025em] text-gl-text">
+        <Link
+          href={projectPath}
+          className="after:absolute after:inset-0 after:rounded-[14px] after:content-['']"
+        >
+          {project.title}
+        </Link>
+      </h3>
 
-          {/* Constraints */}
-          {visibleConstraints.length > 0 ? (
-            <ul className="space-y-1.5 sm:pl-10">
-              {visibleConstraints.map((constraint) => (
-                <li
-                  key={constraint}
-                  className="flex gap-2.5 text-[15px] text-gl-text"
-                >
-                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gl-primary" />
-                  <span>{constraint}</span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+      <p className="mt-2 text-[15px] leading-[1.6] text-gl-text-muted">
+        {project.summary}
+      </p>
 
-          {/* Tags */}
-          {allTags.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5 sm:pl-10">
-              {allTags.map((tag) => (
-                <Tag
-                  key={tag}
-                  dot={getSwatchColor(tag)}
-                  className="px-2.5 py-1 text-[12px]"
-                >
-                  {tag}
-                </Tag>
-              ))}
-            </div>
-          ) : null}
+      {tags.length > 0 ? (
+        <ul className="mt-4 flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <li key={tag}>
+              <Tag dot={getSwatchColor(tag)}>{tag}</Tag>
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center gap-4 sm:pl-10 pt-1">
-            <Link
-              href={projectPath}
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gl-primary transition-colors hover:text-gl-primary-hover"
-            >
-              Project overview
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
-            {project.links.code ? (
-              <a
-                href={project.links.code}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[13px] font-medium text-gl-text-faint transition-colors hover:text-gl-text"
-              >
-                Code ↗
-              </a>
-            ) : null}
-            {project.links.live ? (
-              <a
-                href={project.links.live}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[13px] font-medium text-gl-text-faint transition-colors hover:text-gl-text"
-              >
-                Live ↗
-              </a>
-            ) : null}
-          </div>
-        </div>
-      </FadeIn>
-    </div>
+      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+        <span className="link-arrow">
+          Read the overview
+          <ArrowRight className="size-3.5" aria-hidden />
+        </span>
+        {project.links.code ? (
+          <a
+            href={project.links.code}
+            target="_blank"
+            rel="noreferrer"
+            className="relative z-10 inline-flex items-center gap-1 font-sans text-[13px] text-gl-text-muted transition-colors hover:text-gl-text"
+          >
+            Code
+            <ArrowUpRight className="size-3.5" aria-hidden />
+          </a>
+        ) : null}
+        {project.links.live ? (
+          <a
+            href={project.links.live}
+            target="_blank"
+            rel="noreferrer"
+            className="relative z-10 inline-flex items-center gap-1 font-sans text-[13px] text-gl-text-muted transition-colors hover:text-gl-text"
+          >
+            Live
+            <ArrowUpRight className="size-3.5" aria-hidden />
+          </a>
+        ) : null}
+      </div>
+    </article>
   );
 }
