@@ -35,7 +35,7 @@ export default async function BlogPage() {
     .size;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <PageIntro
         title="Writing"
         lede="Technical writing focused on backend decisions, system trade-offs, and implementation patterns."

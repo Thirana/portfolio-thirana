@@ -1,7 +1,7 @@
 "use client";
 
 import { use } from "react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Github } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -62,7 +62,10 @@ export function GitHubContributions({
                   <span className="font-semibold text-gl-text tabular-nums">
                     {totalCount.toLocaleString("en")}
                   </span>{" "}
-                  contributions in the last year
+                  contributions since{" "}
+                  {data.length > 0
+                    ? format(parseISO(data[0].date), "MMM yyyy")
+                    : "last year"}
                 </p>
                 <a
                   className="inline-flex items-center gap-1.5 text-[13px] transition-colors hover:text-gl-text"

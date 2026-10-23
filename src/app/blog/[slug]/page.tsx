@@ -97,7 +97,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}

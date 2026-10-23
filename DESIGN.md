@@ -81,10 +81,10 @@ spacing:
   gutter: "24px"
   card-pad: "20px"
   card-pad-lg: "24px"
-  section-inner: "28px"
-  section-inner-lg: "36px"
-  section-gap: "40px"
-  section-gap-lg: "48px"
+  section-inner: "20px"
+  section-inner-lg: "24px"
+  section-gap: "28px"
+  section-gap-lg: "32px"
   column: "672px"
 components:
   pill-ink:
@@ -142,7 +142,7 @@ components:
 
 The site reads like a personal notebook left open on a desk: warm off-white paper, near-black warm ink, one narrow column, and a small cap-wearing mascot that follows the cursor beside a lowercase handwritten-feeling name. Nothing glows, nothing is dark, nothing competes. Sections are opened by small outlined pill labels and separated by dashed seams, the way a notebook is ruled and tabbed rather than boxed. The few raised things - white cards - sit on the paper with a soft, low shadow, like index cards laid on top.
 
-Density is calm and editorial. Interface text (headings, labels, nav, meta) is set in Satoshi; anything meant to be read at length is set in Erode, a warm serif; code alone uses JetBrains Mono. Color is almost entirely ink-on-paper. The single chromatic voice is a rust link color, and the single solid fill is the black ink pill that carries the one primary action, "Work with me". Small swatch dots and monogram tiles add quiet categorical color without ever becoming decoration.
+Density is calm and editorial. Interface text (headings, labels, nav, meta) is set in Satoshi; anything meant to be read at length is set in Erode, a warm serif; code alone uses JetBrains Mono. Color is almost entirely ink-on-paper. The single chromatic voice is a rust link color, and the single solid fill is the black ink pill that carries the one primary action, "Work with me". Small swatch dots, colored chip icons and real company logos add quiet categorical color without ever becoming decoration.
 
 The world is light only, by the owner's decision. It deliberately retires the dark terminal-dashboard portfolio this site used to be: no near-black grounds, no neon accents, no monospace-as-personality.
 
@@ -175,7 +175,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 - **Selection Blush** (selection-blush): text selection highlight.
 
 ### Categorical swatches
-- **Moss, Indigo, Plum, Ochre, Brick, Teal** (swatch-moss ... swatch-teal): assigned deterministically by name hash. Used as 6px dots inside tags, as status-dot colors, and as the fill of company monogram tiles (white initials). Never as text color on paper, never as backgrounds of large areas.
+- **Moss, Indigo, Plum, Ochre, Brick, Teal** (swatch-moss ... swatch-teal): assigned deterministically by name hash. Used as 6px dots inside tags, as status-dot colors, as the icon color of section chips and hero facts, and as the fill of monogram fallback tiles (white initials). Never as text color on paper, never as backgrounds of large areas.
 - **Contribution scale** (contribution-0 through contribution-4): a GitHub-green ramp used only by the contributions heatmap; level 0 is a warm paper-grey so empty days sit in the paper rather than on it.
 - **Success** (success) and **Danger** (danger): the "Live" status dot and error text respectively.
 
@@ -214,7 +214,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 
 A single centered column, 42rem (672px) max-width with 24px side gutters, used by the header, main content, and footer alike. There is no multi-column page grid; the only internal grids are small (the capability matrix's three columns from 640px up, post rows that put the date beside the title from 640px up).
 
-Vertical rhythm is section-based: page sections stack 40px apart on mobile and 48px from 640px up, each separated by a dashed seam; inside a section the pill heading sits 28px (mobile) / 36px (desktop) above its content. Cards stack 16px apart. The page starts 32px below the header (48px from 640px up), and the footer sits 96px below the last section.
+Vertical rhythm is section-based: page sections stack 28px apart on mobile and 32px from 640px up, each separated by a dashed seam (so roughly 60px between one section's end and the next chip); inside a section the pill heading sits 20px (mobile) / 24px (desktop) above its content. Cards stack 16px apart. The page starts 32px below the header (48px from 640px up), and the footer sits 64px below the last section.
 
 The one breakpoint that matters is 640px (`sm`). Below it: the hero mascot shrinks from 208px to 160px and stacks above the wordmark, the desktop nav hides behind a menu pill that opens a right-side sheet drawer (82vw, max 320px), post-list dates move above titles, and the Work-with-me card stacks its button under the text. Dense content uses progressive disclosure (collapsible experience entries, code toggles), never hidden content.
 
@@ -252,7 +252,7 @@ Tactile and quiet: everything is a pill, and only one is solid.
 - **Focus:** a 2px rust outline offset 2px on every focusable element.
 
 ### Chips (section headings)
-- **Style:** the h2 of every section is an outlined pill - hairline border, transparent fill, muted ink text, Satoshi 13px weight 500 at +0.01em, 5px 12px 6px padding, with an optional 14px muted icon.
+- **Style:** the h2 of every section is an outlined pill - hairline border, transparent fill, muted ink text, Satoshi 13px weight 500 at +0.01em, 5px 12px 6px padding, with an optional 14px icon tinted by a swatch token (Contributions moss, Experience teal, Projects brick, Writing indigo; About-page sections pick from the same set). The label stays muted ink; only the icon carries color.
 - **State:** static; chips are labels, not controls.
 
 ### Tags and status badges
@@ -269,7 +269,7 @@ Tactile and quiet: everything is a pill, and only one is solid.
 
 ### Lists
 - **Post list:** hairline-ruled rows (top, bottom, and between). Title in Satoshi 15px weight 600, Erode 15px summary clamped to two lines, Satoshi 13px faint date right-aligned on desktop and above the title on mobile. Hover fills the row with card white at 14px radius.
-- **Experience timeline:** monogram tile, company and role, date range with a chevron; entries collapse open (240ms, cubic-bezier(0.22, 1, 0.36, 1)) to reveal short-dash bullets and tags, connected by a dotted rail.
+- **Experience timeline:** company logo tile, company and role, date range with a chevron; entries start collapsed, including the current employer, and open (240ms, cubic-bezier(0.22, 1, 0.36, 1)) to reveal short-dash bullets and tags, connected by a dotted rail.
 
 ### Navigation
 - **Desktop:** right-aligned Satoshi 14px links, muted at rest and ink when active or hovered, followed by the ink "Work with me" pill. The left slot holds the 17px lowercase wordmark.
@@ -279,8 +279,11 @@ Tactile and quiet: everything is a pill, and only one is solid.
 ### Mascot and stamp (signature)
 The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card that closes every page. The mascot stands in for a portrait; do not add a photo beside it.
 
-### Company monograms
-Squircle tiles (22% radius) filled with the name's swatch color, white Satoshi bold initials, a faint inset ink ring. They stand in for logos at 30px in the hero row and 36px in the timeline.
+### Company logos
+Real square company logos (public/logos, 128px PNG) shown as squircle tiles at 22% radius with a faint 1px ink ring: 28px in the hero "worked at" row, 36px in the timeline. Logos with a wordmark beneath the symbol are cropped to the symbol so they read at tile size. A company without a logo falls back to a monogram tile: the name's swatch color, white Satoshi bold initials, never smaller than 11px.
+
+### Hero facts ticker
+One Satoshi 15px line under the worked-at row: a swatch-tinted icon, a muted label, a 12px hairline, then the ink value (e.g. "Currently at - MO Marketplace", "Lost in - another book"; work facts mixed with personal ones). It cycles every 3.4s; each fact rises 55% out of a 4px blur over 520ms (cubic-bezier(0.16, 1, 0.3, 1)). It pauses on hover, stays static under reduced motion, and exposes every fact to screen readers as a plain list. Facts must be true and short enough to fit one line at 390px.
 
 ### Prose
 Erode 17px at line-height 1.7 with Satoshi semibold headings (h2 22px, h3 18px, tight negative tracking). Links are rust with a 35%-rust underline offset 3px that becomes solid on hover. Code blocks, tables, blockquotes, images and diagrams are all cards. Horizontal rules are dashed seams. Mermaid diagrams use the paper palette (white nodes, strong-hairline borders, ink text, Satoshi labels).

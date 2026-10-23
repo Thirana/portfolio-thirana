@@ -117,21 +117,25 @@ function ExperienceItem({
   const showPositionTitles = !!experience.role || experience.positions.length > 1;
 
   return (
-    <li className="relative pb-7 last:pb-0">
+    <li className="relative pb-6 last:pb-0">
       {!isLast ? (
         <span
           aria-hidden
           className="absolute top-12 bottom-1 left-[17.5px] w-px bg-[repeating-linear-gradient(to_bottom,var(--gl-border-strong)_0,var(--gl-border-strong)_3px,transparent_3px,transparent_6px)]"
         />
       ) : null}
-      <Collapsible defaultOpen={experience.isCurrentEmployer} disabled={!hasDetails}>
+      <Collapsible disabled={!hasDetails}>
         <CollapsibleTrigger
           className={cn(
             "group flex w-full items-start gap-4 text-left",
             hasDetails ? "cursor-pointer" : "cursor-default",
           )}
         >
-          <CompanyMark name={experience.companyName} size={36} />
+          <CompanyMark
+            name={experience.companyName}
+            logo={experience.companyLogo}
+            size={36}
+          />
           <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
             <div className="min-w-0">
               <h3 className="font-sans text-[17px] leading-snug font-semibold tracking-[-0.015em] text-gl-text">

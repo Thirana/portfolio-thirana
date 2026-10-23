@@ -3,7 +3,7 @@ import { WorkWithMe } from "@/components/WorkWithMe";
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-24 space-y-14">
+    <footer className="mt-16 space-y-12">
       <WorkWithMe />
       <div className="flex flex-col gap-3 font-sans text-[13px] text-gl-text-muted sm:flex-row sm:items-center sm:justify-between">
         <span className="text-gl-text">Thirana Embuldeniya</span>

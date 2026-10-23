@@ -96,7 +96,7 @@ export default async function AboutPage() {
   ];
 
   return (
-    <div className="space-y-10 sm:space-y-12">
+    <div className="space-y-7 sm:space-y-8">
       <header className="space-y-6">
         <div className="flex items-center gap-5">
           <Image
@@ -138,7 +138,7 @@ export default async function AboutPage() {
 
       <Seam />
 
-      <Section title="In short" icon={UserRound}>
+      <Section title="In short" icon={UserRound} tone="var(--gl-swatch-2)">
         <ul className="space-y-3">
           {heroBioPoints.map((point) => (
             <li
@@ -157,19 +157,19 @@ export default async function AboutPage() {
 
       <Seam />
 
-      <Section title="Technologies and tools" icon={Wrench}>
+      <Section title="Technologies and tools" icon={Wrench} tone="var(--gl-swatch-4)">
         <TechTabs />
       </Section>
 
       <Seam />
 
-      <Section title="Featured work" icon={Layers}>
+      <Section title="Featured work" icon={Layers} tone="var(--gl-swatch-5)">
         <FeaturedWorkTabs projects={projects} posts={posts} />
       </Section>
 
       <Seam />
 
-      <Section title="How I work" icon={Compass}>
+      <Section title="How I work" icon={Compass} tone="var(--gl-swatch-6)">
         <dl className="divide-y divide-gl-border border-y border-gl-border">
           {aboutPrinciples.map((item) => (
             <div

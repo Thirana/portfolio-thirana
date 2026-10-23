@@ -343,10 +343,9 @@ export const ContributionGraphCalendar = ({
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el || el.scrollWidth <= el.clientWidth) return;
-    // Snap to a whole week column so the first visible column is never cut.
-    const column = el.scrollWidth / weeks.length;
-    const max = el.scrollWidth - el.clientWidth;
-    el.scrollLeft = Math.ceil(max / column) * column;
+    el.scrollLeft = el.scrollWidth;
+    // Fade the clipped left edge so a partial week reads as "more this way".
+    el.style.maskImage = "linear-gradient(to right, transparent, #000 40px)";
   }, [weeks.length]);
 
   return (

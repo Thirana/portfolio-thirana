@@ -47,7 +47,7 @@ export default async function ProjectsPage() {
   );
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <PageIntro
         title="Projects"
         lede="System-focused work that highlights architecture decisions, reliability controls, and measurable outcomes."

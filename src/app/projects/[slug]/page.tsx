@@ -124,7 +124,7 @@ export default async function ProjectPage({ params }: PageProps) {
   });
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
@@ -172,7 +172,7 @@ export default async function ProjectPage({ params }: PageProps) {
       <Seam />
 
       {meta.outcomes.length > 0 ? (
-        <Section title="Outcomes" icon={ListChecks}>
+        <Section title="Outcomes" icon={ListChecks} tone="var(--gl-swatch-1)">
           <ul className="space-y-2.5">
             {meta.outcomes.map((outcome) => (
               <li
@@ -190,7 +190,7 @@ export default async function ProjectPage({ params }: PageProps) {
         </Section>
       ) : null}
 
-      <Section title="Concepts and strategies" icon={Layers}>
+      <Section title="Concepts and strategies" icon={Layers} tone="var(--gl-swatch-2)">
         <CapabilityMatrix rows={projectCapabilityRows} />
         <EvidenceLinks
           items={meta.evidence.filter((e) => e.label !== "Repository")}

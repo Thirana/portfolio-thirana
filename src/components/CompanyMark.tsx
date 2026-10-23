@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getSwatchColor } from "@/lib/swatch";
 import { cn } from "@/lib/utils";
 
@@ -12,15 +13,34 @@ function initials(name: string): string {
 /** Monogram tile standing in for a company logo. */
 export function CompanyMark({
   name,
+  logo,
   size = 36,
   withTooltip = false,
   className,
 }: {
   name: string;
+  logo?: string;
   size?: number;
   withTooltip?: boolean;
   className?: string;
 }) {
+  if (logo) {
+    return (
+      <Image
+        src={logo}
+        alt={name}
+        title={withTooltip ? name : undefined}
+        width={size}
+        height={size}
+        className={cn(
+          "shrink-0 rounded-[22%] object-cover shadow-[0_0_0_1px_rgba(23,21,15,0.08)]",
+          className,
+        )}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   const label = initials(name);
   return (
     <span

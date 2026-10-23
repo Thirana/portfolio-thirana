@@ -21,7 +21,7 @@ function resolveSiteUrl() {
 export const siteConfig = {
   name: "Thirana's Personal Blog",
   description:
-    "Backend-first engineering portfolio and blog focused on systems, reliability, and delivery quality.",
+    "Thirana Embuldeniya engineers secure software systems for people, from cloud platforms and servers to the networks that connect them. Projects and writing.",
   url: resolveSiteUrl(),
   authorName: "Thirana Embuldeniya",
   authorHandle: "@_Thirana",

@@ -13,7 +13,7 @@ export default function RelatedBlogs({ posts }: RelatedBlogsProps) {
   return (
     <>
       <Seam />
-      <Section title="Related reading" icon={BookOpen}>
+      <Section title="Related reading" icon={BookOpen} tone="var(--gl-swatch-2)">
         <PostList posts={posts} />
       </Section>
     </>

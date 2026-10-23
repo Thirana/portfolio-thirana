@@ -25,9 +25,16 @@ import Section, { Seam } from "@/components/Section";
 import { WorkExperience } from "@/components/work-experience";
 import { CompanyMark } from "@/components/CompanyMark";
 import { PostList } from "@/components/PostList";
+import { RotatingFacts, type Fact } from "@/components/RotatingFacts";
 
 const GITHUB_USERNAME = "Thirana";
 const GITHUB_PROFILE_URL = "https://github.com/Thirana";
+
+// Brand tints for the social pills; anything unlisted stays ink.
+const SOCIAL_TONES: Record<string, string> = {
+  LinkedIn: "#0a66c2",
+  Email: "var(--gl-swatch-4)",
+};
 
 export default async function Home() {
   const [featuredProjects, allProjects, allPosts] = await Promise.all([
@@ -43,8 +50,24 @@ export default async function Home() {
   const currentTitle =
     currentEmployer?.role?.title ?? currentEmployer?.positions[0]?.title;
 
+  const facts: Fact[] = [
+    ...(currentTitle && currentEmployer
+      ? [
+          {
+            kind: "work" as const,
+            label: "Currently at",
+            value: currentEmployer.companyName,
+          },
+        ]
+      : []),
+    { kind: "movie", label: "Winding down with", value: "a good movie" },
+    { kind: "read", label: "Lost in", value: "another book" },
+    { kind: "curious", label: "Curious about", value: "what's new in tech" },
+    { kind: "place", label: "Based in", value: "Colombo, Sri Lanka" },
+  ];
+
   return (
-    <div className="space-y-10 sm:space-y-12">
+    <div className="space-y-7 sm:space-y-8">
       {/* Identity: mascot beside the handle */}
       <header className="space-y-7">
         <div className="space-y-4 sm:space-y-6">
@@ -84,7 +107,12 @@ export default async function Home() {
             <ul className="flex flex-wrap gap-1.5">
               {WORK_EXPERIENCE.map((exp) => (
                 <li key={exp.id}>
-                  <CompanyMark name={exp.companyName} size={30} withTooltip />
+                  <CompanyMark
+                    name={exp.companyName}
+                    logo={exp.companyLogo}
+                    size={28}
+                    withTooltip
+                  />
                 </li>
               ))}
             </ul>
@@ -92,19 +120,7 @@ export default async function Home() {
           <hr className="border-gl-border" />
         </div>
 
-        {currentTitle && currentEmployer ? (
-          <p className="flex items-start gap-2.5 font-sans text-[14px] text-gl-text-muted">
-            <Briefcase
-              className="mt-0.5 size-4 shrink-0 text-gl-text-faint"
-              aria-hidden
-            />
-            <span>
-              Currently {currentTitle} at{" "}
-              <span className="text-gl-text">{currentEmployer.companyName}</span>
-              , Colombo
-            </span>
-          </p>
-        ) : null}
+        <RotatingFacts facts={facts} />
       </header>
 
       <Seam />
@@ -121,7 +137,11 @@ export default async function Home() {
                 rel={external ? "noreferrer" : undefined}
                 className="pill"
               >
-                <Icon className="size-3.5 shrink-0" aria-hidden />
+                <Icon
+                  className="size-3.5 shrink-0"
+                  style={{ color: SOCIAL_TONES[social.label] }}
+                  aria-hidden
+                />
                 {social.label}
               </a>
             </li>
@@ -131,7 +151,7 @@ export default async function Home() {
 
       <Seam />
 
-      <Section title="Contributions" icon={Github}>
+      <Section title="Contributions" icon={Github} tone="var(--gl-swatch-1)">
         <div className="card p-5 pb-6">
           <Suspense fallback={<GitHubContributionsFallback />}>
             <GitHubContributions
@@ -144,13 +164,13 @@ export default async function Home() {
 
       <Seam />
 
-      <Section title="Experience" icon={Briefcase}>
+      <Section title="Experience" icon={Briefcase} tone="var(--gl-swatch-6)">
         <WorkExperience experiences={WORK_EXPERIENCE} />
       </Section>
 
       <Seam />
 
-      <Section title="Projects" icon={FolderGit2}>
+      <Section title="Projects" icon={FolderGit2} tone="var(--gl-swatch-5)">
         <div className="space-y-4">
           {featuredProjects.map((project) => (
             <ProjectCard key={project.slug} project={project} />
@@ -164,7 +184,7 @@ export default async function Home() {
 
       <Seam />
 
-      <Section title="Writing" icon={BookOpen}>
+      <Section title="Writing" icon={BookOpen} tone="var(--gl-swatch-2)">
         <PostList posts={recentPosts} />
         <Link href="/blog" className="link-arrow">
           All {allPosts.length} articles
