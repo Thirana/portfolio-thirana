@@ -55,7 +55,10 @@ export function CompanyMark({
         width: size,
         height: size,
         background: getSwatchColor(name),
-        fontSize: Math.max(11, Math.round(size * (label.length > 2 ? 0.3 : 0.38))),
+        fontSize: Math.max(
+          11,
+          Math.round(size * (label.length > 2 ? 0.3 : 0.38)),
+        ),
         letterSpacing: label.length > 2 ? "-0.04em" : undefined,
       }}
     >

@@ -54,7 +54,10 @@ export default function TechTabs() {
                       href={item.href as Route<string>}
                       className="pill group"
                     >
-                      <Icon className="size-3.5 text-gl-text-muted" aria-hidden />
+                      <Icon
+                        className="size-3.5 text-gl-text-muted"
+                        aria-hidden
+                      />
                       {item.label}
                       <ArrowRight
                         className="size-3 text-gl-text-faint transition-transform group-hover:translate-x-0.5"

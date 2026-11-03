@@ -22,7 +22,12 @@ export function PostList({
   className?: string;
 }) {
   return (
-    <ul className={cn("divide-y divide-gl-border border-y border-gl-border", className)}>
+    <ul
+      className={cn(
+        "divide-y divide-gl-border border-y border-gl-border",
+        className,
+      )}
+    >
       {posts.map((post) => (
         <li key={post.slug}>
           <Link

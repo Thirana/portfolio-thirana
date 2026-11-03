@@ -190,7 +190,11 @@ export default async function ProjectPage({ params }: PageProps) {
         </Section>
       ) : null}
 
-      <Section title="Concepts and strategies" icon={Layers} tone="var(--gl-swatch-2)">
+      <Section
+        title="Concepts and strategies"
+        icon={Layers}
+        tone="var(--gl-swatch-2)"
+      >
         <CapabilityMatrix rows={projectCapabilityRows} />
         <EvidenceLinks
           items={meta.evidence.filter((e) => e.label !== "Repository")}

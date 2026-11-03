@@ -108,7 +108,9 @@ function MermaidCanvas({
   if (error) {
     return (
       <div className="space-y-3">
-        <p className="font-sans text-xs text-gl-danger">Mermaid render failed: {error}</p>
+        <p className="font-sans text-xs text-gl-danger">
+          Mermaid render failed: {error}
+        </p>
         <pre className="overflow-x-auto rounded-xl border border-gl-border bg-gl-bg p-4 text-xs text-gl-text-muted">
           <code>{chart}</code>
         </pre>

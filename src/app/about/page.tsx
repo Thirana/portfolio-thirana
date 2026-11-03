@@ -10,11 +10,7 @@ import {
   UserRound,
   Wrench,
 } from "lucide-react";
-import {
-  aboutPrinciples,
-  aboutSummary,
-  heroBioPoints,
-} from "@/content/about";
+import { aboutPrinciples, aboutSummary, heroBioPoints } from "@/content/about";
 import { WORK_EXPERIENCE } from "@/content/experience";
 import { profile } from "@/content/profile";
 import {
@@ -157,7 +153,11 @@ export default async function AboutPage() {
 
       <Seam />
 
-      <Section title="Technologies and tools" icon={Wrench} tone="var(--gl-swatch-4)">
+      <Section
+        title="Technologies and tools"
+        icon={Wrench}
+        tone="var(--gl-swatch-4)"
+      >
         <TechTabs />
       </Section>
 

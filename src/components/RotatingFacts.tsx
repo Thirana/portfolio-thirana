@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Briefcase, Clapperboard, MapPin, Sparkles } from "lucide-react";
+import {
+  BookOpen,
+  Briefcase,
+  Clapperboard,
+  MapPin,
+  Sparkles,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ICONS = {

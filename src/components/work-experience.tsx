@@ -114,7 +114,8 @@ function ExperienceItem({
   const hasDetails = experience.positions.some(
     (p) => p.description || (p.skills && p.skills.length > 0),
   );
-  const showPositionTitles = !!experience.role || experience.positions.length > 1;
+  const showPositionTitles =
+    !!experience.role || experience.positions.length > 1;
 
   return (
     <li className="relative pb-6 last:pb-0">
@@ -219,8 +220,11 @@ function PeriodLabel({ period }: { period: Period }) {
   const duration = formatDuration(period.start, period.end);
   return (
     <span>
-      {formatPeriodDate(period.start)} - {period.end ? formatPeriodDate(period.end) : "Present"}
-      {duration ? <span className="text-gl-text-faint"> · {duration}</span> : null}
+      {formatPeriodDate(period.start)} -{" "}
+      {period.end ? formatPeriodDate(period.end) : "Present"}
+      {duration ? (
+        <span className="text-gl-text-faint"> · {duration}</span>
+      ) : null}
     </span>
   );
 }

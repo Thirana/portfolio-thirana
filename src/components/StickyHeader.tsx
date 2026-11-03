@@ -33,7 +33,9 @@ export default function StickyHeader() {
           aria-label="Home"
           className={cn(
             "font-sans text-[17px] font-semibold tracking-[-0.03em] text-gl-text transition-opacity",
-            isHome && !scrolled ? "pointer-events-none opacity-0" : "opacity-100",
+            isHome && !scrolled
+              ? "pointer-events-none opacity-0"
+              : "opacity-100",
           )}
           tabIndex={isHome && !scrolled ? -1 : 0}
         >

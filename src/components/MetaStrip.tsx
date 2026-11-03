@@ -23,8 +23,13 @@ export default function MetaStrip({ items, className }: MetaStripProps) {
       )}
     >
       {items.map((item) => (
-        <div key={`${item.label}-${item.value}`} className="flex items-baseline gap-1.5">
-          <dd className="font-semibold tabular-nums text-gl-text">{item.value}</dd>
+        <div
+          key={`${item.label}-${item.value}`}
+          className="flex items-baseline gap-1.5"
+        >
+          <dd className="font-semibold tabular-nums text-gl-text">
+            {item.value}
+          </dd>
           <dt className="text-gl-text-muted">{item.label}</dt>
         </div>
       ))}

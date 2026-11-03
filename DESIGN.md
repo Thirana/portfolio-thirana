@@ -147,6 +147,7 @@ Density is calm and editorial. Interface text (headings, labels, nav, meta) is s
 The world is light only, by the owner's decision. It deliberately retires the dark terminal-dashboard portfolio this site used to be: no near-black grounds, no neon accents, no monospace-as-personality.
 
 **Key Characteristics:**
+
 - Warm paper ground with white soft-shadow cards; light only.
 - One 42rem (672px) column on every page, header included.
 - Pill-shaped section headings (13px Satoshi, hairline outline) and dashed seams between sections.
@@ -159,9 +160,11 @@ The world is light only, by the owner's decision. It deliberately retires the da
 Ink on warm paper, with one rust voice for links and a muted set of categorical swatches for data.
 
 ### Primary
+
 - **Workshop Rust** (rust): every inline link in prose, the arrowed "All projects" / "Read the overview" links, capability evidence text, and the focus ring. Hover deepens to **Kiln Rust** (rust-deep). Rust is text and outline only.
 
 ### Neutral
+
 - **Warm Paper** (paper): the page ground and the text color on the ink pill.
 - **Card White** (paper-white): cards, tags, inline code chips, hovered pills and post rows - anything that sits on the paper.
 - **Paper Shade** (paper-shade): rare inset fills (code-toggle hover, loading skeletons).
@@ -175,11 +178,13 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 - **Selection Blush** (selection-blush): text selection highlight.
 
 ### Categorical swatches
+
 - **Moss, Indigo, Plum, Ochre, Brick, Teal** (swatch-moss ... swatch-teal): assigned deterministically by name hash. Used as 6px dots inside tags, as status-dot colors, as the icon color of section chips and hero facts, and as the fill of monogram fallback tiles (white initials). Never as text color on paper, never as backgrounds of large areas.
 - **Contribution scale** (contribution-0 through contribution-4): a GitHub-green ramp used only by the contributions heatmap; level 0 is a warm paper-grey so empty days sit in the paper rather than on it.
 - **Success** (success) and **Danger** (danger): the "Live" status dot and error text respectively.
 
 ### Named Rules
+
 **The Rust Is Ink Rule.** Rust appears only as text, underline, or focus outline. It never fills a button, badge, or surface. If something needs to be a solid call to action, it is the black ink pill.
 
 **The One Ink Pill Rule.** Each view carries exactly one solid ink action in its header ("Work with me") and one in the closing Work-with-me card ("Send me a note"). Every other action is an outlined pill or a rust arrow link.
@@ -195,6 +200,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 **Character:** A clean geometric-humanist sans for everything you scan, paired with a warm, slightly bookish serif for everything you read. The body element defaults to Erode; headings, buttons, nav, labels and form controls switch to Satoshi in the base layer.
 
 ### Hierarchy
+
 - **Display** (Satoshi 600, 60px desktop / 48px mobile, line-height 1, -0.03em): the lowercase "thirana" wordmark on home only. Index page titles (PageIntro) use the same treatment one step down at 52px / 40px.
 - **Headline** (Satoshi 600, 44px desktop / 34px mobile, line-height 1.1, -0.03em): article and project detail titles.
 - **Title** (Satoshi 600, 22px, line-height 1.2, -0.025em): project and blog card titles. Prose h2 is 22px at weight 600, h3 18px; experience company names (17px) and post titles (15px) are also weight 600. Titles are semibold, never medium - the reference world reads through firm Satoshi titles over soft Erode text.
@@ -204,6 +210,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 - **Code** (JetBrains Mono 400, 13px, line-height 1.625): fenced code blocks, highlighted with the github-light theme; inline code is 0.8125em in a white hairline chip.
 
 ### Named Rules
+
 **The Two Voices Rule.** Satoshi is for what you scan, Erode is for what you read. Never set a paragraph of reading text in Satoshi or a label in Erode.
 
 **The Lowercase Name Rule.** The identity is the lowercase Satoshi word "thirana" - in the hero at display size and in the sticky header at 17px weight 600, -0.03em. It is not replaced by an all-caps logotype or a monospace handle.
@@ -221,6 +228,7 @@ The one breakpoint that matters is 640px (`sm`). Below it: the hero mascot shrin
 The sticky header is transparent at rest and, after 16px of scroll, becomes 90% paper with a backdrop blur and a 1px hairline underline. On home, the header wordmark stays invisible until scroll, because the hero already shows the name.
 
 ### Named Rules
+
 **The One Column Rule.** Every page lives in the 672px column. Do not break out to full-bleed bands, sidebars, or two-up layouts.
 
 ## Elevation & Depth
@@ -228,11 +236,13 @@ The sticky header is transparent at rest and, after 16px of scroll, becomes 90% 
 Depth is a hybrid of ruled paper and lifted cards. Most structure is flat: hairlines, dashed seams and outlined pills on the paper. Cards, tables, images, diagrams, the active pill tab and the active mobile nav item are lifted by one soft, warm-tinted ambient shadow - an index card on a desk, never a floating panel. Shadows never respond to hover on cards; hover is expressed through outline and fill shifts on pills and rows.
 
 ### Shadow Vocabulary
+
 - **Card rest** (`box-shadow: 0 1px 2px rgba(23, 21, 15, 0.05), 0 10px 28px -14px rgba(23, 21, 15, 0.14)`): cards, prose images, tables, code blocks, blockquotes, mermaid frames, active pill tabs.
 - **Sheet** (`box-shadow: 0 1px 2px rgba(23, 21, 15, 0.06), 0 18px 40px -16px rgba(23, 21, 15, 0.2)`): the mobile nav drawer only.
 - **Header rule** (`box-shadow: 0 1px 0 #e6e3dd`): the scrolled sticky header's hairline.
 
 ### Named Rules
+
 **The Soft Card Rule.** One ambient shadow for every lifted surface. No hard offset shadows, no colored glows, no stacked elevation levels beyond card and sheet.
 
 ## Shapes
@@ -244,7 +254,9 @@ Lines are either a solid 1px hairline or a dashed seam (5px dash, 4px gap). The 
 ## Components
 
 ### Buttons
+
 Tactile and quiet: everything is a pill, and only one is solid.
+
 - **Shape:** fully rounded (999px).
 - **Primary (ink pill):** warm ink fill, paper text, Satoshi 13px weight 600, 7px 13px padding (10px 16px in the Work-with-me card, full-width 12px tall-padded in the mobile drawer). Hover lifts the fill to ink hover; press scales to 0.97 over 150ms.
 - **Secondary (outlined pill):** transparent with a hairline outline, ink text, Satoshi 13px weight 500, a 14px leading icon. Hover strengthens the outline and fills it with card white (150ms). Used for social links, evidence links, the mermaid "Expand" control, and the mobile menu trigger (40px square).
@@ -252,14 +264,17 @@ Tactile and quiet: everything is a pill, and only one is solid.
 - **Focus:** a 2px rust outline offset 2px on every focusable element.
 
 ### Chips (section headings)
+
 - **Style:** the h2 of every section is an outlined pill - hairline border, transparent fill, muted ink text, Satoshi 13px weight 500 at +0.01em, 5px 12px 6px padding, with an optional 14px icon tinted by a swatch token (Contributions moss, Experience teal, Projects brick, Writing indigo; About-page sections pick from the same set). The label stays muted ink; only the icon carries color.
 - **State:** static; chips are labels, not controls.
 
 ### Tags and status badges
+
 - **Tag:** card-white fill, hairline border, 8px radius, Satoshi 12.5px weight 500, with a 6px swatch dot chosen by name hash. Used for tech and domain lists on cards, heroes, and experience entries.
 - **Status badge:** outlined pill, muted Satoshi 12px, with a 6px status dot (success for Live, ochre for WIP/Ongoing, teal for Completed, faint for Paused).
 
 ### Cards / Containers
+
 - **Corner Style:** 14px.
 - **Background:** card white on paper.
 - **Shadow Strategy:** card rest shadow (see Elevation & Depth); no border.
@@ -268,29 +283,36 @@ Tactile and quiet: everything is a pill, and only one is solid.
 - **Project card:** status badge and year on top, 22px title whose link stretches over the whole card, Erode summary, up to six tags, then a rust "Read the overview" arrow link plus muted Code / Live links.
 
 ### Lists
+
 - **Post list:** hairline-ruled rows (top, bottom, and between). Title in Satoshi 15px weight 600, Erode 15px summary clamped to two lines, Satoshi 13px faint date right-aligned on desktop and above the title on mobile. Hover fills the row with card white at 14px radius.
 - **Experience timeline:** company logo tile, company and role, date range with a chevron; entries start collapsed, including the current employer, and open (240ms, cubic-bezier(0.22, 1, 0.36, 1)) to reveal short-dash bullets and tags, connected by a dotted rail.
 
 ### Navigation
+
 - **Desktop:** right-aligned Satoshi 14px links, muted at rest and ink when active or hovered, followed by the ink "Work with me" pill. The left slot holds the 17px lowercase wordmark.
 - **Mobile:** a 40px outlined menu pill opens a right-side sheet drawer on paper with the sheet shadow; links are 16px rows at 14px radius, the active row lifted as a white card; the ink pill sits full-width at the bottom.
 - **Tabs:** pill tabs - muted Satoshi 13px labels; the active tab becomes a white, hairline-outlined, card-shadowed pill.
 
 ### Mascot and stamp (signature)
+
 The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card that closes every page. The mascot stands in for a portrait; do not add a photo beside it.
 
 ### Company logos
+
 Real square company logos (public/logos, 128px PNG) shown as squircle tiles at 22% radius with a faint 1px ink ring: 28px in the hero "worked at" row, 36px in the timeline. Logos with a wordmark beneath the symbol are cropped to the symbol so they read at tile size. A company without a logo falls back to a monogram tile: the name's swatch color, white Satoshi bold initials, never smaller than 11px.
 
 ### Hero facts ticker
+
 One Satoshi 15px line under the worked-at row: a swatch-tinted icon, a muted label, a 12px hairline, then the ink value (e.g. "Currently at - MO Marketplace", "Lost in - another book"; work facts mixed with personal ones). It cycles every 3.4s; each fact rises 55% out of a 4px blur over 520ms (cubic-bezier(0.16, 1, 0.3, 1)). It pauses on hover, stays static under reduced motion, and exposes every fact to screen readers as a plain list. Facts must be true and short enough to fit one line at 390px.
 
 ### Prose
+
 Erode 17px at line-height 1.7 with Satoshi semibold headings (h2 22px, h3 18px, tight negative tracking). Links are rust with a 35%-rust underline offset 3px that becomes solid on hover. Code blocks, tables, blockquotes, images and diagrams are all cards. Horizontal rules are dashed seams. Mermaid diagrams use the paper palette (white nodes, strong-hairline borders, ink text, Satoshi labels).
 
 ## Do's and Don'ts
 
 ### Do:
+
 - **Do** open every section with a pill chip heading and separate sections with a dashed seam (5px dash, 4px gap, hairline color).
 - **Do** keep every page inside the 672px column with 24px gutters.
 - **Do** put reading text in Erode and every label, heading, button and meta line in Satoshi.
@@ -301,6 +323,7 @@ Erode 17px at line-height 1.7 with Satoshi semibold headings (h2 22px, h3 18px, 
 - **Do** keep the mobile nav as a right-side sheet drawer.
 
 ### Don't:
+
 - **Don't** add a dark theme, theme toggle, or `dark:` variants.
 - **Don't** fill a button, badge or surface with rust.
 - **Don't** add a second solid button style or a second accent hue.

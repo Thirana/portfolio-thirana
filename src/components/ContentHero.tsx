@@ -43,7 +43,9 @@ export default function ContentHero({
       </h1>
 
       {summary ? (
-        <p className="text-[18px] leading-[1.6] text-gl-text-muted">{summary}</p>
+        <p className="text-[18px] leading-[1.6] text-gl-text-muted">
+          {summary}
+        </p>
       ) : null}
 
       {meta ? (
