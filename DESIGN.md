@@ -187,7 +187,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 
 **The Rust Is Ink Rule.** Rust appears only as text, underline, or focus outline. It never fills a button, badge, or surface. If something needs to be a solid call to action, it is the black ink pill.
 
-**The One Ink Pill Rule.** Each view carries exactly one solid ink action in its header ("Work with me") and one in the closing Work-with-me card ("Send me a note"). Every other action is an outlined pill or a rust arrow link.
+**The One Ink Pill Rule.** Each view carries exactly one solid ink action in its header ("Get in touch") and one in the closing Work-with-me card ("Send me a note"). Every other action is an outlined pill or a rust arrow link.
 
 **The Light Only Rule.** There is no dark theme. Do not add `dark:` variants, a theme toggle, or a prefers-color-scheme branch.
 
@@ -289,7 +289,7 @@ Tactile and quiet: everything is a pill, and only one is solid.
 
 ### Navigation
 
-- **Desktop:** right-aligned Satoshi 14px links, muted at rest and ink when active or hovered, followed by the ink "Work with me" pill. The left slot holds the 17px lowercase wordmark.
+- **Desktop:** right-aligned Satoshi 14px links, muted at rest and ink when active or hovered, followed by the ink "Get in touch" pill. The left slot holds the 17px lowercase wordmark.
 - **Mobile:** a 40px outlined menu pill opens a right-side sheet drawer on paper with the sheet shadow; links are 16px rows at 14px radius, the active row lifted as a white card; the ink pill sits full-width at the bottom.
 - **Tabs:** pill tabs - muted Satoshi 13px labels; the active tab becomes a white, hairline-outlined, card-shadowed pill.
 

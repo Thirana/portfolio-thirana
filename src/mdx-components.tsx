@@ -2,6 +2,8 @@ import { isValidElement, type ReactNode } from "react";
 import type { MDXComponents } from "mdx/types";
 import MermaidDiagram from "@/components/MermaidDiagram";
 import CodeToggle from "@/components/CodeToggle";
+import Diagram from "@/components/Diagram";
+import Callout from "@/components/Callout";
 
 function getTextContent(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") {
@@ -86,9 +88,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       );
     },
     table: ({ className, ...props }) => (
-      <div className="not-prose my-6 overflow-x-auto rounded-[14px] bg-gl-surface shadow-gl [scrollbar-width:thin]">
+      <div className="mdx-table not-prose my-6 overflow-x-auto rounded-[14px] bg-gl-surface shadow-gl [scrollbar-width:thin]">
         <table
-          className={`w-full min-w-[40rem] border-collapse font-sans text-[14px] [&_td]:border-t [&_td]:whitespace-nowrap [&_td:first-child]:whitespace-normal [&_td]:border-gl-border [&_td]:px-4 [&_td]:py-2.5 [&_td]:text-gl-text-muted [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-medium [&_th]:text-gl-text ${
+          className={`w-full min-w-[36rem] border-collapse font-sans text-[14px] leading-[1.5] [&_code]:whitespace-nowrap [&_td]:border-t [&_td]:border-gl-border [&_td]:px-4 [&_td]:py-2.5 [&_td]:align-top [&_td]:text-gl-text-muted [&_td:first-child]:min-w-[8rem] [&_td:first-child]:text-gl-text [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-medium [&_th]:text-gl-text ${
             className ?? ""
           }`}
           {...props}
@@ -96,6 +98,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </div>
     ),
     CodeToggle,
+    Diagram,
+    Callout,
     ...components,
   };
 }

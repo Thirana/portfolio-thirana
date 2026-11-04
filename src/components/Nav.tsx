@@ -15,6 +15,7 @@ import { contactHref } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 
 const links = [
+  { href: "/work", label: "Work" },
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Writing" },
   { href: "/about", label: "About" },
@@ -46,7 +47,7 @@ export default function Nav() {
           </Link>
         ))}
         <a href={contactHref} className="pill-ink ml-2">
-          Work with me
+          Get in touch
         </a>
       </nav>
 
@@ -99,7 +100,7 @@ export default function Nav() {
               href={contactHref}
               className="pill-ink w-full justify-center py-3 text-[14px]"
             >
-              Work with me
+              Get in touch
               <ArrowUpRight className="size-3.5" />
             </a>
           </div>

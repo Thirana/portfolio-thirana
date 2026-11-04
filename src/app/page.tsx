@@ -6,13 +6,16 @@ import {
   Briefcase,
   FolderGit2,
   Github,
+  NotebookText,
 } from "lucide-react";
 import { profile, socials } from "@/content/profile";
 import { WORK_EXPERIENCE } from "@/content/experience";
 import {
   getAllBlogPosts,
   getAllProjects,
+  getAllWork,
   getFeaturedProjects,
+  getFeaturedWork,
 } from "@/lib/content";
 import { getCachedContributions } from "@/lib/get-cached-contributions";
 import {
@@ -26,6 +29,7 @@ import { WorkExperience } from "@/components/work-experience";
 import { CompanyMark } from "@/components/CompanyMark";
 import { PostList } from "@/components/PostList";
 import { RotatingFacts, type Fact } from "@/components/RotatingFacts";
+import WorkCard from "@/components/WorkCard";
 
 const GITHUB_USERNAME = "Thirana";
 const GITHUB_PROFILE_URL = "https://github.com/Thirana";
@@ -37,11 +41,14 @@ const SOCIAL_TONES: Record<string, string> = {
 };
 
 export default async function Home() {
-  const [featuredProjects, allProjects, allPosts] = await Promise.all([
-    getFeaturedProjects(3),
-    getAllProjects(),
-    getAllBlogPosts(),
-  ]);
+  const [featuredWork, allWork, featuredProjects, allProjects, allPosts] =
+    await Promise.all([
+      getFeaturedWork(3),
+      getAllWork(),
+      getFeaturedProjects(3),
+      getAllProjects(),
+      getAllBlogPosts(),
+    ]);
   const recentPosts = allPosts.slice(0, 4);
 
   const contributions = getCachedContributions(GITHUB_USERNAME);
@@ -169,6 +176,26 @@ export default async function Home() {
       </Section>
 
       <Seam />
+
+      {featuredWork.length > 0 ? (
+        <>
+          <Section title="Work" icon={NotebookText} tone="var(--gl-swatch-3)">
+            <div className="space-y-4">
+              {featuredWork.map((work) => (
+                <WorkCard key={work.slug} work={work} />
+              ))}
+            </div>
+            {allWork.length > featuredWork.length ? (
+              <Link href="/work" className="link-arrow">
+                All {allWork.length} case studies
+                <ArrowRight className="size-3.5" />
+              </Link>
+            ) : null}
+          </Section>
+
+          <Seam />
+        </>
+      ) : null}
 
       <Section title="Projects" icon={FolderGit2} tone="var(--gl-swatch-5)">
         <div className="space-y-4">

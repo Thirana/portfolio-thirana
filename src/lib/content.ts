@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import { unstable_cache } from "next/cache";
+import { WORK_EXPERIENCE } from "@/content/experience";
 
 export type ContentMeta = {
   slug: string;
@@ -51,14 +52,70 @@ export type ProjectEvidence = {
   href: string;
 };
 
+/** Icons a work highlight may name in frontmatter; see WorkCard for the mapping. */
+export const WORK_HIGHLIGHT_ICONS = [
+  "shield",
+  "lock",
+  "key",
+  "git-branch",
+  "route",
+  "server",
+  "cloud",
+  "workflow",
+  "tag",
+  "door",
+] as const;
+
+export type WorkHighlightIcon = (typeof WORK_HIGHLIGHT_ICONS)[number];
+
+export type WorkHighlight = {
+  icon: WorkHighlightIcon;
+  label: string;
+};
+
+export type WorkGlanceRow = {
+  label: string;
+  value: string;
+};
+
+/** Small preview shown on work cards; an SVG or image under /public. */
+export type WorkCover = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
+export type WorkMeta = {
+  slug: string;
+  title: string;
+  date: string;
+  summary: string;
+  /** Matches an `id` in src/content/experience.ts; name, logo and role come from there. */
+  company: string;
+  companyName: string;
+  companyLogo?: string;
+  role: string;
+  tech: string[];
+  highlights: WorkHighlight[];
+  glance: WorkGlanceRow[];
+  outcomes: string[];
+  cover?: WorkCover;
+  featured: boolean;
+  priority: number;
+  draft: boolean;
+};
+
 const blogDir = path.join(process.cwd(), "content", "blog");
 const projectsDir = path.join(process.cwd(), "content", "projects");
+const workDir = path.join(process.cwd(), "content", "work");
 const isProduction = process.env.NODE_ENV === "production";
 const isProductionBuild = process.env.NEXT_PHASE === "phase-production-build";
 
 export const CONTENT_CACHE_TAGS = {
   blog: "content:blog",
   projects: "content:projects",
+  work: "content:work",
 } as const;
 
 function toStringArray(value: unknown): string[] {
@@ -208,6 +265,120 @@ function normalizeProjectMeta(
   };
 }
 
+function assertWorkField(
+  condition: boolean,
+  fileName: string,
+  message: string,
+) {
+  if (!condition) {
+    throw new Error(`[content/work/${fileName}] ${message}`);
+  }
+}
+
+function toRecords(value: unknown): Record<string, unknown>[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((item): item is Record<string, unknown> => {
+    return !!item && typeof item === "object" && !Array.isArray(item);
+  });
+}
+
+function normalizeWorkMeta(
+  slug: string,
+  data: Record<string, unknown>,
+  fileName: string,
+): WorkMeta {
+  const { title, date, summary, company, role, tech, priority } = data;
+
+  assertWorkField(typeof title === "string", fileName, "Missing title");
+  assertWorkField(
+    typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date),
+    fileName,
+    "date must be YYYY-MM-DD",
+  );
+  assertWorkField(typeof summary === "string", fileName, "Missing summary");
+  assertWorkField(typeof company === "string", fileName, "Missing company");
+  assertWorkField(Array.isArray(tech), fileName, "Missing tech array");
+
+  const experience = WORK_EXPERIENCE.find((item) => item.id === company);
+  assertWorkField(
+    !!experience,
+    fileName,
+    `company "${String(company)}" is not an id in src/content/experience.ts`,
+  );
+
+  const highlights = toRecords(data.highlights).map((item) => {
+    const icon = item.icon as WorkHighlightIcon;
+    assertWorkField(
+      WORK_HIGHLIGHT_ICONS.includes(icon),
+      fileName,
+      `highlight icon must be one of: ${WORK_HIGHLIGHT_ICONS.join(", ")}`,
+    );
+    assertWorkField(
+      typeof item.label === "string",
+      fileName,
+      "Each highlight needs a label",
+    );
+    return { icon, label: item.label as string };
+  });
+
+  const glance = toRecords(data.glance).map((item) => {
+    assertWorkField(
+      typeof item.label === "string" && typeof item.value === "string",
+      fileName,
+      "Each glance row needs a label and a value",
+    );
+    return { label: item.label as string, value: item.value as string };
+  });
+
+  let cover: WorkCover | undefined;
+  if (data.cover !== undefined) {
+    const raw = toRecords([data.cover])[0] ?? {};
+    assertWorkField(
+      typeof raw.src === "string" &&
+        raw.src.startsWith("/") &&
+        typeof raw.alt === "string" &&
+        typeof raw.width === "number" &&
+        typeof raw.height === "number",
+      fileName,
+      "cover needs src (starting with /), alt, width and height",
+    );
+    cover = {
+      src: raw.src as string,
+      alt: raw.alt as string,
+      width: raw.width as number,
+      height: raw.height as number,
+    };
+  }
+
+  const defaultRole =
+    experience?.role?.title ?? experience?.positions[0]?.title ?? "";
+
+  return {
+    slug,
+    title: title as string,
+    date: date as string,
+    summary: summary as string,
+    company: company as string,
+    companyName: experience?.companyName ?? (company as string),
+    companyLogo: experience?.companyLogo,
+    role: typeof role === "string" ? role : defaultRole,
+    tech: toStringArray(tech),
+    highlights,
+    glance,
+    outcomes: toStringArray(data.outcomes),
+    cover,
+    featured: data.featured === true,
+    priority:
+      typeof priority === "number" && Number.isFinite(priority)
+        ? priority
+        : 100,
+    draft: data.draft === true,
+  };
+}
+
 async function readMdxMeta(dir: string) {
   const files = await fs.readdir(dir);
   const entries = await Promise.all(
@@ -251,6 +422,62 @@ async function readProjectMetaList() {
 
     return a.title.localeCompare(b.title);
   });
+}
+
+/** Drafts render in `next dev` and are left out of production builds. */
+function isVisibleWork(meta: WorkMeta) {
+  return !meta.draft || !isProduction;
+}
+
+async function readWorkMetaList() {
+  let files: string[];
+  try {
+    files = await fs.readdir(workDir);
+  } catch {
+    return [];
+  }
+
+  const entries = await Promise.all(
+    files
+      .filter((file) => file.endsWith(".mdx"))
+      .map(async (file) => {
+        const slug = file.replace(/\.mdx$/, "");
+        const raw = await fs.readFile(path.join(workDir, file), "utf8");
+        const { data } = matter(raw);
+        return normalizeWorkMeta(slug, data, file);
+      }),
+  );
+
+  return entries.filter(isVisibleWork).sort((a, b) => {
+    if (a.priority !== b.priority) {
+      return a.priority - b.priority;
+    }
+
+    const byDate = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (byDate !== 0) {
+      return byDate;
+    }
+
+    return a.title.localeCompare(b.title);
+  });
+}
+
+async function readWorkMetaBySlug(slug: string) {
+  try {
+    const raw = await fs.readFile(path.join(workDir, `${slug}.mdx`), "utf8");
+    const { data } = matter(raw);
+    const meta = normalizeWorkMeta(slug, data, `${slug}.mdx`);
+    return isVisibleWork(meta) ? meta : null;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      (error as Error & { code?: string }).code === "ENOENT"
+    ) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 async function readBlogMetaBySlug(slug: string) {
@@ -316,6 +543,50 @@ const getProjectMetaBySlugCached = unstable_cache(
   ["content-project-by-slug"],
   { tags: [CONTENT_CACHE_TAGS.projects] },
 );
+
+const getAllWorkCached = unstable_cache(
+  async () => readWorkMetaList(),
+  ["content-work-list"],
+  { tags: [CONTENT_CACHE_TAGS.work] },
+);
+
+const getWorkMetaBySlugCached = unstable_cache(
+  async (slug: string) => readWorkMetaBySlug(slug),
+  ["content-work-by-slug"],
+  { tags: [CONTENT_CACHE_TAGS.work] },
+);
+
+export async function getAllWork() {
+  if (!isProduction || isProductionBuild) {
+    return readWorkMetaList();
+  }
+
+  return getAllWorkCached();
+}
+
+export async function getFeaturedWork(limit = 3) {
+  const work = await getAllWork();
+  return work.filter((item) => item.featured).slice(0, limit);
+}
+
+export async function getWorkMetaBySlug(slug: string) {
+  if (!isProduction || isProductionBuild) {
+    return readWorkMetaBySlug(slug);
+  }
+
+  return getWorkMetaBySlugCached(slug);
+}
+
+export async function getWorkBySlug(slug: string) {
+  const meta = await getWorkMetaBySlug(slug);
+  if (!meta) {
+    return null;
+  }
+
+  const { default: Content } = await import(`../../content/work/${slug}.mdx`);
+
+  return { meta, Content };
+}
 
 export async function getAllBlogPosts() {
   if (!isProduction || isProductionBuild) {

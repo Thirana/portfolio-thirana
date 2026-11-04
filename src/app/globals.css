@@ -495,3 +495,23 @@ html {
     @apply border-border outline-ring/50;
   }
 }
+
+/*
+ * Work case studies: tables sit on the paper instead of a white card,
+ * ruled top and bottom like the post list, with cell text aligned to the prose.
+ * Unlayered so it wins over the shared table utilities in mdx-components.
+ */
+.work-prose .mdx-table {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  border-block: 1px solid var(--gl-border);
+}
+
+.work-prose .mdx-table :is(th, td):first-child {
+  padding-left: 0;
+}
+
+.work-prose .mdx-table :is(th, td):last-child {
+  padding-right: 0;
+}

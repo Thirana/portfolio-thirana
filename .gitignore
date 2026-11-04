@@ -55,3 +55,9 @@ docs/professional-grade-vercel-roadmap.md
 .github/skills/impeccable/
 .github/agents/impeccable-*.agent.md
 .github/hooks/impeccable.json
+
+# excalidraw diagram skill (its own git clone, installed locally)
+.claude/skills/excalidraw-diagram-skill/
+
+# excalidraw diagram sources (kept locally; the site uses the exported SVGs in public/diagrams)
+*.excalidraw

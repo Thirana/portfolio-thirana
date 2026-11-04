@@ -2,7 +2,7 @@ import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { CONTENT_CACHE_TAGS } from "@/lib/content";
 
-type RevalidateScope = "all" | "blog" | "projects";
+type RevalidateScope = "all" | "blog" | "projects" | "work";
 
 type RevalidatePayload = {
   scope?: RevalidateScope;
@@ -10,13 +10,23 @@ type RevalidatePayload = {
 };
 
 const scopeTags: Record<RevalidateScope, string[]> = {
-  all: [CONTENT_CACHE_TAGS.blog, CONTENT_CACHE_TAGS.projects],
+  all: [
+    CONTENT_CACHE_TAGS.blog,
+    CONTENT_CACHE_TAGS.projects,
+    CONTENT_CACHE_TAGS.work,
+  ],
   blog: [CONTENT_CACHE_TAGS.blog],
   projects: [CONTENT_CACHE_TAGS.projects],
+  work: [CONTENT_CACHE_TAGS.work],
 };
 
 function getScope(input: string | null | undefined): RevalidateScope {
-  if (input === "blog" || input === "projects" || input === "all") {
+  if (
+    input === "blog" ||
+    input === "projects" ||
+    input === "work" ||
+    input === "all"
+  ) {
     return input;
   }
 
