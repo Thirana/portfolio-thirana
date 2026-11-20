@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BookOpen,
   Briefcase,
+  Flag,
   FolderGit2,
   Github,
   NotebookText,
@@ -30,6 +31,7 @@ import { CompanyMark } from "@/components/CompanyMark";
 import { PostList } from "@/components/PostList";
 import { RotatingFacts, type Fact } from "@/components/RotatingFacts";
 import WorkCard from "@/components/WorkCard";
+import { SecurityPractice } from "@/components/SecurityPractice";
 
 const GITHUB_USERNAME = "Thirana";
 const GITHUB_PROFILE_URL = "https://github.com/Thirana";
@@ -219,6 +221,12 @@ export default async function Home() {
           All {allProjects.length} projects
           <ArrowRight className="size-3.5" />
         </Link>
+      </Section>
+
+      <Seam />
+
+      <Section title="Security practice" icon={Flag} tone="var(--gl-swatch-4)">
+        <SecurityPractice />
       </Section>
 
       <Seam />

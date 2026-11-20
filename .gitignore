@@ -61,4 +61,4 @@ docs/professional-grade-vercel-roadmap.md
 
 # excalidraw diagram previews (the sources are committed; the site uses the exported SVGs in public/diagrams)
 content/**/diagrams/**/*.png
-content/site-diagrams/*.png
+content/site-diagrams/**/*.png
