@@ -1,7 +1,8 @@
 "use client";
 
 import { differenceInMonths, format, parse } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
+import { ArrowRight, ChevronDownIcon } from "lucide-react";
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 
 import {
@@ -57,12 +58,18 @@ export type ExperienceItemType = {
 
 type Period = { start: string; end?: string };
 
+/** A published case study, listed under the company it was written for. */
+export type CaseStudyLink = { slug: string; title: string };
+
 export function WorkExperience({
   className,
   experiences,
+  caseStudies = {},
 }: {
   className?: string;
   experiences: ExperienceItemType[];
+  /** Case studies keyed by experience `id` (the work note's `company`). */
+  caseStudies?: Record<string, CaseStudyLink[]>;
 }) {
   return (
     <ol className={cn("relative", className)}>
@@ -70,6 +77,7 @@ export function WorkExperience({
         <ExperienceItem
           key={experience.id}
           experience={experience}
+          caseStudies={caseStudies[experience.id] ?? []}
           isLast={index === experiences.length - 1}
         />
       ))}
@@ -100,9 +108,11 @@ function companyPeriod(experience: ExperienceItemType): Period | null {
 
 function ExperienceItem({
   experience,
+  caseStudies,
   isLast,
 }: {
   experience: ExperienceItemType;
+  caseStudies: CaseStudyLink[];
   isLast: boolean;
 }) {
   const period = companyPeriod(experience);
@@ -111,9 +121,11 @@ function ExperienceItem({
     : experience.positions.length === 1
       ? experience.positions[0].title
       : `${experience.positions.length} roles`;
-  const hasDetails = experience.positions.some(
-    (p) => p.description || (p.skills && p.skills.length > 0),
-  );
+  const hasDetails =
+    caseStudies.length > 0 ||
+    experience.positions.some(
+      (p) => p.description || (p.skills && p.skills.length > 0),
+    );
   const showPositionTitles =
     !!experience.role || experience.positions.length > 1;
 
@@ -170,6 +182,9 @@ function ExperienceItem({
                 showTitle={showPositionTitles}
               />
             ))}
+            {caseStudies.length > 0 ? (
+              <CaseStudies items={caseStudies} />
+            ) : null}
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -212,6 +227,32 @@ function ExperiencePosition({
           ))}
         </ul>
       ) : null}
+    </div>
+  );
+}
+
+function CaseStudies({ items }: { items: CaseStudyLink[] }) {
+  return (
+    <div className="space-y-2">
+      <h4 className="font-sans text-[13px] font-medium text-gl-text-faint">
+        Case studies
+      </h4>
+      <ul className="space-y-2">
+        {items.map((item) => (
+          <li key={item.slug}>
+            <Link
+              href={`/work/${item.slug}`}
+              className="group flex items-start justify-between gap-3 font-sans text-[15px] leading-snug text-gl-text transition-colors hover:text-gl-primary"
+            >
+              <span>{item.title}</span>
+              <ArrowRight
+                className="mt-[3px] size-3.5 shrink-0 text-gl-text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-gl-primary"
+                aria-hidden
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -51,6 +51,15 @@ export default async function Home() {
     ]);
   const recentPosts = allPosts.slice(0, 4);
 
+  // Case studies grouped by the experience entry they belong to.
+  const caseStudies: Record<string, { slug: string; title: string }[]> = {};
+  for (const work of allWork) {
+    (caseStudies[work.company] ??= []).push({
+      slug: work.slug,
+      title: work.title,
+    });
+  }
+
   const contributions = getCachedContributions(GITHUB_USERNAME);
 
   const currentEmployer = WORK_EXPERIENCE.find((e) => e.isCurrentEmployer);
@@ -172,7 +181,10 @@ export default async function Home() {
       <Seam />
 
       <Section title="Experience" icon={Briefcase} tone="var(--gl-swatch-6)">
-        <WorkExperience experiences={WORK_EXPERIENCE} />
+        <WorkExperience
+          experiences={WORK_EXPERIENCE}
+          caseStudies={caseStudies}
+        />
       </Section>
 
       <Seam />
