@@ -151,13 +151,13 @@ export default function SiteFooter() {
         </div>
 
         {/* The sketch spans the full width; on narrow screens it keeps a
-            readable size and shows its left part, the hills to the Lotus Tower. */}
+            readable size and shows its left part, the mountain and jungle to the Lotus Tower. */}
         <div aria-hidden className="mt-6 flex overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element -- static SVG sketch */}
           <img
             src="/diagrams/site/colombo.svg"
             alt=""
-            width={1590}
+            width={1588}
             height={305}
             loading="lazy"
             decoding="async"

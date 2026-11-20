@@ -273,20 +273,62 @@ html {
   }
 
   /* Pill heading that opens every section */
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    border: 1px solid var(--gl-border);
-    border-radius: 999px;
-    padding: 5px 12px 6px;
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: 0.01em;
-    color: var(--gl-text-muted);
-    background: transparent;
+  /*
+   * Hand-drawn outline, in the spirit of the Excalidraw sketches: two loose
+   * strokes with uneven corners instead of one ruled border. The fill sits on
+   * a pseudo-element so its edge follows the same wobble. Neighbouring list
+   * items get different corners so a row of tags does not look stamped out.
+   */
+  .sketch {
+    --sketch-ink: color-mix(in oklab, var(--gl-text-muted) 42%, transparent);
+    --sketch-fill: transparent;
+    --sketch-r1: 7px 11px 6px 10px / 10px 6px 11px 7px;
+    --sketch-r2: 11px 6px 10px 7px / 6px 11px 7px 10px;
+    position: relative;
+    isolation: isolate;
+    border-color: transparent !important;
+    background: transparent !important;
+  }
+  .sketch::before,
+  .sketch::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border: 1.25px solid var(--sketch-ink);
+  }
+  .sketch::before {
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--sketch-r1);
+    background: var(--sketch-fill);
+  }
+  .sketch::after {
+    inset: 1.5px -1px -1px 1.5px;
+    border-radius: var(--sketch-r2);
+    opacity: 0.4;
+  }
+  :where(li:nth-child(3n + 2)) > .sketch {
+    --sketch-r1: 11px 6px 10px 7px / 7px 10px 6px 11px;
+    --sketch-r2: 6px 11px 7px 10px / 11px 7px 10px 6px;
+  }
+  :where(li:nth-child(3n)) > .sketch {
+    --sketch-r1: 6px 10px 8px 11px / 11px 8px 10px 6px;
+    --sketch-r2: 9px 7px 11px 6px / 7px 11px 6px 9px;
+  }
+  /* Pill-shaped badges keep a pill silhouette, drawn loosely */
+  /* Drafts and other not-final states: the same hand, dashed */
+  .sketch.sketch-dashed::before,
+  .sketch.sketch-dashed::after {
+    border-style: dashed;
+  }
+  /* Outlined pills that are links fill in and darken on hover */
+  .sketch.pill:hover {
+    --sketch-fill: var(--gl-surface);
+    --sketch-ink: color-mix(in oklab, var(--gl-text-muted) 70%, transparent);
+  }
+  .sketch.sketch-pill {
+    --sketch-r1: 15px 13px 16px 12px / 13px 16px 12px 15px;
+    --sketch-r2: 12px 16px 13px 15px / 16px 12px 15px 13px;
   }
 
   /* Dashed seam between sections */

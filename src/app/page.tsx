@@ -153,7 +153,7 @@ export default async function Home() {
                 href={social.href}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noreferrer" : undefined}
-                className="pill"
+                className="pill sketch sketch-pill"
               >
                 <Icon
                   className="size-3.5 shrink-0"

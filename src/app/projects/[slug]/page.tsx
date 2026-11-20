@@ -147,7 +147,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 href={meta.links.code}
                 target="_blank"
                 rel="noreferrer"
-                className="pill py-1"
+                className="pill sketch sketch-pill py-1"
               >
                 Repository
                 <ArrowUpRight className="size-3.5" aria-hidden />
@@ -158,7 +158,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 href={meta.links.live}
                 target="_blank"
                 rel="noreferrer"
-                className="pill py-1"
+                className="pill sketch sketch-pill py-1"
               >
                 Live
                 <ArrowUpRight className="size-3.5" aria-hidden />

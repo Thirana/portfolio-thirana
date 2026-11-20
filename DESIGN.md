@@ -103,12 +103,10 @@ components:
     padding: "7px 13px 7px 11px"
   pill-hover:
     backgroundColor: "{colors.paper-white}"
-  chip-heading:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink-muted}"
-    typography: "{typography.label}"
-    rounded: "{rounded.pill}"
-    padding: "5px 12px 6px"
+  section-heading:
+    textColor: "{colors.ink}"
+    typography: "Satoshi 600, 22px (24px from sm), -0.02em"
+    underline: "3px marker stroke in the section swatch, under the words only"
   link-arrow:
     textColor: "{colors.rust}"
     typography: "{typography.label}"
@@ -179,7 +177,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 
 ### Categorical swatches
 
-- **Moss, Indigo, Plum, Ochre, Brick, Teal** (swatch-moss ... swatch-teal): assigned deterministically by name hash. Used as 6px dots inside tags, as status-dot colors, as the icon color of section chips and hero facts, and as the fill of monogram fallback tiles (white initials). Never as text color on paper, never as backgrounds of large areas.
+- **Moss, Indigo, Plum, Ochre, Brick, Teal** (swatch-moss ... swatch-teal): assigned deterministically by name hash. Used as 6px dots inside tags, as status-dot colors, as the icon and underline color of section headings, the icon color of hero facts, and as the fill of monogram fallback tiles (white initials). Never as text color on paper, never as backgrounds of large areas.
 - **Contribution scale** (contribution-0 through contribution-4): a GitHub-green ramp used only by the contributions heatmap; level 0 is a warm paper-grey so empty days sit in the paper rather than on it.
 - **Success** (success) and **Danger** (danger): the "Live" status dot and error text respectively.
 
@@ -206,7 +204,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 - **Title** (Satoshi 600, 22px, line-height 1.2, -0.025em): project and blog card titles. Prose h2 is 22px at weight 600, h3 18px; experience company names (17px) and post titles (15px) are also weight 600. Titles are semibold, never medium - the reference world reads through firm Satoshi titles over soft Erode text.
 - **Body** (Erode 400, 17px, line-height 1.7): long-form prose and page ledes (home and index ledes at 18px, line-height 1.625, max-width 34rem). **Body Compact** (Erode 400, 15px, line-height 1.6-1.7) carries card summaries, post-list summaries, and experience bullets.
 - **Rendering:** text uses the browser default font smoothing and text-rendering. Never set `-webkit-font-smoothing: antialiased` or `optimizeLegibility`: on macOS antialiased thins Satoshi and Erode and loses the reference's full, warm text color.
-- **Label** (Satoshi 500, 13px, line-height 1.2, no tracking): chips, pills, the ink pill (weight 600), arrow links, meta lines, dates, footer links. Tags are 12.5px, status badges 12px.
+- **Label** (Satoshi 500, 13px, line-height 1.2, no tracking): pills, the ink pill (weight 600), arrow links, meta lines, dates, footer links. Tags are 12.5px, status badges 12px.
 - **Code** (JetBrains Mono 400, 13px, line-height 1.625): fenced code blocks, highlighted with the github-light theme; inline code is 0.8125em in a white hairline chip.
 
 ### Named Rules
@@ -223,7 +221,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 
 A single centered column, 42rem (672px) max-width with 24px side gutters, used by the header, main content, and footer alike. There is no multi-column page grid; the only internal grids are small (the capability matrix's three columns from 640px up, post rows that put the date beside the title from 640px up).
 
-Vertical rhythm is section-based: page sections stack 28px apart on mobile and 32px from 640px up, each separated by a dashed seam (so roughly 60px between one section's end and the next chip); inside a section the pill heading sits 20px (mobile) / 24px (desktop) above its content. Cards stack 16px apart. The page starts 32px below the header (48px from 640px up), and the footer sits 64px below the last section.
+Vertical rhythm is section-based: page sections stack 28px apart on mobile and 32px from 640px up, each separated by a dashed seam (so roughly 60px between one section's end and the next heading); inside a section the heading sits 24px (mobile) / 28px (desktop) above its content. Cards stack 16px apart. The page starts 32px below the header (48px from 640px up), and the footer sits 64px below the last section.
 
 The one breakpoint that matters is 640px (`sm`). Below it: the hero mascot shrinks from 208px to 160px and stacks above the wordmark, the desktop nav hides behind a menu pill that opens a right-side sheet drawer (82vw, max 320px), post-list dates move above titles, and the Work-with-me card stacks its button under the text. Dense content uses progressive disclosure (collapsible experience entries, code toggles), never hidden content. Content tables stack on phones: each row becomes a block, the first cell reads as its heading and every other value is labelled with its column name. Diagrams fit the column width and offer Expand for a full-size view.
 
@@ -249,7 +247,7 @@ Depth is a hybrid of ruled paper and lifted cards. Most structure is flat: hairl
 
 ## Shapes
 
-Two silhouettes dominate: the fully rounded pill (999px) for every small interactive or labeling element - chips, pills, the ink button, status badges, tabs - and the gently rounded card (14px) for every raised surface. Smaller radii step down for smaller objects: tags 8px, inset code panels and toggles 10px, inline code 6px. Company monograms are squircle-like tiles at 22% radius; the hero mascot sits in an 18px rounded frame.
+Two silhouettes dominate: the fully rounded pill (999px) for every small interactive or labeling element - pills, the ink button, status badges, tabs - and the gently rounded card (14px) for every raised surface. Smaller radii step down for smaller objects: tags 8px, inset code panels and toggles 10px, inline code 6px. Company monograms are squircle-like tiles at 22% radius; the hero mascot sits in an 18px rounded frame.
 
 Lines are either a solid 1px hairline or a dashed seam (5px dash, 4px gap). The experience timeline rail is a finer dotted line (3px dash, 3px gap) in the strong hairline. The stamp is the one decorative edge: a 4px cream frame with a perforated, postage-stamp mask around a 56px mascot frame.
 
@@ -265,15 +263,23 @@ Tactile and quiet: everything is a pill, and only one is solid.
 - **Tertiary (arrow link):** rust Satoshi 13px weight 500 with a trailing arrow that nudges 2px right on hover (200ms, cubic-bezier(0.22, 1, 0.36, 1)) while the text deepens to kiln rust.
 - **Focus:** a 2px rust outline offset 2px on every focusable element.
 
-### Chips (section headings)
+### Section headings
 
-- **Style:** the h2 of every section is an outlined pill - hairline border, transparent fill, muted ink text, Satoshi 13px weight 500 at +0.01em, 5px 12px 6px padding, with an optional 14px icon tinted by a swatch token (Contributions moss, Experience teal, Projects brick, Writing indigo; About-page sections pick from the same set). The label stays muted ink; only the icon carries color.
-- **State:** static; chips are labels, not controls.
+- **Style:** each section opens like a notebook chapter: the title in Satoshi 22px (24px from `sm`) weight 600 at -0.02em, ink, with a 20px icon tinted by a swatch token (Contributions moss, Experience teal, Work plum, Projects brick, Security practice ochre, Writing indigo; About and detail pages pick from the same set). Under the title words only (not the icon), a firm 3px marker stroke in the same swatch: a calm wave that ends in a small upward flick, sitting just below the baseline. Its weight matches the 600 title, so text and stroke read as one mark.
+- **Spacing:** a dashed seam above, then 24-28px down to the section content.
+- **State:** static; headings are labels, not controls.
 
 ### Tags and status badges
 
-- **Tag:** card-white fill, hairline border, 8px radius, Satoshi 12.5px weight 500, with a 6px swatch dot chosen by name hash. Used for tech and domain lists on cards, heroes, and experience entries.
-- **Status badge:** outlined pill, muted Satoshi 12px, with a 6px status dot (success for Live, ochre for WIP/Ongoing, teal for Completed, faint for Paused).
+- **Tag:** card-white fill inside a hand-drawn outline (see Sketch outline), Satoshi 12.5px weight 500, with a 6px swatch dot chosen by name hash. Used for tech and domain lists on cards, heroes, and experience entries.
+- **Status badge:** hand-drawn pill (`sketch sketch-pill`), muted Satoshi 12px, with a 6px status dot (success for Live, ochre for WIP/Ongoing, teal for Completed, faint for Paused).
+
+### Sketch outline
+
+- **What:** the `.sketch` utility in `globals.css` draws a tag or badge border the way the Excalidraw diagrams do: two loose 1.25px strokes in muted ink at 42%, the second offset about 1.5px down-right at 40% opacity, with uneven corner radii. Tags in a list get one of three corner sets by position, so a row never looks stamped out. `.sketch-pill` keeps a pill silhouette for status badges and outlined link pills (profile links, related links, project repository/live links); on hover a linked pill fills with card white and its ink darkens. `.sketch-dashed` draws the same outline dashed, for the Draft badge. The solid ink pill and small UI controls (menu button, diagram buttons) stay as they are.
+- **Why:** the diagrams, card marks and footer sketch are the site's signature; chips and tags carry the same hand.
+- **Fill:** set `--sketch-fill` (tags use card white) so the fill follows the wobbly edge.
+- **Clipping:** the offset stroke reaches 1px past the box, so a list that clips its overflow needs 1px of padding on the right and bottom.
 
 ### Cards / Containers
 
@@ -301,7 +307,7 @@ The identity image is the "cap" mascot: a directional sprite sheet that turns it
 
 ### Footer
 
-Closes every page on the same paper ground, opened by a dashed seam in the column; its content keeps to the 672px column and only the closing sketch runs the full page width. The full name as a signature sits on its own row: Caveat 600 at 36px (32px on phones) over a hand-drawn rust underline, set level. Below it three columns share one top line: Contact (two short lines - email corrections, and the Work-with-me ask with a "Send me a note" link - then the live time in Colombo with a moss dot, client-only so the server render has no clock), Pages, and Elsewhere (socials with faint icons). Then the copyright and Back to top. The bottom edge is a hand-drawn sketch of Sri Lanka spanning the full page width - jungle hills with a waterfall that runs down into the sea, an elephant in a festival cloth, a white stupa with a gilded spire and prayer flags, the old Colombo clock tower, the Lotus Tower, a few city towers with a tuk-tuk and the coastal train in front, palms, an oruwa, and two stilt fishermen off the beach - drawn like the work card marks (rough 3.5px strokes, one swatch color per object with its light fill, small details such as windows kept). Below 600px it keeps that width and shows its left part, the hills to the Lotus Tower. Sources live in `content/site-diagrams/`.
+Closes every page on the same paper ground, opened by a dashed seam in the column; its content keeps to the 672px column and only the closing sketch runs the full page width. The full name as a signature sits on its own row: Caveat 600 at 36px (32px on phones) over a hand-drawn rust underline, set level. Below it three columns share one top line: Contact (two short lines - email corrections, and the Work-with-me ask with a "Send me a note" link - then the live time in Colombo, Sri Lanka with a moss dot, client-only so the server render has no clock), Pages, and Elsewhere (socials with faint icons). Then the copyright and Back to top. The bottom edge is a hand-drawn sketch of Sri Lanka spanning the full page width - a rocky mountain with a waterfall that runs down into the sea, a jungle of rain trees, tall flat-topped trees and ferns around it, a wild elephant, a white stupa with a gilded spire and prayer flags, the old Colombo clock tower, the Lotus Tower, a few city towers (windows on every one) with a tuk-tuk and an old coastal train in front - a steam engine with a chimney and a trail of smoke, its tender, and two maroon carriages with raised roofs, on a railway with sleepers - a grove of coconut palms by the beach, an oruwa, and two stilt fishermen off the beach - drawn like the work card marks (rough 3.5px strokes, one swatch color per object with its light fill, small details such as windows kept). Below 600px it keeps that width and shows its left part, the mountain and jungle to the Lotus Tower. Sources live in `content/site-diagrams/`.
 
 ### Security practice (home)
 

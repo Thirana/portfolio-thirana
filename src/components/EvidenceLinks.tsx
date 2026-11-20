@@ -23,7 +23,12 @@ export default function EvidenceLinks({
     <ul className={cn("flex flex-wrap gap-2", className)}>
       {items.map((item) => (
         <li key={`${item.label}-${item.href}`}>
-          <a href={item.href} target="_blank" rel="noreferrer" className="pill">
+          <a
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+            className="pill sketch sketch-pill"
+          >
             {item.label}
             <ArrowUpRight className="size-3.5 text-gl-text-muted" aria-hidden />
           </a>

@@ -59,7 +59,7 @@ export function WorkByline({ work }: { work: WorkMeta }) {
         {formatWorkDate(work.date)}
       </time>
       {work.draft ? (
-        <span className="rounded-full border border-dashed border-gl-border-strong px-2 py-px text-[12px] text-gl-text-muted">
+        <span className="sketch sketch-pill sketch-dashed rounded-full border border-dashed border-gl-border-strong px-2.5 py-0.5 text-[12px] text-gl-text-muted">
           Draft
         </span>
       ) : null}
@@ -78,7 +78,7 @@ function CardByline({ work }: { work: WorkMeta }) {
         {formatWorkDate(work.date)}
       </time>
       {work.draft ? (
-        <span className="rounded-full border border-dashed border-gl-border-strong px-2 py-px text-[12px] text-gl-text-muted">
+        <span className="sketch sketch-pill sketch-dashed rounded-full border border-dashed border-gl-border-strong px-2.5 py-0.5 text-[12px] text-gl-text-muted">
           Draft
         </span>
       ) : null}
@@ -104,7 +104,7 @@ export function HighlightTags({
     <ul
       className={
         singleLine
-          ? "flex min-w-0 flex-nowrap gap-1.5 overflow-hidden [mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] max-sm:[&>li:nth-child(n+3)]:hidden [&>li]:shrink-0"
+          ? "flex min-w-0 flex-nowrap gap-1.5 overflow-hidden py-px pr-px [mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] max-sm:[&>li:nth-child(n+3)]:hidden [&>li]:shrink-0"
           : "flex flex-wrap gap-1.5"
       }
     >

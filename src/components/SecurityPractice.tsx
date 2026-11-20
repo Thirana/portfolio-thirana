@@ -30,7 +30,7 @@ function StopMarker({ status }: { status: PracticeArea["status"] }) {
 function StatusBadge({ status }: { status: PracticeArea["status"] }) {
   const done = status === "completed";
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-gl-border px-2.5 py-0.5 font-sans text-[12px] text-gl-text-muted">
+    <span className="sketch sketch-pill inline-flex items-center gap-1.5 rounded-full border border-gl-border px-3 py-1 font-sans text-[12px] text-gl-text-muted">
       <span
         aria-hidden
         className={cn(

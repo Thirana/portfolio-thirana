@@ -38,7 +38,7 @@ export function LocalTime() {
     <span className="inline-flex items-center gap-1.5 tabular-nums">
       <span aria-hidden className="size-1.5 rounded-full bg-gl-swatch-1" />
       <time dateTime={now.toISOString()}>
-        {formatter.format(now).toLowerCase()} in Colombo
+        {formatter.format(now).toLowerCase()} in Colombo, Sri Lanka
       </time>
     </span>
   );

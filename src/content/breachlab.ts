@@ -34,7 +34,7 @@ export const breachLab = {
         "Privilege escalation",
         "Credential exposure",
         "Data exfiltration",
-        "Cloud IAM misconfiguration",
+        "Cloud network misconfiguration",
         "CI/CD pipeline misconfiguration",
       ],
       certificates: [
@@ -58,6 +58,7 @@ export const breachLab = {
       weaknesses: [
         "Information disclosure",
         "Broken access control (IDOR)",
+        "Business logic vulnerabilities",
         "Authentication and JWT flaws",
         "Cookie and session flaws",
         "SQL and command injection",

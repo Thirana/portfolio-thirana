@@ -57,7 +57,7 @@ export default function TechTabs() {
                     <Link
                       key={item.href}
                       href={item.href as Route<string>}
-                      className="pill group"
+                      className="pill sketch sketch-pill group"
                     >
                       <Icon
                         className="size-3.5 text-gl-text-muted"
