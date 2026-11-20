@@ -67,38 +67,48 @@ export function WorkByline({ work }: { work: WorkMeta }) {
   );
 }
 
-/** Two-line identity for cards: company on top, role and date beneath. */
+/** Company and date on one line; the role is the same on every card. */
 function CardByline({ work }: { work: WorkMeta }) {
   return (
-    <div className="flex items-center gap-2.5 font-sans">
-      <CompanyMark name={work.companyName} logo={work.companyLogo} size={28} />
-      <div className="min-w-0">
-        <p className="text-[14px] leading-tight font-semibold text-gl-text">
-          {work.companyName}
-        </p>
-        <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-[13px] leading-tight text-gl-text-faint">
-          <span>{work.role}</span>
-          <span aria-hidden>·</span>
-          <time dateTime={work.date} className="tabular-nums">
-            {formatWorkDate(work.date)}
-          </time>
-          {work.draft ? (
-            <span className="ml-0.5 rounded-full border border-dashed border-gl-border-strong px-2 py-px text-[12px] text-gl-text-muted">
-              Draft
-            </span>
-          ) : null}
-        </p>
-      </div>
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-[13px] text-gl-text-faint">
+      <CompanyMark name={work.companyName} logo={work.companyLogo} size={20} />
+      <span className="font-semibold text-gl-text">{work.companyName}</span>
+      <span aria-hidden>·</span>
+      <time dateTime={work.date} className="tabular-nums">
+        {formatWorkDate(work.date)}
+      </time>
+      {work.draft ? (
+        <span className="rounded-full border border-dashed border-gl-border-strong px-2 py-px text-[12px] text-gl-text-muted">
+          Draft
+        </span>
+      ) : null}
     </div>
   );
 }
 
-export function HighlightTags({ work }: { work: WorkMeta }) {
-  if (work.highlights.length === 0) return null;
+export function HighlightTags({
+  work,
+  limit,
+  singleLine = false,
+}: {
+  work: WorkMeta;
+  /** Show only the first few highlights. */
+  limit?: number;
+  /** Keep the tags on one row; whatever does not fit fades out at the edge. */
+  singleLine?: boolean;
+}) {
+  const highlights = work.highlights.slice(0, limit);
+  if (highlights.length === 0) return null;
 
   return (
-    <ul className="flex flex-wrap gap-1.5">
-      {work.highlights.map((highlight) => {
+    <ul
+      className={
+        singleLine
+          ? "flex min-w-0 flex-nowrap gap-1.5 overflow-hidden [mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] max-sm:[&>li:nth-child(n+2)]:hidden [&>li]:shrink-0"
+          : "flex flex-wrap gap-1.5"
+      }
+    >
+      {highlights.map((highlight) => {
         const Icon = HIGHLIGHT_ICONS[highlight.icon];
         return (
           <li key={highlight.label}>
@@ -120,6 +130,26 @@ export function HighlightTags({ work }: { work: WorkMeta }) {
   );
 }
 
+/**
+ * A small hand-drawn sketch of what the note is about, in the same rough
+ * style as the diagrams inside it, sitting on the card like a margin doodle.
+ */
+function CardMark({ src }: { src: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- static SVG sketch
+    <img
+      src={src}
+      alt=""
+      aria-hidden
+      width={56}
+      height={56}
+      loading="lazy"
+      decoding="async"
+      className="size-12 shrink-0 object-contain transition-transform duration-300 group-hover:-rotate-[8deg] sm:size-14"
+    />
+  );
+}
+
 type WorkCardProps = {
   work: WorkMeta;
   /** h2 on the /work index, h3 inside a home-page section. */
@@ -131,47 +161,35 @@ export default function WorkCard({ work, headingLevel = "h3" }: WorkCardProps) {
   const href = `/work/${work.slug}` as Route<string>;
 
   return (
-    <article className="card relative flow-root p-5 sm:p-6">
-      {work.cover ? (
-        // Floats top-right and lifts past the card edge on desktop, so the
-        // byline, title and summary wrap around it; stacks on top on phones.
-        // pointer-events-none lets clicks reach the card's stretched link.
-        <div className="pointer-events-none relative z-10 mb-4 overflow-hidden rounded-[10px] border border-gl-border bg-gl-bg shadow-gl sm:float-right sm:-mt-11 sm:-mr-2 sm:mb-3 sm:ml-4 sm:w-[12rem]">
-          {/* eslint-disable-next-line @next/next/no-img-element -- static SVG with inlined fonts */}
-          <img
-            src={work.cover.src}
-            alt={work.cover.alt}
-            width={work.cover.width}
-            height={work.cover.height}
-            loading="lazy"
-            decoding="async"
-            className="block h-auto w-full"
-          />
+    <article className="card group relative p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <CardByline work={work} />
+          <Heading
+            title={work.cardTitle ? work.title : undefined}
+            className="mt-3 text-[20px] leading-[1.3] font-semibold tracking-[-0.02em] text-gl-text sm:truncate sm:text-[21px]"
+          >
+            <Link
+              href={href}
+              className="after:absolute after:inset-0 after:rounded-[14px] after:content-['']"
+            >
+              {work.cardTitle ?? work.title}
+            </Link>
+          </Heading>
         </div>
-      ) : null}
+        {work.mark ? <CardMark src={work.mark} /> : null}
+      </div>
 
-      <CardByline work={work} />
-
-      <Heading className="mt-3.5 text-[22px] leading-[1.2] font-semibold tracking-[-0.025em] text-balance text-gl-text">
-        <Link
-          href={href}
-          className="after:absolute after:inset-0 after:rounded-[14px] after:content-['']"
-        >
-          {work.title}
-        </Link>
-      </Heading>
-
-      <p className="mt-2 max-w-[38rem] text-[15px] leading-[1.6] text-gl-text-muted">
+      <p className="mt-2 line-clamp-2 max-w-[38rem] text-[15px] leading-[1.6] text-gl-text-muted">
         {work.summary}
       </p>
 
-      <div className="mt-4">
-        <HighlightTags work={work} />
-      </div>
-
-      <div className="mt-5">
-        <span className="link-arrow">
-          Read the case study
+      <div className="mt-4 flex items-center gap-4">
+        <div className="min-w-0 flex-1">
+          <HighlightTags work={work} limit={3} singleLine />
+        </div>
+        <span className="link-arrow shrink-0">
+          Read<span className="sr-only"> the case study</span>
           <ArrowRight className="size-3.5" aria-hidden />
         </span>
       </div>

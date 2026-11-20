@@ -1,15 +1,12 @@
 ---
 title: "Session management, part 1: sessions the backend can trust and end"
+cardTitle: "Session management, part 1: the backend"
 date: "2026-10-22"
 summary: "I rebuilt how the MO Marketplace backend issues and checks login sessions: short-lived asymmetric access tokens, rotating refresh tokens with theft detection, sessions that can be ended per device or per person, and one account per person, so MO's internal staff can also shop without a second account - shipped without logging anyone out."
 company: "mo-marketplace"
 featured: true
 priority: 2
-cover:
-  src: "/diagrams/work/session-management-backend/cover.svg"
-  alt: "Sketch: one login is a chain of refresh tokens; a stolen copy of a used token reaches the refresh check, reuse is detected, and the whole chain is revoked."
-  width: 520
-  height: 340
+mark: "/diagrams/work/session-management-backend/mark.svg"
 highlights:
   - icon: "key"
     label: "Asymmetric signing"

@@ -78,14 +78,6 @@ export type WorkGlanceRow = {
   value: string;
 };
 
-/** Small preview shown on work cards; an SVG or image under /public. */
-export type WorkCover = {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-};
-
 export type WorkMeta = {
   slug: string;
   title: string;
@@ -100,7 +92,10 @@ export type WorkMeta = {
   highlights: WorkHighlight[];
   glance: WorkGlanceRow[];
   outcomes: string[];
-  cover?: WorkCover;
+  /** Short title for cards; the full title is used everywhere else. */
+  cardTitle?: string;
+  /** Hand-drawn sketch shown on the card, e.g. /diagrams/work/<slug>/mark.svg. */
+  mark?: string;
   featured: boolean;
   priority: number;
   draft: boolean;
@@ -333,25 +328,17 @@ function normalizeWorkMeta(
     return { label: item.label as string, value: item.value as string };
   });
 
-  let cover: WorkCover | undefined;
-  if (data.cover !== undefined) {
-    const raw = toRecords([data.cover])[0] ?? {};
-    assertWorkField(
-      typeof raw.src === "string" &&
-        raw.src.startsWith("/") &&
-        typeof raw.alt === "string" &&
-        typeof raw.width === "number" &&
-        typeof raw.height === "number",
-      fileName,
-      "cover needs src (starting with /), alt, width and height",
-    );
-    cover = {
-      src: raw.src as string,
-      alt: raw.alt as string,
-      width: raw.width as number,
-      height: raw.height as number,
-    };
-  }
+  assertWorkField(
+    data.cardTitle === undefined || typeof data.cardTitle === "string",
+    fileName,
+    "cardTitle must be a string",
+  );
+  assertWorkField(
+    data.mark === undefined ||
+      (typeof data.mark === "string" && data.mark.startsWith("/")),
+    fileName,
+    "mark must be a path starting with /",
+  );
 
   const defaultRole =
     experience?.role?.title ?? experience?.positions[0]?.title ?? "";
@@ -369,7 +356,8 @@ function normalizeWorkMeta(
     highlights,
     glance,
     outcomes: toStringArray(data.outcomes),
-    cover,
+    cardTitle: data.cardTitle as string | undefined,
+    mark: data.mark as string | undefined,
     featured: data.featured === true,
     priority:
       typeof priority === "number" && Number.isFinite(priority)

@@ -21,7 +21,7 @@ Pick this up once the new blog posts / projects are in.
 - [x] Published `content/work/admin-panels-cloud-run-iap.mdx` (draft flag removed 2026-11-04).
 - [x] Production `/work` is no longer empty now that the first case study is published.
 - [x] Link Experience timeline entries to their case studies (2026-11-20: a "Case studies" list inside each expanded entry).
-- [x] Card thumbnails: optional `cover` frontmatter (src, alt, width, height) shown top-right on work cards.
+- [x] Card marks (2026-11-20, replaced the `cover` thumbnails): optional `mark` frontmatter (path to a small hand-drawn SVG) and optional `cardTitle` (one-line title for cards).
 - [x] Mermaid diagrams and tables scroll sideways inside their card on phones (2026-11-20: tables stack per row with column labels via `src/lib/rehype-table-labels.ts`; Mermaid fits the width, Expand for full size).
 - [ ] Next case study from `~/Documents/Personals/mo-work-experience`.
 
@@ -34,7 +34,7 @@ Pick this up once the new blog posts / projects are in.
   - Render: `cd .claude/skills/excalidraw-diagram-skill/references && uv run python render_excalidraw.py <file> --output <png> --svg <svg>`
 - **Tables:** no white card on work pages; ruled top/bottom and between rows, text aligned to the prose (`.work-prose .mdx-table` in `globals.css`). Blog tables keep the card.
 - **Callouts:** `<Callout title="...">` (green by default; `tone="warning"` / `"note"`) for the one sentence a reader must not miss, e.g. the goal.
-- **Card cover:** a small Excalidraw sketch (paper `#faf9f7` background is fine here; it sits in a framed thumbnail).
+- **Card mark:** one simple hand-drawn object for the note's topic (shield, key, cookie), drawn in Excalidraw with solid light fills, no background, exported to `public/diagrams/work/<slug>/mark.svg`. Sources in `content/work/diagrams/marks/`. Keep `cardTitle` short enough for one line (about 40 characters).
 - **Copy:** never frame the work by how long it took (no "one day", no clock-time timelines) - it undersells the scope. Present the user's own setup (e.g. release-please) as their work. No hostnames, IPs, project IDs, SA emails or colleague names. Don't hint at the naming pattern either (no `staging.<domain>` / `admin-staging.<domain>`): say "the staging website", "the admin panel".
 
 ## Audit fixes (from the 2026-11-03 audit, score 14/20)
