@@ -5,6 +5,7 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkGfm from "remark-gfm";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
+import rehypeTableLabels from "./src/lib/rehype-table-labels";
 import type { Options as PrettyCodeOptions } from "rehype-pretty-code";
 
 const prettyCodeOptions: PrettyCodeOptions = {
@@ -18,7 +19,12 @@ const withMDX = createMDX({
   options: {
     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
     // rehype-slug gives every heading an id, so sections can be deep-linked.
-    rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+    // rehypeTableLabels names each table cell after its column, for phones.
+    rehypePlugins: [
+      rehypeSlug,
+      rehypeTableLabels,
+      [rehypePrettyCode, prettyCodeOptions],
+    ],
   },
 });
 

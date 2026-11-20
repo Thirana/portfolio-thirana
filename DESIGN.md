@@ -223,7 +223,7 @@ A single centered column, 42rem (672px) max-width with 24px side gutters, used b
 
 Vertical rhythm is section-based: page sections stack 28px apart on mobile and 32px from 640px up, each separated by a dashed seam (so roughly 60px between one section's end and the next chip); inside a section the pill heading sits 20px (mobile) / 24px (desktop) above its content. Cards stack 16px apart. The page starts 32px below the header (48px from 640px up), and the footer sits 64px below the last section.
 
-The one breakpoint that matters is 640px (`sm`). Below it: the hero mascot shrinks from 208px to 160px and stacks above the wordmark, the desktop nav hides behind a menu pill that opens a right-side sheet drawer (82vw, max 320px), post-list dates move above titles, and the Work-with-me card stacks its button under the text. Dense content uses progressive disclosure (collapsible experience entries, code toggles), never hidden content.
+The one breakpoint that matters is 640px (`sm`). Below it: the hero mascot shrinks from 208px to 160px and stacks above the wordmark, the desktop nav hides behind a menu pill that opens a right-side sheet drawer (82vw, max 320px), post-list dates move above titles, and the Work-with-me card stacks its button under the text. Dense content uses progressive disclosure (collapsible experience entries, code toggles), never hidden content. Content tables stack on phones: each row becomes a block, the first cell reads as its heading and every other value is labelled with its column name. Diagrams fit the column width and offer Expand for a full-size view.
 
 The sticky header is transparent at rest and, after 16px of scroll, becomes 90% paper with a backdrop blur and a 1px hairline underline. On home, the header wordmark stays invisible until scroll, because the hero already shows the name.
 
@@ -295,7 +295,7 @@ Tactile and quiet: everything is a pill, and only one is solid.
 
 ### Mascot and stamp (signature)
 
-The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card that closes every page. The mascot stands in for a portrait; do not add a photo beside it.
+The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. The same interactive mascot opens the About page at 128px (112px mobile), beside the page title. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card that closes every page. The mascot stands in for a portrait; do not add a photo anywhere on the site.
 
 ### Company logos
 

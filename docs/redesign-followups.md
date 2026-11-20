@@ -20,9 +20,9 @@ Pick this up once the new blog posts / projects are in.
 
 - [x] Published `content/work/admin-panels-cloud-run-iap.mdx` (draft flag removed 2026-11-04).
 - [x] Production `/work` is no longer empty now that the first case study is published.
-- [ ] Link Experience timeline entries to their case studies ("Read the case study").
+- [x] Link Experience timeline entries to their case studies (2026-11-20: a "Case studies" list inside each expanded entry).
 - [x] Card thumbnails: optional `cover` frontmatter (src, alt, width, height) shown top-right on work cards.
-- [ ] Mermaid diagrams and tables scroll sideways inside their card on phones (all posts, not just work); consider a mobile layout.
+- [x] Mermaid diagrams and tables scroll sideways inside their card on phones (2026-11-20: tables stack per row with column labels via `src/lib/rehype-table-labels.ts`; Mermaid fits the width, Expand for full size).
 - [ ] Next case study from `~/Documents/Personals/mo-work-experience`.
 
 ### Style for every work case study (agreed 2026-11-04)
@@ -41,13 +41,13 @@ Pick this up once the new blog posts / projects are in.
 
 1. [ ] **[P1] Capability table rows are mismatched on every project page.**
        `src/app/projects/[slug]/page.tsx:107-123` zips `domains` / `constraints` / `metrics` by index, and the lists don't line up
-       (e.g. Marketplace: "Database Integrity" next to "Notifications: Persisted intent"; Grow Logs has 5 domains but 3 constraints, so the last constraint repeats).
+       (e.g. Marketplace: "Database Integrity" next to "Notifications: Persisted intent"; Grow Logs (since removed) had 5 domains but 3 constraints, so the last constraint repeats).
        Fix: replace with an explicit frontmatter list of `{ domain, focus, strategy }` rows, validate it in `src/lib/content.ts`, and rewrite the data for all projects.
 2. [ ] **[P2] Heading skip on `/projects`.** `src/components/ProjectCard.tsx:30` renders `h3` directly under the page `h1`. Add a heading-level prop (h2 on `/projects`, h3 on home).
 3. [ ] **[P2] Remove the stat strips under the Writing and Projects page titles.**
        "1 tracks" (forced by `trackCount || 1` in `src/app/blog/page.tsx:46`), ISO "2026-05-20 latest", "3 evidence links" - filler that PRODUCT.md lists as an anti-reference ("hero metrics").
 4. [ ] **[P2] Replace em/en dashes in blog posts** (67 across all 7; 24 in `session-security-in-practice.mdx`). Mostly `—` -> `-`, read each one. Check any new posts too.
-5. [ ] **[P3] About page portrait** (`/images/square.png`) conflicts with DESIGN.md ("the mascot stands in for a portrait"). Decide: keep it and update DESIGN.md, or swap to the mascot.
+5. [x] **[P3] About page portrait** (2026-11-20: replaced with the interactive mascot; DESIGN.md updated) (`/images/square.png`) conflicts with DESIGN.md ("the mascot stands in for a portrait"). Decide: keep it and update DESIGN.md, or swap to the mascot.
 6. [ ] **[P3] Line length.** Card summaries run ~94 chars/line on desktop; About lede isn't capped at 34rem like the home lede.
 7. [ ] **[P3] Mermaid diagrams.** `rect rgb(...)` tints in the MDX sit outside the palette; labels render small on desktop (Expand exists).
 

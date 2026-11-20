@@ -93,7 +93,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     table: ({ className, ...props }) => (
       <div className="mdx-table not-prose my-6 overflow-x-auto rounded-[14px] bg-gl-surface shadow-gl [scrollbar-width:thin]">
         <table
-          className={`w-full min-w-[36rem] border-collapse font-sans text-[14px] leading-[1.5] [&_code]:whitespace-nowrap [&_td]:border-t [&_td]:border-gl-border [&_td]:px-4 [&_td]:py-2.5 [&_td]:align-top [&_td]:text-gl-text-muted [&_td:first-child]:min-w-[8rem] [&_td:first-child]:text-gl-text [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-medium [&_th]:text-gl-text ${
+          className={`w-full border-collapse sm:min-w-[36rem] font-sans text-[14px] leading-[1.5] [&_code]:whitespace-nowrap [&_td]:border-t [&_td]:border-gl-border [&_td]:px-4 [&_td]:py-2.5 [&_td]:align-top [&_td]:text-gl-text-muted sm:[&_td:first-child]:min-w-[8rem] [&_td:first-child]:text-gl-text [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-medium [&_th]:text-gl-text ${
             className ?? ""
           }`}
           {...props}

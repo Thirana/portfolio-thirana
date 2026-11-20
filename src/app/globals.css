@@ -550,3 +550,65 @@ html {
 .work-prose .mdx-table :is(th, td):last-child {
   padding-right: 0;
 }
+
+/*
+ * Phones: every table row becomes a block instead of the table scrolling
+ * sideways. The first cell reads as the row's heading; each other cell is
+ * named by its column, which rehype-table-labels copies into data-label.
+ * Unlayered so it wins over the table utilities in mdx-components.
+ */
+@media (max-width: 639.98px) {
+  .mdx-table :is(table, tbody, tr, td) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mdx-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .mdx-table tr {
+    padding: 12px 16px;
+  }
+
+  .mdx-table tr + tr {
+    border-top: 1px solid var(--gl-border);
+  }
+
+  .mdx-table td {
+    border-top: 0;
+    padding: 0;
+  }
+
+  .mdx-table td:first-child {
+    font-weight: 500;
+  }
+
+  .mdx-table td + td {
+    margin-top: 8px;
+  }
+
+  .mdx-table td + td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 1px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gl-text-faint);
+  }
+
+  .mdx-table code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .work-prose .mdx-table tr {
+    padding-inline: 0;
+  }
+}

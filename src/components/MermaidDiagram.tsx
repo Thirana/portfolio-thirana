@@ -160,7 +160,7 @@ export default function MermaidDiagram({
               chart={chart}
               renderId={`${renderBaseId}-inline`}
               ariaLabel="Mermaid diagram"
-              className="[&_svg]:mx-auto [&_svg]:block [&_svg]:h-auto [&_svg]:max-w-none [&_svg]:min-w-[760px] md:[&_svg]:min-w-0"
+              className="[&_svg]:mx-auto [&_svg]:block [&_svg]:h-auto [&_svg]:w-full [&_svg]:max-w-full"
             />
           </div>
         </div>
