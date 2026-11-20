@@ -1,0 +1,342 @@
+---
+title: "Session management, part 2: keeping shoppers signed in on the website"
+date: "2026-11-20"
+draft: true
+summary: "I moved the MO Marketplace website's refresh token into an HttpOnly cookie and built the browser side of the session: a real CORS allowlist and an origin check on the server, one layer on the website that owns every token, and refreshes that work across tabs - so shoppers stay signed in and a backend outage never logs anyone out."
+company: "mo-marketplace"
+featured: true
+priority: 3
+cover:
+  src: "/diagrams/work/session-management-website/cover.svg"
+  alt: "Sketch: inside the browser, a page script cannot read the HttpOnly refresh cookie; the browser sends the cookie to the backend only on login, refresh and logout."
+  width: 520
+  height: 340
+highlights:
+  - icon: "lock"
+    label: "HttpOnly refresh cookie"
+  - icon: "shield"
+    label: "CORS allowlist and origin check"
+  - icon: "workflow"
+    label: "One layer owns the tokens"
+  - icon: "route"
+    label: "Refresh across tabs"
+tech:
+  [
+    "TypeScript",
+    "HttpOnly cookies",
+    "CORS",
+    "Web Locks API",
+    "BroadcastChannel",
+  ]
+glance:
+  - label: "Before"
+    value: "The website received its refresh token in the JSON response body, where page scripts could read it"
+  - label: "After"
+    value: "The refresh token lives in an HttpOnly cookie, the access token only in memory, and one layer renews it across reloads and tabs"
+outcomes:
+  - "No page script can read the website's refresh token. A stolen access token is useful for minutes."
+  - "Shoppers stay signed in across reloads and tabs, and tabs never race each other into a logout."
+  - "A backend outage or a permissions error never logs anyone out. Being signed out is a normal state for a guest, not an error."
+  - "The server only accepts cookies from the website's own origins, and checks the origin before refresh or logout runs."
+  - "Each kind of mistake is prevented by how the code is built: refresh cannot call itself, ordinary calls send no cookie, and one function ends every session."
+---
+
+This is the second of two notes on rebuilding session management at MO Marketplace. [Part 1](/work/session-management-backend) built sessions the server can trust and end. This one is the website, where the browser has its own rules about cookies, origins and tabs.
+
+The general mechanics - why a refresh token belongs in an `HttpOnly` cookie, and why two refreshes at once look like theft - are in [Session Security in Practice](/blog/session-security-in-practice#5-deliver-tokens-via-http-only-cookies). This note covers the decisions the website needed on top of them.
+
+## The problem
+
+Part 1 ended with every client receiving its refresh token in the JSON response body. That suits the mobile app, which keeps it in the phone's secure storage. In a browser, anything JavaScript can read, an injected script can read too: an XSS bug, a compromised package or a bad third-party tag. A refresh token is long-lived, so a stolen one is a long-lived session.
+
+Moving it into a cookie is the standard answer. The website added its own constraints on top:
+
+- **Shoppers expect to stay signed in.** Coming back the next day should not mean logging in again.
+- **Most visitors are guests.** Being signed out is a normal state for a shop, not an error, and the site has to work fully without a session.
+- **Shoppers open several tabs.** Each tab has its own memory, but they all share one cookie, and refresh tokens are single-use.
+- **A backend outage must not log anyone out.** "The server did not answer" is not the same as "the session ended".
+
+<Callout title="The goal">
+
+Keep the long-lived credential where page scripts cannot read it, keep shoppers signed in across reloads and tabs, and never log anyone out because the backend had a bad minute.
+
+</Callout>
+
+## The design at a glance
+
+| Concern             | What I chose                                                                                    |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| Refresh token       | An `HttpOnly`, `Secure`, `SameSite=Strict` cookie, set by the backend and sent only to auth routes |
+| Access token        | Kept in memory only, never stored; restored from the cookie on each page load                   |
+| Cookies on requests | Only login, refresh and logout send credentials                                                 |
+| Which site is asking | A per-environment allowlist maps each browser origin to a surface; refresh and logout check it |
+| Private calls       | One wrapper: token attached at send time, `401` refreshes and retries once, `403` never logs out |
+| Several tabs        | A lock around refresh, and a channel that shares the new token, login and logout                |
+| Ending a session    | One `endSession()` function that every exit path uses                                           |
+
+The first half of the work was on the server, because a cookie changes what the server has to check. The second half is the website.
+
+## The server: delivering the refresh token by cookie
+
+How the refresh token is delivered became another per-surface setting on the server: the mobile app gets it in the response body, browsers get a cookie. Every login route and the refresh route use one helper for this, so no route has its own delivery logic.
+
+```http
+HTTP/1.1 201 Created
+Set-Cookie: <name>=<value>; HttpOnly; Secure; SameSite=Strict; Path=<auth>
+
+{ "token": "<access token>", ... }
+```
+
+| Attribute         | What it does                                                         |
+| ----------------- | -------------------------------------------------------------------- |
+| `HttpOnly`        | JavaScript cannot read it                                            |
+| `Secure`          | sent over HTTPS only                                                 |
+| `SameSite=Strict` | not sent on requests that other sites start                          |
+| `Path`            | sent only to the auth routes, not with every API call                |
+| no `Domain`       | sent only to the exact API host that set it, not to other subdomains |
+
+- **`SameSite=Strict` protects refresh and logout from cross-site requests**, so those two routes need no separate CSRF token.
+- **The refresh route sits inside the cookie's path.** Versioned API routes do not, so the website calls the unversioned refresh route; a versioned one would arrive without the cookie.
+- **The website can never see the cookie.** The only way to find out whether a shopper has one is to call refresh.
+
+### The cookie required a real CORS allowlist
+
+Browsers do not send cookies to an API whose CORS setting allows every origin, and this API allowed every origin. So the cookie made a strict allowlist necessary.
+
+The list is in code, one map per environment. Each allowed origin is mapped to the surface it logs into, and the CORS list is the keys of that map:
+
+```ts
+const ORIGIN_SURFACE: Record<Env, Record<string, Surface>> = {
+  development: { "<local admin panel>": STAFF, "<local website>": CUSTOMER },
+  staging: { "<staging admin panel>": STAFF, "<staging website>": CUSTOMER },
+  production: { "<admin panel>": STAFF, "<website>": CUSTOMER },
+};
+```
+
+- **An origin cannot be allowed without saying which surface it belongs to**, because the CORS list comes from the same map.
+- **The server refuses to start in an environment it has no list for**, instead of falling back to a default.
+- **Origins are compared as exact strings**: scheme, host and port, with no trailing slash.
+
+### CORS does not stop a request
+
+CORS tells the browser whether a page may _read_ a response. A page from a disallowed origin can still _send_ the request: the handler runs, and the browser hides the response afterwards. For a route that rotates or revokes a session, running the handler is what matters.
+
+There is a second gap. `SameSite` compares sites, not origins:
+
+| Term   | Made of                                      | Decides                                         |
+| ------ | -------------------------------------------- | ----------------------------------------------- |
+| Origin | scheme + full host + port                    | CORS, whether credentials are sent, the surface |
+| Site   | scheme + registrable domain (`example.com`) | `SameSite`                                      |
+
+Every subdomain of the company's domain counts as the same site, so a page on any of them could make the browser send the refresh cookie. So refresh and logout now check the `Origin` header before the handler runs:
+
+- **An unknown origin is refused** with a `403`.
+- **A request with a refresh cookie but no `Origin` is refused.** Browsers always send one on these requests.
+- **No origin and no cookie is the mobile app**, which sends its refresh token in the body.
+
+This does not stop a command-line client, which can send any `Origin` it likes, and it is not meant to. A command-line client has no shopper's cookie jar, so it would still need a real token.
+
+Staging and production are also the same site, so `SameSite` does not keep them apart. Only the origin lists do, and checking that no staging origin is in the production list is part of every release.
+
+### One cookie name per surface
+
+A browser stores a cookie under **host + path + name**. The port and scheme are not part of it, so a different origin does not mean a different cookie. The admin panel and the website call the same API host. With one cookie name, they would share one slot in the browser, and a staff member using both in the same browser would see this:
+
+1. Logging in on the website overwrites the admin panel's cookie.
+2. The admin panel refreshes with the website's token and gets a token for the wrong surface.
+3. The website then presents a token that has already been rotated. That is exactly what reuse detection looks for, so the whole session is revoked.
+
+The result is random logouts in both apps, and logs that show a theft that never happened. So each surface has its own cookie name, and the refresh route works out the surface from the `Origin` and reads only that surface's cookie:
+
+- **A token from another surface gets a plain `401` before anything is written.** It is not treated as reuse, because that would let one stale tab end a healthy session.
+- **Logout clears only the caller's cookie.** Logging out of the admin panel does not end a shopping session in the same browser.
+
+The name was chosen before any browser held a refresh cookie, so it never had to be renamed. A rename after release would have logged every user out once.
+
+## The website: one layer owns the tokens
+
+On the website, screens never touch a token. They see a status and a user, and everything else happens in one layer:
+
+<Diagram
+  src="/diagrams/work/session-management-website/website-layers.svg"
+  alt="The website's layers, top to bottom. Screens use useSession, useLogin and useLogout and see a status and a user, never a token. The session provider makes one check per page load: refresh from the cookie, then load the user. authFetch attaches the token at send time, refreshes and retries once on a 401, and throws a 403 without logging anyone out; private calls go from it to the backend with a Bearer access token. The session and token store is the only code that holds a token: the access token in memory, one refresh at a time, a refresh timer and endSession. It sends login, refresh and logout to the backend, and the browser adds the cookie. It also talks to other tabs in the same browser: they take turns to refresh and share the token, login and logout."
+  width={730}
+  height={676}
+  caption="Only the store holds a token. Every other layer asks it."
+/>
+
+Login, refresh, logout and every private call go **straight from the browser to the backend**, never through the website's own server. The cookie lives on the backend's host, and the backend identifies the website by the browser's `Origin`; a hop through the website's server would lose both. The trade-off is that the website's server cannot render logged-in content, such as the shopper's name, in the first HTML. Those parts render in the browser.
+
+### The access token stays in memory
+
+The access token lives in a module variable, never in `localStorage` or `sessionStorage`, so a script cannot copy a credential that outlives the page. This limits what XSS can do; it does not prevent XSS. A script running in the page can still make calls while it runs.
+
+The cost is that a reload clears it. So every page load starts with one session check:
+
+1. If a token is in memory, use it. Otherwise call refresh, and the browser adds the cookie.
+2. If refresh succeeds, load the current user. If it returns `401`, the visitor is a guest.
+
+Until that check settles, the status is `loading`, so the header does not show "Log in" to a shopper who is logged in. A failed check retries with backoff; an answered one is not repeated until something changes.
+
+### Cookies only on the three auth calls
+
+A cross-origin response can only set or replace the session cookie if the request opted in to credentials. `fetch` already denies this by default: its `credentials` default is `"same-origin"`, and the website and the API are different origins. So ordinary calls send no cookie, and any `Set-Cookie` in their responses is ignored.
+
+Only login, refresh and logout pass `credentials: "include"`. The safe setting is the default, so there is no rule to enforce - only three calls that opt in.
+
+### One wrapper for private calls
+
+Every call to the backend goes through one `request()` function, which turns each failure into one of four kinds. The decisions after that are made on the kind:
+
+| Status                         | Kind           | Meaning                    |
+| ------------------------------ | -------------- | -------------------------- |
+| `401`                          | `unauthorized` | not logged in              |
+| `403`                          | `forbidden`    | logged in, but not allowed |
+| no answer, `408`, `429`, `5xx` | `temporary`    | worth retrying             |
+| any other `4xx`                | `invalid`      | the request is wrong       |
+
+Private calls go through `authFetch()`, which wraps `request()`:
+
+1. **If there is no token yet, it waits for the page-load check** instead of sending a call that is sure to fail.
+2. **It attaches the current token when the call is sent**, not when it was created.
+3. **On a `401`, it refreshes and retries once.** If the token already changed while the call was out, because another call refreshed, it skips the refresh and retries with the new token.
+4. **A `401` from refresh, or a second `401` on the retry, ends the session.**
+5. **A `403` and every other error is thrown unchanged.** A refresh would give the same user the same permissions, so it would fail the same way.
+
+<CodeToggle title="Show authFetch() (simplified)">
+
+```ts
+export async function authFetch<T>(path: string, init: RequestInit = {}) {
+  await sessionReady(); // wait for the page-load check
+  const sent = tokenStore.get();
+  try {
+    return await request<T>(path, withBearer(init, sent));
+  } catch (error) {
+    if (!isApiError(error, "unauthorized")) throw error; // 403 and the rest
+    if (tokenStore.get() === sent) await refreshAccessToken(); // a 401 here ends the session
+    try {
+      return await request<T>(path, withBearer(init, tokenStore.get())); // retry once
+    } catch (retryError) {
+      if (isApiError(retryError, "unauthorized")) endSession();
+      throw retryError;
+    }
+  }
+}
+```
+
+</CodeToggle>
+
+Login and refresh do **not** go through `authFetch()`. They call `request()` directly, so there is no refresh code in their path, and a `401` from refresh cannot start another refresh. That is guaranteed by how the code is built, not by an `if` that someone could break later. Logout is the exception: it goes through `authFetch()`, because the server's logout needs a valid access token, and after a shopper has been idle the token is refreshed first.
+
+### Refreshing before the token expires
+
+Waiting for a `401` costs a failed call, a refresh and a retry every time the access token expires. So two more pieces sit in the store:
+
+- **One refresh at a time in a tab.** The in-flight refresh is kept as a promise, and every caller in the tab gets the same one. Any number of `401`s, the page-load check and the timer share a single refresh. A tab runs JavaScript on one thread, so this needs no lock inside the tab.
+- **A refresh timer.** Each time a token is stored, a timer is set for shortly before it expires, minus a random few seconds. All tabs share one token, and the random offset stops their timers from firing together.
+
+The timer is only there for speed. Background tabs throttle timers and a sleeping laptop runs none, so the `401` path in `authFetch()` is what keeps sessions correct.
+
+## Several tabs, one cookie
+
+Each tab has its own memory: its own token, in-flight refresh and timer. All tabs share one cookie, and every refresh rotates it. If two tabs refresh at the same moment with the same cookie, one wins and the other gets `401` "already used" - which the losing tab reads as a session that has ended:
+
+<Diagram
+  src="/diagrams/work/session-management-website/tabs-refresh.svg"
+  alt="Side by side. Without a lock, both tabs refresh at the same moment with cookie R1. Tab A wins and gets a new token. Tab B loses with a 401, already used, so it ends the session and tells every tab: the shopper is logged out of every tab, though nothing was stolen. With a lock, tab A takes the lock, refreshes with cookie R1, stores the token and tells the other tabs, then releases the lock. Tab B waits for the lock the whole time, then gets it, sees the new token and skips the call. One refresh, and every tab has the new token."
+  width={760}
+  height={550}
+  caption="The lock prevents the race. The second tab checks before it calls."
+/>
+
+- **A Web Lock around refresh.** The refresh runs inside `navigator.locks.request()`, so tabs take turns. Inside the lock, a tab first checks whether another tab already stored a fresh token, and if so uses it and skips the call.
+- **A fallback for browsers without Web Locks.** If refresh answers "already used", the tab retries once. The winning tab's new cookie is already in the shared cookie jar, so the retry succeeds.
+
+<CodeToggle title="Show the refresh inside the lock (simplified)">
+
+```ts
+let refreshing: Promise<string> | null = null;
+
+export function refreshAccessToken(): Promise<string> {
+  if (refreshing) return refreshing; // one refresh at a time in this tab
+  const before = tokenStore.get();
+  refreshing = navigator.locks
+    .request("auth-refresh", async () => {
+      // tabs take turns
+      const current = tokenStore.get();
+      if (current && current !== before && !expiresSoon(current)) {
+        return current; // another tab already refreshed
+      }
+      const { token } = await refreshToken(); // bare request; the browser adds the cookie
+      tokenStore.set(token);
+      tabs.post({ type: "token", token });
+      return token;
+    })
+    .finally(() => {
+      refreshing = null;
+    });
+  return refreshing;
+}
+```
+
+</CodeToggle>
+
+The tabs keep each other in step with a `BroadcastChannel`. It only reaches tabs of the same origin, and a tab does not receive its own messages:
+
+| Message  | Sent on               | What the other tabs do                                   |
+| -------- | --------------------- | -------------------------------------------------------- |
+| `token`  | every refresh         | store it and reset their timer                           |
+| `login`  | login, with the user  | store the token and show the user, without loading it again |
+| `logout` | any end of a session  | end their own session, without sending the message again |
+
+## When a session counts as ended
+
+Logouts spread to every tab, so deciding when a session has ended matters more on the website than anywhere else. Only one answer ends it:
+
+| Refresh result                    | Meaning                                       | What the website does                    |
+| --------------------------------- | --------------------------------------------- | ---------------------------------------- |
+| `200`                             | a new token                                   | continue                                 |
+| `401`                             | expired, revoked, logged out elsewhere, reuse | **end the session**                      |
+| `403` (origin refused)            | a setup mistake                               | **keep the session**, report the error   |
+| no answer, `5xx`, `408`, `429`    | unknown: network, restart, overload           | **keep the session**, retry later        |
+
+- **A `403` keeps the session.** Logging out cannot fix an origin missing from the allowlist, and it would hide the real problem.
+- **Temporary failures keep it too.** Treating "no answer" as "logged out" would log every tab out during a short backend outage.
+
+### One function ends every session
+
+A session can end from several places: logout, a `401` from refresh, a `401` after a retry, or another tab logging out. All of them call one function, `endSession()`, which:
+
+1. clears the access token,
+2. cancels the refresh timer,
+3. clears the website's stored data, except the guest cart and the last order, which are not tied to the login,
+4. tells the other tabs, unless the call came from another tab,
+5. tells the session layer, which clears every cached private response and sets the session to empty.
+
+Because every exit path uses it, none can skip a step. It never calls the backend, so it always works. It does not redirect anywhere either: guests are normal on a shop, so screens simply show the guest state.
+
+Logout itself calls the backend first, so the server revokes the session and clears the cookie (the website [cannot delete an `HttpOnly` cookie itself](/blog/session-security-in-practice#5-deliver-tokens-via-http-only-cookies)). `endSession()` runs after it whether or not the call succeeds, so the screen always logs out.
+
+### What screens see
+
+`useSession()` returns three things:
+
+- **`status`**: `loading`, `authenticated` or `guest`.
+- **`user`**: the current user, or `null`.
+- **`error`**: `null`, a `temporary` error (the backend did not answer; it keeps retrying) or a `config` error (the backend refused this site's origin).
+
+If the backend is down when a page loads, the status is `guest` with a `temporary` error. Nothing is cleared, so the shopper is signed back in automatically when the backend returns. Private screens can use the error to say "can't reach the server" instead of "please log in". Keeping the error separate means every screen still handles only three statuses.
+
+## Where it started: the admin panel
+
+The website started from the admin panel's session design and changed it where a shop needs something different. It uses `fetch` with one wrapper instead of interceptors, and gets safe credentials from `fetch`'s default instead of forcing them off. A lock prevents the refresh race between tabs instead of recovering after it. A `403` from refresh and temporary failures keep the session instead of ending it, and ending a session shows the guest state instead of redirecting to a login page.
+
+## Why this mattered
+
+- **No page script can read the refresh token.** A stolen access token is useful for minutes.
+- **Shoppers stay signed in** across reloads and tabs, and tabs never race each other into a logout.
+- **Outages do not log anyone out.** Only a `401` from refresh ends a session; a `403` or a server that did not answer never does.
+- **The browser rules are enforced on the server**: an exact allowlist, an origin check before refresh and logout, and one cookie per surface.
+- **Mistakes are prevented by design**, not by checks: refresh cannot call itself, ordinary calls send no cookie, and one function ends every session.
+
+Together with [Part 1](/work/session-management-backend), sessions at MO Marketplace can now be trusted, renewed and ended on the server, and the website keeps shoppers signed in without holding a credential that page scripts can read.
