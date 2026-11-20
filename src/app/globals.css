@@ -71,6 +71,8 @@
   --font-serif: var(--font-erode), ui-serif, Georgia, serif;
   --font-mono:
     var(--font-jetbrains-mono), ui-monospace, "JetBrains Mono", monospace;
+  /* Handwriting for the footer signature only */
+  --font-signature: var(--font-caveat), "Segoe Print", cursive;
 
   /* GL color utilities */
   --color-gl-bg: var(--gl-bg);

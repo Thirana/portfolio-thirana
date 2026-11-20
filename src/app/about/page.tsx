@@ -20,6 +20,7 @@ import {
 } from "@/lib/content";
 import { Mascot } from "@/components/Mascot";
 import TechTabs from "@/components/TechTabs";
+import { WorkWithMe } from "@/components/WorkWithMe";
 import FeaturedWorkTabs from "@/components/FeaturedWorkTabs";
 import Section, { Seam } from "@/components/Section";
 import { siteConfig } from "@/lib/site";
@@ -182,6 +183,9 @@ export default async function AboutPage() {
           ))}
         </dl>
       </Section>
+
+      {/* The only place the Work-with-me card appears. */}
+      <WorkWithMe className="mt-12! sm:mt-14!" />
     </div>
   );
 }

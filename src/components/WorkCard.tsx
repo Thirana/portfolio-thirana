@@ -104,7 +104,7 @@ export function HighlightTags({
     <ul
       className={
         singleLine
-          ? "flex min-w-0 flex-nowrap gap-1.5 overflow-hidden [mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] max-sm:[&>li:nth-child(n+2)]:hidden [&>li]:shrink-0"
+          ? "flex min-w-0 flex-nowrap gap-1.5 overflow-hidden [mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)] max-sm:[&>li:nth-child(n+3)]:hidden [&>li]:shrink-0"
           : "flex flex-wrap gap-1.5"
       }
     >
@@ -184,11 +184,13 @@ export default function WorkCard({ work, headingLevel = "h3" }: WorkCardProps) {
         {work.summary}
       </p>
 
+      {/* Phones: the whole card is the link, so the tags get the full row
+          and the Read label is left out. */}
       <div className="mt-4 flex items-center gap-4">
         <div className="min-w-0 flex-1">
           <HighlightTags work={work} limit={3} singleLine />
         </div>
-        <span className="link-arrow shrink-0">
+        <span className="link-arrow shrink-0 max-sm:hidden">
           Read<span className="sr-only"> the case study</span>
           <ArrowRight className="size-3.5" aria-hidden />
         </span>

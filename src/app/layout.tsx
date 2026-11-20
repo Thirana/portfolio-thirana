@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Caveat, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -39,6 +39,14 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+// Handwriting, used only for the signature in the footer.
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: "600",
+  variable: "--font-caveat",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
@@ -72,12 +80,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${satoshi.variable} ${erode.variable} ${jetbrainsMono.variable}`}
+      className={`${satoshi.variable} ${erode.variable} ${jetbrainsMono.variable} ${caveat.variable}`}
     >
       <body className="bg-gl-bg text-gl-text">
         <StickyHeader />
-        <div className="page flex min-h-screen flex-col pt-8 pb-12 sm:pt-12">
-          <main className="flex-1">{children}</main>
+        <div className="flex min-h-screen flex-col">
+          <main className="page flex-1 pt-8 sm:pt-12">{children}</main>
+          {/* Full-width band; its content keeps to the page column. */}
           <SiteFooter />
         </div>
         <Analytics />

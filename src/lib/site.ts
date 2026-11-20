@@ -27,6 +27,14 @@ export const siteConfig = {
   authorHandle: "@_Thirana",
 } as const;
 
+/** Main pages, shared by the header nav and the footer index. */
+export const mainNav = [
+  { href: "/work", label: "Work" },
+  { href: "/projects", label: "Projects" },
+  { href: "/blog", label: "Writing" },
+  { href: "/about", label: "About" },
+] as const;
+
 export function absoluteUrl(pathname = "/") {
   if (pathname.startsWith("http://") || pathname.startsWith("https://")) {
     return pathname;

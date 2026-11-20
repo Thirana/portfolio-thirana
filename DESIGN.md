@@ -153,7 +153,7 @@ The world is light only, by the owner's decision. It deliberately retires the da
 - Pill-shaped section headings (13px Satoshi, hairline outline) and dashed seams between sections.
 - Satoshi for UI and headings, Erode for reading, JetBrains Mono for code only.
 - Rust is the only accent and it is never a fill; black ink is the only solid button.
-- A cursor-following "cap" mascot is the identity image; a stamp-framed static frame of it closes every page.
+- A cursor-following "cap" mascot is the identity image; a stamp-framed static frame of it closes the About page.
 
 ## Colors
 
@@ -187,7 +187,7 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 
 **The Rust Is Ink Rule.** Rust appears only as text, underline, or focus outline. It never fills a button, badge, or surface. If something needs to be a solid call to action, it is the black ink pill.
 
-**The One Ink Pill Rule.** Each view carries exactly one solid ink action in its header ("Get in touch") and one in the closing Work-with-me card ("Send me a note"). Every other action is an outlined pill or a rust arrow link.
+**The One Ink Pill Rule.** Each view carries exactly one solid ink action in its header ("Get in touch") and one in the Work-with-me card at the end of the About page ("Send me a note"). Every other action is an outlined pill or a rust arrow link.
 
 **The Light Only Rule.** There is no dark theme. Do not add `dark:` variants, a theme toggle, or a prefers-color-scheme branch.
 
@@ -215,6 +215,8 @@ Ink on warm paper, with one rust voice for links and a muted set of categorical 
 
 **The Lowercase Name Rule.** The identity is the lowercase Satoshi word "thirana" - in the hero at display size and in the sticky header at 17px weight 600, -0.03em. It is not replaced by an all-caps logotype or a monospace handle.
 
+**The One Hand Rule.** Caveat appears once, as the footer signature. It is never used for headings, labels or body text.
+
 **The No Mono Personality Rule.** JetBrains Mono appears inside code and nowhere else - not in labels, dates, nav, or headings.
 
 ## Layout
@@ -229,7 +231,7 @@ The sticky header is transparent at rest and, after 16px of scroll, becomes 90% 
 
 ### Named Rules
 
-**The One Column Rule.** Every page lives in the 672px column. Do not break out to full-bleed bands, sidebars, or two-up layouts.
+**The One Column Rule.** Every page lives in the 672px column. Do not break out to full-bleed bands, sidebars, or two-up layouts. The footer sketch is the only exception: it runs the full page width, the footer content does not.
 
 ## Elevation & Depth
 
@@ -295,7 +297,11 @@ Tactile and quiet: everything is a pill, and only one is solid.
 
 ### Mascot and stamp (signature)
 
-The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. The same interactive mascot opens the About page at 128px (112px mobile), beside the page title. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card that closes every page. The mascot stands in for a portrait; do not add a photo anywhere on the site.
+The identity image is the "cap" mascot: a directional sprite sheet that turns its head toward the cursor, rendered at 208px (160px mobile) to the left of the wordmark. The same interactive mascot opens the About page at 128px (112px mobile), beside the page title. A static front-facing frame of the same sheet appears at 56px inside the perforated cream stamp in the Work-with-me card at the end of the About page. The mascot stands in for a portrait; do not add a photo anywhere on the site.
+
+### Footer
+
+Closes every page on the same paper ground, opened by a dashed seam in the column; its content keeps to the 672px column and only the closing sketch runs the full page width. The full name as a signature sits on its own row: Caveat 600 at 36px (32px on phones) over a hand-drawn rust underline, set level. Below it three columns share one top line: Contact (two short lines - email corrections, and the Work-with-me ask with a "Send me a note" link - then the live time in Colombo with a moss dot, client-only so the server render has no clock), Pages, and Elsewhere (socials with faint icons). Then the copyright and Back to top. The bottom edge is a hand-drawn sketch of Sri Lanka spanning the full page width - jungle hills with a waterfall that runs down into the sea, an elephant in a festival cloth, a white stupa with a gilded spire and prayer flags, the old Colombo clock tower, the Lotus Tower, a few city towers with a tuk-tuk and the coastal train in front, palms, an oruwa, and two stilt fishermen off the beach - drawn like the work card marks (rough 3.5px strokes, one swatch color per object with its light fill, small details such as windows kept). Below 600px it keeps that width and shows its left part, the hills to the Lotus Tower. Sources live in `content/site-diagrams/`.
 
 ### Company logos
 
@@ -329,6 +335,6 @@ Erode 17px at line-height 1.7 with Satoshi semibold headings (h2 22px, h3 18px, 
 - **Don't** add a second solid button style or a second accent hue.
 - **Don't** use JetBrains Mono outside code, or uppercase letter-spaced labels anywhere in the UI.
 - **Don't** use hard offset shadows, colored glows, or gradient color fills on surfaces.
-- **Don't** break the column with full-bleed bands, sidebars, or multi-column page grids.
+- **Don't** break the column with full-bleed bands (the footer sketch is the one exception), sidebars, or multi-column page grids.
 - **Don't** replace the mobile drawer with a full-screen takeover.
 - **Don't** introduce colors outside the tokens in `src/app/globals.css`; extend the token set there first.

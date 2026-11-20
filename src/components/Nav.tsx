@@ -12,14 +12,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { contactHref } from "@/lib/contact";
+import { mainNav } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-const links = [
-  { href: "/work", label: "Work" },
-  { href: "/projects", label: "Projects" },
-  { href: "/blog", label: "Writing" },
-  { href: "/about", label: "About" },
-] as const;
+const links = mainNav;
 
 export default function Nav() {
   const pathname = usePathname();
