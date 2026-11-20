@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import {
   Briefcase,
   Compass,
@@ -19,6 +18,7 @@ import {
   type ProjectMeta,
   type ContentMeta,
 } from "@/lib/content";
+import { Mascot } from "@/components/Mascot";
 import TechTabs from "@/components/TechTabs";
 import FeaturedWorkTabs from "@/components/FeaturedWorkTabs";
 import Section, { Seam } from "@/components/Section";
@@ -48,15 +48,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [growLogs, personalSite, sessionSecurity, safeOrder] =
+  const [personalSite, marketplaceService, sessionSecurity, safeOrder] =
     await Promise.all([
-      getProjectMetaBySlug("grow-logs"),
       getProjectMetaBySlug("personal-site"),
+      getProjectMetaBySlug("marketplace-service"),
       getBlogMetaBySlug("session-security-in-practice"),
       getBlogMetaBySlug("safe-order-creation-idempotency-transactions"),
     ]);
 
-  const projects = [growLogs, personalSite].filter(
+  const projects = [personalSite, marketplaceService].filter(
     (p): p is ProjectMeta => p != null,
   );
   const posts = [sessionSecurity, safeOrder].filter(
@@ -94,14 +94,10 @@ export default async function AboutPage() {
   return (
     <div className="space-y-7 sm:space-y-8">
       <header className="space-y-6">
-        <div className="flex items-center gap-5">
-          <Image
-            src="/images/square.png"
-            alt={profile.name}
-            width={88}
-            height={88}
-            priority
-            className="size-[72px] rounded-2xl object-cover object-top shadow-gl sm:size-[88px]"
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Mascot
+            size={128}
+            className="-my-5 -ml-6 shrink-0 max-sm:-my-4 max-sm:-ml-5 max-sm:size-[112px]!"
           />
           <div className="space-y-1.5">
             <h1 className="font-sans text-[40px] leading-none font-semibold tracking-[-0.03em] text-gl-text sm:text-[52px]">

@@ -1,7 +1,7 @@
 export type TechRelatedItem = {
   label: string;
   href: string;
-  type: "project" | "blog";
+  type: "project" | "blog" | "work";
 };
 
 export type TechTab = {
@@ -26,12 +26,10 @@ export const techTabs: TechTab[] = [
       "Zod",
     ],
     highlights: [
-      "Currently building Grow Logs, a full stack SaaS using NestJS, Next.js, and PostgreSQL, applying production level engineering concepts required for a real user facing product.",
       "Built this personal portfolio site with Next.js using static generation, tag based on demand revalidation, and automated social card generation per route.",
       "Built a production NestJS bootstrap sequence with env validation, global exception filter, request ID middleware, and structured logging interceptor.",
     ],
     related: [
-      { label: "Grow Logs", href: "/projects/grow-logs", type: "project" },
       {
         label: "Personal Site",
         href: "/projects/personal-site",
@@ -69,19 +67,29 @@ export const techTabs: TechTab[] = [
   {
     value: "auth",
     label: "Auth & Security",
-    tools: ["JWT", "bcrypt", "HTTP only cookies", "Refresh tokens", "RBAC"],
+    tools: [
+      "JWT (RS256)",
+      "Refresh token rotation",
+      "HttpOnly cookies",
+      "CORS",
+      "RBAC",
+    ],
     highlights: [
-      "Built rotating refresh tokens with bcrypt hashed storage and full session wipe on reuse detection.",
-      "Implemented RBAC using JWT role claims with role guards enforced on admin only endpoints.",
-      "Delivered refresh tokens via HTTP only cookies scoped to the API origin to block XSS token theft.",
+      "Rebuilt session management at MO Marketplace: short-lived RS256 access tokens and rotating refresh tokens with reuse detection, so a stolen copy ends that session.",
+      "Made sessions endable on the server - one device on logout, every device on a ban or password change - and shipped the change without logging anyone out.",
+      "Moved the website's refresh token into an HttpOnly cookie, behind a strict CORS allowlist and an origin check on refresh and logout.",
     ],
     related: [
+      {
+        label: "Session management, part 1",
+        href: "/work/session-management-backend",
+        type: "work",
+      },
       {
         label: "Session Security in Practice",
         href: "/blog/session-security-in-practice",
         type: "blog",
       },
-      { label: "Grow Logs", href: "/projects/grow-logs", type: "project" },
     ],
   },
   {
@@ -106,7 +114,7 @@ export const techTabs: TechTab[] = [
 ];
 
 export const aboutSummary =
-  "I am a software engineer who works across backend systems, frontend interfaces, and cloud infrastructure. I enjoy studying how real production platforms are built and validated, then applying those patterns through self-driven projects and professional work. Currently I am building Grow Logs, a full stack SaaS, to put what I learn into practice.";
+  "I am a software engineer who works across backend systems, frontend interfaces, and cloud infrastructure. I enjoy studying how real production platforms are built and validated, then applying those patterns through self-driven projects and professional work.";
 
 export const heroBioPoints = [
   "Software engineer with 1.5 years of industry experience and a BSc (Hons) in Computer Engineering from the University of Sri Jayewardenepura.",

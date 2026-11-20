@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { ArrowRight, BookOpen, FolderGit2 } from "lucide-react";
+import { ArrowRight, BookOpen, FolderGit2, NotebookText } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { PillTabsList } from "@/components/PillTabs";
 import Tag from "@/components/Tag";
@@ -47,7 +47,12 @@ export default function TechTabs() {
             {tab.related.length > 0 && (
               <div className="flex flex-wrap gap-2 border-t border-gl-border pt-4">
                 {tab.related.map((item) => {
-                  const Icon = item.type === "blog" ? BookOpen : FolderGit2;
+                  const Icon =
+                    item.type === "blog"
+                      ? BookOpen
+                      : item.type === "work"
+                        ? NotebookText
+                        : FolderGit2;
                   return (
                     <Link
                       key={item.href}
