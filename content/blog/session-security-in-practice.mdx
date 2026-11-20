@@ -291,7 +291,7 @@ There are two families of JWT signing algorithms, and the choice decides who can
 
 <Diagram
   src="/diagrams/blog/session-security-in-practice/signing-keys.svg"
-  alt="Side-by-side comparison. Left, one shared secret (HS256): the auth service signs with the secret and hands a copy of the same secret to Service A and Service B, so both can verify and also sign; any service holding the secret can mint a valid token. Right, a key pair (RS256 or ES256): the auth service signs with the private key and hands only the public key to Service A and Service B, which can verify but never sign; a leaked public key cannot be used to forge a token. Below, an example token header: alg RS256, kid key-2, which tells the verifier which key to check with."
+  alt="Side-by-side comparison. Left, one shared secret (HS256): the auth service signs with the secret and hands a copy of the same secret to Service A and Service B, so both can verify and also sign; any service holding the secret can create a valid token. Right, a key pair (RS256 or ES256): the auth service signs with the private key and hands only the public key to Service A and Service B, which can verify but never sign; a leaked public key cannot be used to forge a token. Below, an example token header: alg RS256, kid key-2, which tells the verifier which key to check with."
   width={680}
   height={501}
   caption="With a shared secret every verifier is also a signer. With a key pair, only one service can sign."
@@ -349,13 +349,13 @@ Logout, a banned account or a changed password should take effect now, not when 
 | Per-user cut-off time | Store one "valid after" timestamp per user; reject tokens whose `iat` is older     | Every token for that user  | A timestamp comparison on the user row   |
 | Account check         | Load the user on every request; reject banned or inactive accounts                 | Every token for that user  | One lookup, often already being done     |
 
-The last two combine well: if the user row is already loaded for the request, checking its status and a cut-off timestamp is nearly free. Refresh tokens are easier still - they live in the database, so revoking one is just updating its row.
+The last two combine well: if the user row is already loaded for the request, checking its status and a cut-off timestamp needs no extra query. Refresh tokens are simpler: they live in the database, so revoking one means updating its row.
 
 <Part id="refresh-tokens" number={3} total={4} title="Refresh tokens: rotation and reuse detection">
 
 - Refresh tokens are random strings stored only as hashes, so a database leak gives no working tokens.
 - Every refresh uses the token up. A token that comes back a second time is a copy.
-- On reuse, end the session: the thief's new token dies with it.
+- On reuse, end the session: the thief's new token is revoked with it.
 
 </Part>
 
@@ -373,7 +373,7 @@ Common leak scenarios:
 
 What happens next depends on the server:
 
-- **It accepts the token as long as it is valid:** the attacker has 7 days of access, and no one knows.
+- **It accepts the token as long as it is valid:** the attacker has 7 days of access, and nothing detects it.
 - **It rotates on every use but does not detect reuse:** the attacker can race the legitimate user, and the server cannot tell the difference.
 
 > Rotation without detection is not enough. A rotated token that is never checked for reuse gives the attacker a full replacement token pair on first use, with nothing to stop them from continuing.
@@ -388,7 +388,7 @@ If a refresh token is stolen and the server has no rotation or detection:
 2. The legitimate user has no way to know their session is compromised.
 3. The server has no signal that anything is wrong.
 
-The access token lifetime limits the blast radius of one kind of leak. The refresh token needs its own protection.
+The access token lifetime limits how long a leaked access token can be used. The refresh token needs its own protection.
 
 ### The Rotation and Detection Model
 
@@ -542,7 +542,7 @@ if (!matched) {
 
 </CodeToggle>
 
-This is the nuclear option. A legitimate user who triggers this (for example, a buggy client that retries a refresh request) will have to log in again. For a small app that is an acceptable tradeoff - the alternative is leaving stolen sessions open. The next sections cover how a larger system narrows both the blast radius and the false alarms.
+This is the strictest response. A legitimate user who triggers this (for example, a buggy client that retries a refresh request) will have to log in again. For a small app that is an acceptable tradeoff - the alternative is leaving stolen sessions open. The next sections cover how a larger system ends fewer sessions on reuse and raises fewer false alarms.
 
 ### Token Theft and Reuse Detection Flow
 
@@ -581,7 +581,7 @@ return { accessToken };
 
 </CodeToggle>
 
-This takes XSS off the table for stealing refresh tokens:
+So an injected script cannot steal the refresh token:
 
 - **The access token** can still be read from memory by an injected script, but it expires within 15 minutes.
 - **The refresh token** stays out of reach.
