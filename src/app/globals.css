@@ -137,6 +137,8 @@
 html {
   background-color: var(--gl-bg);
   color-scheme: light;
+  /* Keep deep-linked headings (#section) clear of the sticky header. */
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -430,6 +432,13 @@ html {
   margin-top: 2rem;
 }
 
+.prose :where(h4) {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
 .prose :where(th) {
   font-family: var(--font-sans);
   font-weight: 600;
@@ -472,6 +481,32 @@ html {
   color: var(--gl-text);
   padding: 0;
   font-size: inherit;
+}
+
+/* Colored words in a code block, written as /word/#color in the fence meta
+   (rehype-pretty-code). Used to trace one value through a formula; the
+   colors are the site swatches, so they can match a nearby diagram. */
+.prose pre mark[data-highlighted-chars] {
+  background: transparent;
+  font-weight: 600;
+}
+.prose pre mark[data-highlighted-chars] span {
+  color: inherit !important;
+}
+.prose pre mark[data-chars-id="indigo"] {
+  color: var(--gl-swatch-2);
+}
+.prose pre mark[data-chars-id="plum"] {
+  color: var(--gl-swatch-3);
+}
+.prose pre mark[data-chars-id="teal"] {
+  color: var(--gl-swatch-6);
+}
+.prose pre mark[data-chars-id="amber"] {
+  color: var(--gl-warning);
+}
+.prose pre mark[data-chars-id="green"] {
+  color: var(--gl-success);
 }
 
 .prose :where(hr) {

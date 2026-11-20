@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useState } from "react";
 import { ChevronDown, Code2 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -69,13 +69,24 @@ const githubLight: Record<string, CSSProperties> = {
 
 type CodeToggleProps = {
   title: string;
-  code: string;
+  /**
+   * Preferred: pass a fenced code block as children. MDX keeps its indentation
+   * and rehype-pretty-code highlights it at build time.
+   */
+  children?: ReactNode;
+  /**
+   * Legacy: code as a string prop. MDX strips leading whitespace from lines
+   * inside multi-line attribute expressions, so indentation is lost - use
+   * children instead.
+   */
+  code?: string;
   language?: string;
   defaultOpen?: boolean;
 };
 
 export default function CodeToggle({
   title,
+  children,
   code,
   language = "typescript",
   defaultOpen = false,
@@ -105,37 +116,43 @@ export default function CodeToggle({
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="overflow-hidden duration-300 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-          <div className="mt-2 overflow-x-auto rounded-[10px] border border-gl-border bg-gl-bg [scrollbar-width:thin]">
-            <SyntaxHighlighter
-              language={language}
-              style={githubLight}
-              customStyle={{
-                margin: 0,
-                padding: "1rem 1.25rem",
-                borderRadius: "0.5rem",
-                background: "transparent",
-                fontSize: "0.8rem",
-                lineHeight: "1.65",
-                whiteSpace: "pre",
-              }}
-              codeTagProps={{
-                style: {
-                  fontFamily:
-                    "var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
-                  whiteSpace: "pre",
+          {children ? (
+            <div className="mt-2 [&_figure]:m-0 [&_pre]:my-0 [&_pre]:rounded-[10px] [&_pre]:border [&_pre]:border-gl-border [&_pre]:bg-gl-bg [&_pre]:shadow-none [&_pre]:[scrollbar-width:thin]">
+              {children}
+            </div>
+          ) : (
+            <div className="mt-2 overflow-x-auto rounded-[10px] border border-gl-border bg-gl-bg [scrollbar-width:thin]">
+              <SyntaxHighlighter
+                language={language}
+                style={githubLight}
+                customStyle={{
+                  margin: 0,
+                  padding: "1rem 1.25rem",
+                  borderRadius: "0.5rem",
                   background: "transparent",
-                  border: "0",
-                  padding: "0",
-                  display: "block",
-                  fontStyle: "normal",
-                },
-              }}
-              showLineNumbers={false}
-              wrapLongLines={false}
-            >
-              {code.trim()}
-            </SyntaxHighlighter>
-          </div>
+                  fontSize: "0.8rem",
+                  lineHeight: "1.65",
+                  whiteSpace: "pre",
+                }}
+                codeTagProps={{
+                  style: {
+                    fontFamily:
+                      "var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
+                    whiteSpace: "pre",
+                    background: "transparent",
+                    border: "0",
+                    padding: "0",
+                    display: "block",
+                    fontStyle: "normal",
+                  },
+                }}
+                showLineNumbers={false}
+                wrapLongLines={false}
+              >
+                {(code ?? "").trim()}
+              </SyntaxHighlighter>
+            </div>
+          )}
         </CollapsibleContent>
       </Collapsible>
     </div>

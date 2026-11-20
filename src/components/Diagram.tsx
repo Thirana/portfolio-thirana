@@ -45,11 +45,12 @@ export default function Diagram({
             className="mx-auto block h-auto w-full max-w-[40rem]"
           />
           <div className="mt-2 flex justify-end sm:hidden">
-            <DialogTrigger asChild>
-              <button type="button" className="pill h-8 px-3">
-                <Maximize2 className="size-3.5" aria-hidden />
-                Expand
-              </button>
+            {/* No asChild: Radix Slot renders nothing on the server when this
+                server component hands it a child element, which broke
+                hydration. The trigger renders its own <button> instead. */}
+            <DialogTrigger className="pill h-8 px-3">
+              <Maximize2 className="size-3.5" aria-hidden />
+              Expand
             </DialogTrigger>
           </div>
         </div>

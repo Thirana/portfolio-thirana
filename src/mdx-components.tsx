@@ -4,6 +4,9 @@ import MermaidDiagram from "@/components/MermaidDiagram";
 import CodeToggle from "@/components/CodeToggle";
 import Diagram from "@/components/Diagram";
 import Callout from "@/components/Callout";
+import GuideMap from "@/components/GuideMap";
+import MoreDetail from "@/components/MoreDetail";
+import Part from "@/components/Part";
 
 function getTextContent(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") {
@@ -100,6 +103,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     CodeToggle,
     Diagram,
     Callout,
+    GuideMap,
+    MoreDetail,
+    Part,
     ...components,
   };
 }

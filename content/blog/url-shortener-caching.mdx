@@ -76,10 +76,9 @@ The `v1:` prefix is a schema version for safe future key changes.
 3. If present, return `302` immediately.
 4. No DB read required.
 
-<CodeToggle
-  title="Show Go snippet - Cache hit path"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Cache hit path">
+
+```go
 // Fast path: short-key cache hit returns immediately.
 func (s *Service) resolveFromShortCache(ctx context.Context, code string) (string, bool, error) {
     // Build namespaced cache key for this short code.
@@ -98,8 +97,9 @@ func (s *Service) resolveFromShortCache(ctx context.Context, code string) (strin
     // Cache hit: return destination URL immediately.
     return item.URL, true, nil
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 2) Cache miss then DB hit path
 
@@ -108,10 +108,9 @@ func (s *Service) resolveFromShortCache(ctx context.Context, code string) (strin
 3. If both miss, query DB.
 4. If active row exists, set `short` key with `TTL` and return `302`.
 
-<CodeToggle
-  title="Show Go snippet - Cache miss then DB hit"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Cache miss then DB hit">
+
+```go
 // Miss path: check miss-key, then DB, then warm short-key.
 func (s *Service) resolveViaDB(ctx context.Context, code string) (string, int, error) {
     // Negative cache key prevents repeated DB work for known misses.
@@ -133,8 +132,9 @@ func (s *Service) resolveViaDB(ctx context.Context, code string) (string, int, e
     // Preserve contract: active link resolves as 302 redirect.
     return row.TargetURL, http.StatusFound, nil
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 3) Missing or expired path
 
@@ -143,10 +143,9 @@ func (s *Service) resolveViaDB(ctx context.Context, code string) (string, int, e
 3. Service sets `miss` key (short `TTL`).
 4. Service returns `404`.
 
-<CodeToggle
-  title="Show Go snippet - Missing or expired path"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Missing or expired path">
+
+```go
 // Negative caching: remember known misses for a short window.
 func (s *Service) cacheMissingCode(ctx context.Context, code string) {
     missKey := fmt.Sprintf("v1:url:miss:%s", code)
@@ -160,17 +159,17 @@ func (s *Service) notFoundResponse(ctx context.Context, code string) (string, in
     // Same API contract for missing or expired codes.
     return "", http.StatusNotFound, nil
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 4) Cache failure path
 
 > If Redis times out or errors, service falls back to DB path. This may be slower, but behavior remains correct.
 
-<CodeToggle
-  title="Show Go snippet - Cache failure fallback"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Cache failure fallback">
+
+```go
 // Resilience rule: cache failure should not break redirect behavior.
 func (s *Service) ResolveRedirect(ctx context.Context, code string) (string, int, error) {
     // First attempt: try the low-latency cache path.
@@ -186,8 +185,9 @@ func (s *Service) ResolveRedirect(ctx context.Context, code string) (string, int
     // Continue through DB path to preserve correctness.
     return s.resolveViaDB(ctx, code)
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ## Request Sequence Diagram
 

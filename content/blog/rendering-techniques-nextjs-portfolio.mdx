@@ -171,10 +171,9 @@ Quick map before code:
 
 ### 1) SSG example: blog detail route with static params
 
-<CodeToggle
-  title="Show TypeScript snippet - SSG blog route setup"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet - SSG blog route setup">
+
+```typescript
 export const dynamicParams = false;
 export const dynamic = "force-static";
 
@@ -183,15 +182,15 @@ export async function generateStaticParams() {
     // Pre-build all known blog slug pages.
     return posts.map((post) => ({ slug: post.slug }));
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 2) SSG example: project detail route with static params
 
-<CodeToggle
-  title="Show TypeScript snippet - SSG project route setup"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet - SSG project route setup">
+
+```typescript
 export const dynamicParams = false;
 export const dynamic = "force-static";
 
@@ -200,15 +199,15 @@ export async function generateStaticParams() {
     // Pre-build all known project slug pages.
     return projects.map((project) => ({ slug: project.slug }));
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 3) Static-first content layer: tagged cache boundaries for content routes
 
-<CodeToggle
-  title="Show TypeScript snippet - tagged content cache"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet - tagged content cache">
+
+```typescript
 export const CONTENT_CACHE_TAGS = {
     blog: "content:blog",
     projects: "content:projects",
@@ -225,15 +224,15 @@ const getAllProjectsCached = unstable_cache(
     ["content-project-list"],
     { tags: [CONTENT_CACHE_TAGS.projects] }
 );
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 4) Dynamic example: on-demand revalidation API
 
-<CodeToggle
-  title="Show TypeScript snippet - dynamic revalidation flow"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet - dynamic revalidation flow">
+
+```typescript
 function triggerRevalidation(scope: RevalidateScope) {
     const tags = scopeTags[scope];
     // Revalidate only target tag groups, not entire site cache.
@@ -247,8 +246,9 @@ export async function POST(request: NextRequest) {
     const tags = triggerRevalidation(scope);
     return NextResponse.json({ ok: true, tags, mode: "max" });
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ## Revalidation Lifecycle Diagram
 

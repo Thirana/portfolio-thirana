@@ -4,6 +4,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkGfm from "remark-gfm";
 import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
 import type { Options as PrettyCodeOptions } from "rehype-pretty-code";
 
 const prettyCodeOptions: PrettyCodeOptions = {
@@ -16,7 +17,8 @@ const withMDX = createMDX({
   extension: /\.mdx$/,
   options: {
     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    // rehype-slug gives every heading an id, so sections can be deep-linked.
+    rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
   },
 });
 

@@ -44,13 +44,38 @@ git clone https://github.com/Thirana/personal-site.git
 cd personal-site
 ```
 
-### 2) Install dependencies
+### 2) Use Node 24
+
+This project requires Node 24 (pinned in `.nvmrc`). Older versions such as Node 20 fail on `npm run dev` with `ERR_PACKAGE_PATH_NOT_EXPORTED` while loading `next.config.ts`.
+
+With [nvm](https://github.com/nvm-sh/nvm):
+
+```bash
+nvm install        # installs the version in .nvmrc (only needed once)
+nvm use            # switches this shell to Node 24
+node -v            # should print v24.x
+```
+
+Optional - make Node 24 the default for new terminals:
+
+```bash
+nvm alias default 24
+```
+
+If you installed dependencies under a different Node version, reinstall them after switching:
+
+```bash
+rm -rf node_modules .next
+npm install
+```
+
+### 3) Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3) Run the dev server
+### 4) Run the dev server
 
 ```bash
 npm run dev
@@ -58,7 +83,7 @@ npm run dev
 
 Open http://localhost:3000 to view the site.
 
-### 4) Build for production
+### 5) Build for production
 
 ```bash
 npm run build

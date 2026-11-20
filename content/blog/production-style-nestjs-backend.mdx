@@ -66,10 +66,9 @@ That means two things:
 
 Here is the kind of validation setup this article is referring to:
 
-<CodeToggle
-  title="Show TypeScript snippet: environment validation"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: environment validation">
+
+```typescript
 class EnvironmentVariables {
     @IsInt()
     @Min(1)
@@ -118,8 +117,9 @@ export const validateEnv = (
 
     return validatedConfig;
 };
-  `}
-/>
+```
+
+</CodeToggle>
 
 > This approach is valuable because invalid runtime state is usually harder to debug than a startup crash. A clean failure during bootstrap is often the safest possible outcome.
 
@@ -129,10 +129,9 @@ Once configuration is valid, the next goal is to make every request pass through
 
 In NestJS, a practical way to handle that is to put the logic in a single `configureApp` function:
 
-<CodeToggle
-  title="Show TypeScript snippet: shared app pipeline"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: shared app pipeline">
+
+```typescript
 export const configureApp = <T extends INestApplication>(app: T): T => {
     // Pull one shared logger from the app container so every layer uses the same format.
     const structuredLogger = app.get<LoggerService>(WINSTON_MODULE_NEST_PROVIDER);
@@ -164,8 +163,9 @@ export const configureApp = <T extends INestApplication>(app: T): T => {
 
     return app;
 };
-  `}
-/>
+```
+
+</CodeToggle>
 
 This is useful because it keeps cross cutting behavior in one place:
 
@@ -189,10 +189,9 @@ The main idea is:
 
 That looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: request ID middleware"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: request ID middleware">
+
+```typescript
 export const requestIdMiddleware = (
     request: RequestWithRequestId,
     response: Response,
@@ -213,8 +212,9 @@ export const requestIdMiddleware = (
     // Continue to the next middleware or controller.
     next();
 };
-  `}
-/>
+```
+
+</CodeToggle>
 
 Once this exists, every completion log and error log can include the same request identifier. That makes debugging much faster because one failing request can be followed across middleware, controller, service, and exception logs.
 
@@ -244,10 +244,9 @@ Clients should not have to guess whether an error came from validation, a servic
 
 A global exception filter gives one response shape and one structured logging path:
 
-<CodeToggle
-  title="Show TypeScript snippet: global exception filter"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: global exception filter">
+
+```typescript
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
     constructor(private readonly logger: LoggerService) {}
@@ -282,8 +281,9 @@ export class AppExceptionFilter implements ExceptionFilter {
         });
     }
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 > The point is not only cleaner code. The point is stable API behavior under failure.
 
@@ -298,10 +298,9 @@ That is why it is best to expose two health checks:
 
 A simple readiness check often looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: readiness check"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: readiness check">
+
+```typescript
 async getReadiness() {
     // First confirm the main database connection was initialized.
     if (!this.dataSource.isInitialized) {
@@ -323,8 +322,9 @@ async getReadiness() {
         timestamp: new Date().toISOString(),
     };
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 This distinction matters during deployment and restarts. A process that has booted but cannot reach the database should not be treated as ready.
 
