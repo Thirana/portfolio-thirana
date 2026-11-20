@@ -1,0 +1,597 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "ellipse",
+      "id": "req_web",
+      "x": 20,
+      "y": 0,
+      "width": 280,
+      "height": 56,
+      "strokeColor": "#a45740",
+      "backgroundColor": "#f6ebe5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 100001
+    },
+    {
+      "type": "text",
+      "id": "req_web_text",
+      "x": 40,
+      "y": 16.75,
+      "width": 240,
+      "height": 22.5,
+      "text": "Staging website",
+      "originalText": "Staging website",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 100002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "ellipse",
+      "id": "req_admin",
+      "x": 340,
+      "y": 0,
+      "width": 280,
+      "height": 56,
+      "strokeColor": "#a45740",
+      "backgroundColor": "#f6ebe5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 100003
+    },
+    {
+      "type": "text",
+      "id": "req_admin_text",
+      "x": 360,
+      "y": 16.75,
+      "width": 240,
+      "height": 22.5,
+      "text": "Staging admin panel",
+      "originalText": "Staging admin panel",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 100004,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a_web_in",
+      "x": 160,
+      "y": 58,
+      "width": 140,
+      "height": 70,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          36
+        ],
+        [
+          140,
+          36
+        ],
+        [
+          140,
+          70
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 200001,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "arrow",
+      "id": "a_admin_in",
+      "x": 480,
+      "y": 58,
+      "width": 140,
+      "height": 70,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          36
+        ],
+        [
+          -140,
+          36
+        ],
+        [
+          -140,
+          70
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 200002,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "text",
+      "id": "same_ip",
+      "x": 250,
+      "y": 62,
+      "width": 140,
+      "height": 17.5,
+      "text": "same IP, port 443",
+      "originalText": "same IP, port 443",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 200003,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "proxy",
+      "x": 120,
+      "y": 130,
+      "width": 400,
+      "height": 56,
+      "strokeColor": "#17150f",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 300001,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "proxy_text",
+      "x": 130,
+      "y": 146.75,
+      "width": 380,
+      "height": 22.5,
+      "text": "Shared HTTPS proxy",
+      "originalText": "Shared HTTPS proxy",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 300002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a_tls",
+      "x": 320,
+      "y": 188,
+      "width": 0,
+      "height": 88,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          88
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 400001,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "a_tls_l",
+      "x": 334,
+      "y": 210,
+      "width": 290,
+      "height": 41.25,
+      "text": "1 \u00b7 TLS handshake:\nthe SNI name picks the certificate",
+      "originalText": "1 \u00b7 TLS handshake:\nthe SNI name picks the certificate",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 400002,
+      "lineHeight": 1.375
+    },
+    {
+      "type": "rectangle",
+      "id": "certmap",
+      "x": 120,
+      "y": 278,
+      "width": 400,
+      "height": 124,
+      "strokeColor": "#257a91",
+      "backgroundColor": "#e5eff2",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 500001,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "certmap_title",
+      "x": 130,
+      "y": 290,
+      "width": 380,
+      "height": 22.5,
+      "text": "Certificate map",
+      "originalText": "Certificate map",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 500002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "certmap_line1",
+      "x": 150,
+      "y": 324,
+      "width": 300,
+      "height": 20.0,
+      "text": "website name \u2192 website certificate",
+      "originalText": "website name \u2192 website certificate",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 500003,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "certmap_line2",
+      "x": 150,
+      "y": 348,
+      "width": 300,
+      "height": 20.0,
+      "text": "admin panel name \u2192 admin certificate",
+      "originalText": "admin panel name \u2192 admin certificate",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 500004,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "certmap_new",
+      "x": 462,
+      "y": 349,
+      "width": 50,
+      "height": 17.5,
+      "text": "new",
+      "originalText": "new",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#a45740",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 500005,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "certmap_note",
+      "x": 130,
+      "y": 375,
+      "width": 380,
+      "height": 17.5,
+      "text": "no matching entry: the handshake fails",
+      "originalText": "no matching entry: the handshake fails",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#767268",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 500006,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a_http",
+      "x": 320,
+      "y": 404,
+      "width": 0,
+      "height": 72,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          72
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 600001,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "a_http_l",
+      "x": 334,
+      "y": 419,
+      "width": 290,
+      "height": 41.25,
+      "text": "2 \u00b7 HTTP request:\nthe Host header picks the backend",
+      "originalText": "2 \u00b7 HTTP request:\nthe Host header picks the backend",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 600002,
+      "lineHeight": 1.375
+    },
+    {
+      "type": "rectangle",
+      "id": "urlmap",
+      "x": 120,
+      "y": 478,
+      "width": 400,
+      "height": 60,
+      "strokeColor": "#17150f",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 700001,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "urlmap_text",
+      "x": 130,
+      "y": 496.75,
+      "width": 380,
+      "height": 22.5,
+      "text": "URL map: one host rule per name",
+      "originalText": "URL map: one host rule per name",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 700002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a_web_out",
+      "x": 250,
+      "y": 540,
+      "width": 100,
+      "height": 70,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          35
+        ],
+        [
+          -100,
+          35
+        ],
+        [
+          -100,
+          70
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 800001,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "arrow",
+      "id": "a_admin_out",
+      "x": 390,
+      "y": 540,
+      "width": 100,
+      "height": 70,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          35
+        ],
+        [
+          100,
+          35
+        ],
+        [
+          100,
+          70
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 800002,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "rectangle",
+      "id": "be_web",
+      "x": 20,
+      "y": 612,
+      "width": 260,
+      "height": 64,
+      "strokeColor": "#767268",
+      "backgroundColor": "#faf9f7",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 900001,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "be_web_text",
+      "x": 30,
+      "y": 632.75,
+      "width": 240,
+      "height": 22.5,
+      "text": "Website backend",
+      "originalText": "Website backend",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 900002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "be_admin",
+      "x": 360,
+      "y": 612,
+      "width": 260,
+      "height": 64,
+      "strokeColor": "#23683c",
+      "backgroundColor": "#e5f1e8",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 900003,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "be_admin_text",
+      "x": 370,
+      "y": 620,
+      "width": 240,
+      "height": 22.5,
+      "text": "Admin panel backend",
+      "originalText": "Admin panel backend",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 900004,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "be_admin_sub",
+      "x": 370,
+      "y": 647,
+      "width": 240,
+      "height": 17.5,
+      "text": "added with a new host rule",
+      "originalText": "added with a new host rule",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 900005,
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}

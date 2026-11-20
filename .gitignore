@@ -59,5 +59,6 @@ docs/professional-grade-vercel-roadmap.md
 # excalidraw diagram skill (its own git clone, installed locally)
 .claude/skills/excalidraw-diagram-skill/
 
-# excalidraw diagram sources (kept locally; the site uses the exported SVGs in public/diagrams)
-*.excalidraw
+# excalidraw diagram previews (the sources are committed; the site uses the exported SVGs in public/diagrams)
+content/**/diagrams/**/*.png
+content/site-diagrams/*.png

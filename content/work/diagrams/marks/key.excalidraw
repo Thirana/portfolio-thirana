@@ -1,0 +1,124 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "ellipse",
+      "id": "bow",
+      "x": 10.959587645474134,
+      "y": 49.12130990465553,
+      "width": 38,
+      "height": 38,
+      "strokeColor": "#9a5574",
+      "backgroundColor": "#f1dde6",
+      "fillStyle": "solid",
+      "strokeWidth": 4,
+      "roughness": 1.4,
+      "seed": 75141,
+      "opacity": 100
+    },
+    {
+      "type": "ellipse",
+      "id": "hole",
+      "x": 21.784711149549636,
+      "y": 62.64084068090963,
+      "width": 12,
+      "height": 12,
+      "strokeColor": "#9a5574",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 3,
+      "roughness": 1.4,
+      "seed": 88671,
+      "opacity": 100
+    },
+    {
+      "type": "line",
+      "id": "shaft",
+      "x": 44.51443206473471,
+      "y": 55.908345320611296,
+      "width": 40.60035548530583,
+      "height": 34.067743313386586,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          40.60035548530583,
+          -34.067743313386586
+        ]
+      ],
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "strokeWidth": 5,
+      "roughness": 1.4,
+      "seed": 1002,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null,
+      "fillStyle": "hachure"
+    },
+    {
+      "type": "line",
+      "id": "t1",
+      "x": 72.09203201701791,
+      "y": 32.76799137189588,
+      "width": 8.356238925925012,
+      "height": 9.95857776054671,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          8.356238925925012,
+          9.95857776054671
+        ]
+      ],
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "strokeWidth": 5,
+      "roughness": 1.4,
+      "seed": 1003,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null,
+      "fillStyle": "hachure"
+    },
+    {
+      "type": "line",
+      "id": "t2",
+      "x": 80.51852089132667,
+      "y": 25.69732766534395,
+      "width": 6.42787609686539,
+      "height": 7.660444431189781,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          6.42787609686539,
+          7.660444431189781
+        ]
+      ],
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "strokeWidth": 5,
+      "roughness": 1.4,
+      "seed": 1004,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null,
+      "fillStyle": "hachure"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}
