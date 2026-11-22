@@ -1,0 +1,453 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "b",
+      "x": 0,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#a45740",
+      "backgroundColor": "#f6ebe5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1017,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "b_t",
+      "x": 0,
+      "y": 14,
+      "width": 140,
+      "height": 22.5,
+      "text": "browser",
+      "originalText": "browser",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1018,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "a",
+      "x": 520,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#17150f",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1019,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "a_t",
+      "x": 520,
+      "y": 14,
+      "width": 140,
+      "height": 21.25,
+      "text": "api.example.com",
+      "originalText": "api.example.com",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1020,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "line",
+      "id": "bl",
+      "x": 70,
+      "y": 52,
+      "width": 0,
+      "height": 548,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          548
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1021,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "line",
+      "id": "al",
+      "x": 590,
+      "y": 52,
+      "width": 0,
+      "height": 548,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          548
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1022,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "s0",
+      "x": 90,
+      "y": 66,
+      "width": 480,
+      "height": 37.5,
+      "text": "the shop's script calls fetch: PUT /orders/42,\nJSON body, credentials: \"include\"",
+      "originalText": "the shop's script calls fetch: PUT /orders/42,\nJSON body, credentials: \"include\"",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1023,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "s1",
+      "x": 90,
+      "y": 118,
+      "width": 480,
+      "height": 21.25,
+      "text": "1. preflight",
+      "originalText": "1. preflight",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1024,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a1",
+      "x": 72,
+      "y": 146,
+      "width": 516,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          516,
+          0
+        ]
+      ],
+      "strokeColor": "#a45740",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1025,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "text",
+      "id": "s1c",
+      "x": 100,
+      "y": 156,
+      "width": 470,
+      "height": 70.0,
+      "text": "OPTIONS /orders/42\nOrigin: https://shop.example.com\nRequest-Method: PUT\nRequest-Headers: content-type",
+      "originalText": "OPTIONS /orders/42\nOrigin: https://shop.example.com\nRequest-Method: PUT\nRequest-Headers: content-type",
+      "fontSize": 14,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#24292f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1026,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "s2",
+      "x": 90,
+      "y": 252,
+      "width": 480,
+      "height": 21.25,
+      "text": "2. the API allows it",
+      "originalText": "2. the API allows it",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#5258ad",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1027,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a2",
+      "x": 588,
+      "y": 280,
+      "width": 516,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -516,
+          0
+        ]
+      ],
+      "strokeColor": "#5258ad",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1028,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "text",
+      "id": "s2c",
+      "x": 100,
+      "y": 290,
+      "width": 470,
+      "height": 87.5,
+      "text": "204 No Content\nAllow-Origin: https://shop.example.com\nAllow-Methods: GET, POST, PUT, DELETE\nAllow-Headers: Content-Type\nAllow-Credentials: true",
+      "originalText": "204 No Content\nAllow-Origin: https://shop.example.com\nAllow-Methods: GET, POST, PUT, DELETE\nAllow-Headers: Content-Type\nAllow-Credentials: true",
+      "fontSize": 14,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#24292f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1029,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "chk",
+      "x": 90,
+      "y": 398,
+      "width": 480,
+      "height": 18.75,
+      "text": "the browser checks: PUT and content-type are allowed",
+      "originalText": "the browser checks: PUT and content-type are allowed",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1030,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "s3",
+      "x": 90,
+      "y": 436,
+      "width": 480,
+      "height": 21.25,
+      "text": "3. the real request, with the cookie",
+      "originalText": "3. the real request, with the cookie",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1031,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a3",
+      "x": 72,
+      "y": 464,
+      "width": 516,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          516,
+          0
+        ]
+      ],
+      "strokeColor": "#a45740",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1032,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "text",
+      "id": "s3c",
+      "x": 100,
+      "y": 472,
+      "width": 470,
+      "height": 17.5,
+      "text": "PUT /orders/42",
+      "originalText": "PUT /orders/42",
+      "fontSize": 14,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#24292f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1033,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "s4",
+      "x": 90,
+      "y": 510,
+      "width": 480,
+      "height": 21.25,
+      "text": "4. 200 OK, with Allow-Origin and Allow-Credentials",
+      "originalText": "4. 200 OK, with Allow-Origin and Allow-Credentials",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1034,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a4",
+      "x": 588,
+      "y": 538,
+      "width": 516,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -516,
+          0
+        ]
+      ],
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1035,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "s4s",
+      "x": 90,
+      "y": 548,
+      "width": 480,
+      "height": 18.75,
+      "text": "the browser hands the response to the script",
+      "originalText": "the browser hands the response to the script",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1036,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "x": 0,
+      "y": 610,
+      "width": 660,
+      "height": 17.5,
+      "text": "Header names are shortened: each one starts with Access-Control-.",
+      "originalText": "Header names are shortened: each one starts with Access-Control-.",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#767268",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1037,
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}

