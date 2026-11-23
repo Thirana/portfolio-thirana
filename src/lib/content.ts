@@ -28,6 +28,11 @@ export type ProjectLinks = {
   code?: string;
 };
 
+export type ProjectPart = {
+  name: string;
+  detail?: string;
+};
+
 export type ProjectMeta = {
   slug: string;
   title: string;
@@ -43,6 +48,13 @@ export type ProjectMeta = {
   metrics: ProjectMetric[];
   evidence: ProjectEvidence[];
   outcomes: string[];
+  /** The project's parts in order, shown as chips on the card. */
+  parts: ProjectPart[];
+  /** Phrases from the summary to mark with a highlighter on the card. */
+  highlights: string[];
+  /** Screenshot of the project itself, shown breaking out of the card. */
+  preview?: string;
+  previewAlt?: string;
 };
 
 export type ProjectMetric = {
@@ -265,7 +277,31 @@ function normalizeProjectMeta(
     metrics: toProjectMetrics(metrics),
     evidence: toProjectEvidence(evidence),
     outcomes: toStringArray(outcomes),
+    parts: toProjectParts(data.parts),
+    highlights: toStringArray(data.highlights),
+    preview: toPublicPath(data.preview),
+    previewAlt:
+      typeof data.previewAlt === "string" ? data.previewAlt : undefined,
   };
+}
+
+function toProjectParts(value: unknown): ProjectPart[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const { name, detail } = item as Record<string, unknown>;
+    if (typeof name !== "string" || !name.trim()) return [];
+    return [
+      {
+        name: name.trim(),
+        detail: typeof detail === "string" ? detail.trim() : undefined,
+      },
+    ];
+  });
+}
+
+function toPublicPath(value: unknown) {
+  return typeof value === "string" && value.startsWith("/") ? value : undefined;
 }
 
 function assertWorkField(

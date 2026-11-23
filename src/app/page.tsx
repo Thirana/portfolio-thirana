@@ -217,10 +217,12 @@ export default async function Home() {
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
-        <Link href="/projects" className="link-arrow">
-          All {allProjects.length} projects
-          <ArrowRight className="size-3.5" />
-        </Link>
+        {allProjects.length > featuredProjects.length ? (
+          <Link href="/projects" className="link-arrow">
+            All {allProjects.length} projects
+            <ArrowRight className="size-3.5" />
+          </Link>
+        ) : null}
       </Section>
 
       <Seam />

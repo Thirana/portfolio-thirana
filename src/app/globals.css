@@ -656,3 +656,90 @@ html {
     padding-inline: 0;
   }
 }
+
+/* Project card: a paper card like the others, with a pencil line traced
+   loosely around it - uneven corners, a fraction of a degree off. The line
+   settles onto the card on hover. */
+@layer components {
+  .sketch-card {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .sketch-card::before,
+  .sketch-card::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .sketch-card::before {
+    inset: 0;
+    z-index: -1;
+    border-radius: 14px;
+    background: var(--gl-surface);
+    box-shadow: var(--gl-shadow);
+  }
+
+  .sketch-card::after {
+    inset: -4px -3px -3px -4px;
+    border: 1.5px solid color-mix(in oklab, var(--gl-text) 40%, transparent);
+    border-radius: 20px 14px 22px 16px / 14px 22px 16px 20px;
+    transform: rotate(-0.4deg);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* The project's own screenshot, pinned on so it breaks out of the
+     card's top edge, tilted a little. It straightens on hover. */
+  .preview-shot {
+    overflow: hidden;
+    border: 1px solid var(--gl-border-strong);
+    border-radius: 10px;
+    background: var(--gl-surface);
+    box-shadow: var(--gl-shadow-lg);
+    transform: rotate(-1.5deg);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (min-width: 40rem) {
+    .preview-shot {
+      transform: rotate(2deg);
+    }
+  }
+
+  .sketch-card:hover .preview-shot {
+    transform: rotate(0deg) translateY(-3px);
+  }
+
+  /* Highlighter pen over a key phrase: a yellow band across the lower
+     part of the words, slanted at the ends, unbroken across line wraps. */
+  .marker {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    margin: 0 -0.15em;
+    padding: 0 0.15em;
+    background-color: transparent;
+    background-image: linear-gradient(
+      100deg,
+      transparent 0.15em,
+      oklch(0.9 0.16 98 / 0.75) 0.3em,
+      oklch(0.9 0.16 98 / 0.6) calc(100% - 0.3em),
+      transparent calc(100% - 0.15em)
+    );
+    background-position: 0 85%;
+    background-repeat: no-repeat;
+    background-size: 100% 0.6em;
+    color: var(--gl-text);
+  }
+
+  .sketch-card:hover::after {
+    transform: rotate(0deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sketch-card::after,
+    .preview-shot {
+      transition: none;
+    }
+  }
+}
