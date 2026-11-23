@@ -1,0 +1,165 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "win",
+      "x": 4,
+      "y": 22,
+      "width": 88,
+      "height": 72,
+      "angle": 0,
+      "strokeColor": "#257a91",
+      "backgroundColor": "#d9ecf1",
+      "fillStyle": "solid",
+      "strokeWidth": 4,
+      "roughness": 1.4,
+      "seed": 91001,
+      "opacity": 100,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "line",
+      "id": "bar",
+      "x": 6,
+      "y": 40,
+      "width": 84,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          84,
+          0
+        ]
+      ],
+      "strokeColor": "#257a91",
+      "backgroundColor": "transparent",
+      "strokeWidth": 3,
+      "roughness": 1.4,
+      "seed": 91002,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null,
+      "fillStyle": "hachure"
+    },
+    {
+      "type": "ellipse",
+      "id": "d1",
+      "x": 12,
+      "y": 28,
+      "width": 6,
+      "height": 6,
+      "angle": 0,
+      "strokeColor": "#257a91",
+      "backgroundColor": "#257a91",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 91003,
+      "opacity": 100,
+      "roundness": null
+    },
+    {
+      "type": "ellipse",
+      "id": "d2",
+      "x": 22,
+      "y": 28,
+      "width": 6,
+      "height": 6,
+      "angle": 0,
+      "strokeColor": "#257a91",
+      "backgroundColor": "#257a91",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 91004,
+      "opacity": 100,
+      "roundness": null
+    },
+    {
+      "type": "ellipse",
+      "id": "src",
+      "x": 18,
+      "y": 66,
+      "width": 10,
+      "height": 10,
+      "angle": 0,
+      "strokeColor": "#257a91",
+      "backgroundColor": "#257a91",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 91005,
+      "opacity": 100,
+      "roundness": null
+    },
+    {
+      "type": "arrow",
+      "id": "req",
+      "x": 30,
+      "y": 70,
+      "width": 82.0,
+      "height": 62.0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          14.40625,
+          -0.09375
+        ],
+        [
+          27.625,
+          -2.375
+        ],
+        [
+          39.65625,
+          -6.84375
+        ],
+        [
+          50.5,
+          -13.5
+        ],
+        [
+          60.15625,
+          -22.34375
+        ],
+        [
+          68.625,
+          -33.375
+        ],
+        [
+          75.90625,
+          -46.59375
+        ],
+        [
+          82.0,
+          -62.0
+        ]
+      ],
+      "strokeColor": "#257a91",
+      "backgroundColor": "transparent",
+      "strokeWidth": 4,
+      "roughness": 1.4,
+      "seed": 91006,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null,
+      "fillStyle": "hachure"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}

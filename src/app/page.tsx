@@ -28,7 +28,7 @@ import ProjectCard from "@/components/ProjectCard";
 import Section, { Seam } from "@/components/Section";
 import { WorkExperience } from "@/components/work-experience";
 import { CompanyMark } from "@/components/CompanyMark";
-import { PostList } from "@/components/PostList";
+import BlogCard from "@/components/BlogCard";
 import { RotatingFacts, type Fact } from "@/components/RotatingFacts";
 import WorkCard from "@/components/WorkCard";
 import { SecurityPractice } from "@/components/SecurityPractice";
@@ -51,7 +51,7 @@ export default async function Home() {
       getAllProjects(),
       getAllBlogPosts(),
     ]);
-  const recentPosts = allPosts.slice(0, 4);
+  const recentPosts = allPosts.slice(0, 3);
 
   // Case studies grouped by the experience entry they belong to.
   const caseStudies: Record<string, { slug: string; title: string }[]> = {};
@@ -232,11 +232,17 @@ export default async function Home() {
       <Seam />
 
       <Section title="Writing" icon={BookOpen} tone="var(--gl-swatch-2)">
-        <PostList posts={recentPosts} />
-        <Link href="/blog" className="link-arrow">
-          All {allPosts.length} articles
-          <ArrowRight className="size-3.5" />
-        </Link>
+        <div className="space-y-4">
+          {recentPosts.map((post) => (
+            <BlogCard key={post.slug} post={post} compact />
+          ))}
+        </div>
+        {allPosts.length > recentPosts.length ? (
+          <Link href="/blog" className="link-arrow">
+            All {allPosts.length} articles
+            <ArrowRight className="size-3.5" />
+          </Link>
+        ) : null}
       </Section>
     </div>
   );

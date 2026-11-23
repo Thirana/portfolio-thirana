@@ -49,18 +49,18 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [personalSite, marketplaceService, sessionSecurity, safeOrder] =
+  const [personalSite, marketplaceService, sessionSecurity, corsCookies] =
     await Promise.all([
       getProjectMetaBySlug("personal-site"),
       getProjectMetaBySlug("marketplace-service"),
       getBlogMetaBySlug("session-security-in-practice"),
-      getBlogMetaBySlug("safe-order-creation-idempotency-transactions"),
+      getBlogMetaBySlug("cors-and-cookies-in-practice"),
     ]);
 
   const projects = [personalSite, marketplaceService].filter(
     (p): p is ProjectMeta => p != null,
   );
-  const posts = [sessionSecurity, safeOrder].filter(
+  const posts = [sessionSecurity, corsCookies].filter(
     (p): p is ContentMeta => p != null,
   );
 

@@ -35,11 +35,6 @@ export const techTabs: TechTab[] = [
         href: "/projects/personal-site",
         type: "project",
       },
-      {
-        label: "Production Style NestJS Backend",
-        href: "/blog/production-style-nestjs-backend",
-        type: "blog",
-      },
     ],
   },
   {
@@ -51,18 +46,7 @@ export const techTabs: TechTab[] = [
       "Built a Redis cache aside layer that cut redirect latency from 638ms to 286ms and handled 2.5x more requests per second.",
       "Used SHA256 fingerprinting stored in PostgreSQL to make order creation idempotent under retries and duplicate submissions.",
     ],
-    related: [
-      {
-        label: "Cursor Pagination in a Product API",
-        href: "/blog/cursor-pagination-product-listing-api",
-        type: "blog",
-      },
-      {
-        label: "Safe Order Creation",
-        href: "/blog/safe-order-creation-idempotency-transactions",
-        type: "blog",
-      },
-    ],
+    related: [],
   },
   {
     value: "auth",
@@ -88,6 +72,11 @@ export const techTabs: TechTab[] = [
       {
         label: "Session Security in Practice",
         href: "/blog/session-security-in-practice",
+        type: "blog",
+      },
+      {
+        label: "How CORS and Cookies Work Together",
+        href: "/blog/cors-and-cookies-in-practice",
         type: "blog",
       },
     ],

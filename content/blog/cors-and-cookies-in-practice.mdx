@@ -1,5 +1,5 @@
 ---
-title: "CORS and Cookies in Practice: Origins, Credentials, and Common Misconfigurations"
+title: "How CORS and Cookies Work Together: Origins, Credentials, and Common Misconfigurations"
 date: "2026-11-22"
 summary: "How browsers decide what a page may send to another origin and what it may read back, how cookies travel with those requests, and the CORS and cookie misconfigurations that lead to CSRF and data theft - with the fix for each."
 tags:
@@ -22,9 +22,10 @@ appliesTo:
     "CORS configuration",
   ]
 takeaway: "CORS decides which origins may read a response, not which may send a request. Cookies follow site rules, not origin rules. A safe browser session needs an exact origin allowlist, strict cookie attributes, and an Origin check on every route that changes state."
+mark: "/diagrams/blog/cors-and-cookies-in-practice/mark.svg"
 ---
 
-# CORS and Cookies in Practice: Origins, Credentials, and Common Misconfigurations
+# How CORS and Cookies Work Together: Origins, Credentials, and Common Misconfigurations
 
 > Parts 1 and 2 explain the browser rules. Parts 3 and 4 explain the server settings. Part 6 shows what goes wrong when those settings are wrong. Each part starts with an "In short" box, and the extra detail is in sections you can open. For how tokens themselves are issued, rotated and revoked, see [Session Security in Practice](/blog/session-security-in-practice).
 
@@ -194,7 +195,7 @@ So the policy, and CORS with it, is not a server-side access control. A server c
 
 - CORS lets a server tell the browser which other origins may read its responses. It relaxes the Same-Origin Policy and adds no protection of its own.
 - Simple requests are sent straight away. Other requests are first checked with a **preflight** `OPTIONS` request.
-- To send cookies, the frontend must ask for them, and the server must allow them: it names the exact origin and sends `Access-Control-Allow-Credentials: true`.
+- To send cookies, the frontend must ask for them, and the server must allow them. To allow them, the server names the exact origin and sends `Access-Control-Allow-Credentials: true`.
 
 </Part>
 
@@ -294,12 +295,12 @@ fetch("https://api.example.com/orders", { credentials: "include" });
 // Access-Control-Allow-Credentials: true
 ```
 
-| Frontend sends cookies? | API answers                                | Result                                              |
-| ----------------------- | ------------------------------------------ | --------------------------------------------------- |
-| No                      | Anything                                   | No cookie is sent; the API sees an anonymous caller |
-| Yes                     | Exact origin + `Allow-Credentials: true`   | The page can read the response                      |
-| Yes                     | No `Allow-Credentials`                     | Blocked                                             |
-| Yes                     | `Allow-Origin: *`                          | Blocked                                             |
+| Frontend asks for cookies to be sent? | API answers                                | Result                                              |
+| ------------------------------------- | ------------------------------------------ | --------------------------------------------------- |
+| No                                    | Anything                                   | No cookie is sent; the API sees an anonymous caller |
+| Yes                                   | Exact origin + `Allow-Credentials: true`   | The page can read the response                      |
+| Yes                                   | No `Allow-Credentials`                     | Blocked                                             |
+| Yes                                   | `Allow-Origin: *`                          | Blocked                                             |
 
 The last row is why an API with a cookie session needs a real allowlist: it cannot allow every origin and use cookies at the same time.
 

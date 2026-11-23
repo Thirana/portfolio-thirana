@@ -31,8 +31,6 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const posts = await getAllBlogPosts();
-  const trackCount = new Set(posts.map((post) => post.track).filter(Boolean))
-    .size;
 
   return (
     <div className="space-y-8">
@@ -43,7 +41,6 @@ export default async function BlogPage() {
         <MetaStrip
           items={[
             { label: "posts", value: `${posts.length}` },
-            { label: "tracks", value: `${trackCount || 1}` },
             { label: "latest", value: posts[0]?.date ?? "n/a" },
           ]}
         />
@@ -53,7 +50,7 @@ export default async function BlogPage() {
 
       <div className="space-y-4">
         {posts.map((post) => (
-          <BlogCard key={post.slug} post={post} />
+          <BlogCard key={post.slug} post={post} headingLevel="h2" />
         ))}
       </div>
     </div>

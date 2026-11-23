@@ -16,6 +16,9 @@ export type ContentMeta = {
   takeaway?: string;
   project?: string;
   featured?: boolean;
+  /** Small hand-drawn sketch shown on the card, a path under /public. */
+  mark?: string;
+  draft: boolean;
 };
 
 export type ProjectStatus = "Live" | "Ongoing" | "WIP" | "Paused" | "Completed";
@@ -169,6 +172,11 @@ function normalizeMeta(
     takeaway: typeof data.takeaway === "string" ? data.takeaway : undefined,
     project: typeof data.project === "string" ? data.project : undefined,
     featured: typeof data.featured === "boolean" ? data.featured : false,
+    mark:
+      typeof data.mark === "string" && data.mark.startsWith("/")
+        ? data.mark
+        : undefined,
+    draft: data.draft === true,
   };
 }
 
@@ -380,9 +388,9 @@ async function readMdxMeta(dir: string) {
       }),
   );
 
-  return entries.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  return entries
+    .filter(isVisiblePost)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 async function readProjectMetaList() {
@@ -415,6 +423,11 @@ async function readProjectMetaList() {
 /** Drafts render in `next dev` and are left out of production builds. */
 function isVisibleWork(meta: WorkMeta) {
   return !meta.draft || !isProduction;
+}
+
+/** Draft posts are hidden everywhere, including `next dev`. */
+function isVisiblePost(meta: ContentMeta) {
+  return !meta.draft;
 }
 
 async function readWorkMetaList() {
@@ -473,7 +486,8 @@ async function readBlogMetaBySlug(slug: string) {
     const filePath = path.join(blogDir, `${slug}.mdx`);
     const raw = await fs.readFile(filePath, "utf8");
     const { data } = matter(raw);
-    return normalizeMeta(slug, data as Record<string, unknown>);
+    const meta = normalizeMeta(slug, data as Record<string, unknown>);
+    return isVisiblePost(meta) ? meta : null;
   } catch (error) {
     if (error instanceof Error && "code" in error) {
       const maybeCode = (error as Error & { code?: string }).code;
