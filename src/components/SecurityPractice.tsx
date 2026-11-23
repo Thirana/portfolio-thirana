@@ -2,6 +2,7 @@ import { ArrowUpRight, Check, CircleDashed } from "lucide-react";
 import { breachLab, type PracticeArea } from "@/content/breachlab";
 import { cn } from "@/lib/utils";
 import Tag from "./Tag";
+import { ExpandableChips } from "./ExpandableChips";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -30,7 +31,14 @@ function StopMarker({ status }: { status: PracticeArea["status"] }) {
 function StatusBadge({ status }: { status: PracticeArea["status"] }) {
   const done = status === "completed";
   return (
-    <span className="sketch sketch-pill inline-flex items-center gap-1.5 rounded-full border border-gl-border px-3 py-1 font-sans text-[12px] text-gl-text-muted">
+    // On phones the ticked stop marker already says "Completed", and the badge
+    // would drop onto a row of its own, so it is kept for screen readers only.
+    <span
+      className={cn(
+        "sketch sketch-pill inline-flex items-center gap-1.5 rounded-full border border-gl-border px-3 py-1 font-sans text-[12px] text-gl-text-muted",
+        done && "max-sm:sr-only",
+      )}
+    >
       <span
         aria-hidden
         className={cn(
@@ -55,8 +63,7 @@ export function SecurityPractice() {
     <div className="card p-5 sm:p-6">
       <p className="max-w-[34rem] text-[15px] leading-[1.6] text-gl-text-muted">
         Security is a self-taught interest of mine. I study common weaknesses in
-        machines and websites, how to find them and how to fix them, and
-        complete capture-the-flag challenges on a platform called BreachLab.
+        machines and websites, how to find them and how to fix them.
       </p>
 
       <ol className="mt-6">
@@ -84,8 +91,8 @@ export function SecurityPractice() {
                   <StatusBadge status={area.status} />
                 </div>
 
-                <ul
-                  className="mt-3 flex flex-wrap gap-1.5"
+                <ExpandableChips
+                  className="mt-3"
                   aria-label={
                     area.status === "completed"
                       ? "Weaknesses covered"
@@ -93,28 +100,27 @@ export function SecurityPractice() {
                   }
                 >
                   {area.weaknesses.map((weakness) => (
-                    <li key={weakness}>
-                      <Tag
-                        icon={
-                          area.status === "completed" ? (
-                            <Check
-                              className="size-3.5 text-gl-swatch-1"
-                              strokeWidth={2.75}
-                              aria-hidden
-                            />
-                          ) : (
-                            <CircleDashed
-                              className="size-3.5 text-gl-swatch-4"
-                              aria-hidden
-                            />
-                          )
-                        }
-                      >
-                        {weakness}
-                      </Tag>
-                    </li>
+                    <Tag
+                      key={weakness}
+                      icon={
+                        area.status === "completed" ? (
+                          <Check
+                            className="size-3.5 text-gl-swatch-1"
+                            strokeWidth={2.75}
+                            aria-hidden
+                          />
+                        ) : (
+                          <CircleDashed
+                            className="size-3.5 text-gl-swatch-4"
+                            aria-hidden
+                          />
+                        )
+                      }
+                    >
+                      {weakness}
+                    </Tag>
                   ))}
-                </ul>
+                </ExpandableChips>
 
                 {area.certificates?.length ? (
                   <ul

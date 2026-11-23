@@ -95,7 +95,7 @@ export default async function ProjectPage({ params }: PageProps) {
     author: {
       "@type": "Person",
       name: siteConfig.authorName,
-      url: absoluteUrl("/about"),
+      url: absoluteUrl("/"),
     },
     publisher: {
       "@type": "Person",

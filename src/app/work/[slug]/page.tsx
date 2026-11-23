@@ -85,7 +85,7 @@ export default async function WorkCaseStudyPage({ params }: PageProps) {
     author: {
       "@type": "Person",
       name: siteConfig.authorName,
-      url: absoluteUrl("/about"),
+      url: absoluteUrl("/"),
     },
   };
 

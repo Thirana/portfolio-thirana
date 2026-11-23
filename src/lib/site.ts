@@ -32,7 +32,6 @@ export const mainNav = [
   { href: "/work", label: "Work" },
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Writing" },
-  { href: "/about", label: "About" },
 ] as const;
 
 export function absoluteUrl(pathname = "/") {

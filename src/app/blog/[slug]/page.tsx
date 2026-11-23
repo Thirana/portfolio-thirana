@@ -86,7 +86,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: {
       "@type": "Person",
       name: siteConfig.authorName,
-      url: absoluteUrl("/about"),
+      url: absoluteUrl("/"),
     },
     publisher: {
       "@type": "Person",
