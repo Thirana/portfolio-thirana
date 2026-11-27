@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/content/profile";
 import { loadOgFonts, loadOgMascot } from "@/lib/og";
-import { mainNav, siteConfig } from "@/lib/site";
+import { siteConfig } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const alt = `${siteConfig.name} - ${profile.headline}`;
@@ -13,15 +13,17 @@ export const contentType = "image/png";
 
 const INK = "#17150f";
 const MUTED = "#6b6862";
-const LINE = "#cdc8bf";
 const RUST = "#a45740";
 const PAPER = "#faf9f7";
-/** Dot colors for the section pills, from the site's swatches. */
-const DOTS = ["#33805a", "#5258ad", "#257a91"];
+/** The three areas of the line, colored from the mascot: hair, cap, hoodie. */
+const BROWN = "#7a4a2b";
+const CAP_RED = "#b8302c";
+const HOODIE_GREEN = "#2f6438";
 
 /**
- * The share image for the home page: the name, headline and main sections
- * on the left, and the site's mascot saying hello on the right.
+ * The share image for the home page: the name and a handwritten line on
+ * the left, and the site's mascot saying hello on the right. The headline
+ * is left out because it is already the card's description text.
  */
 export default async function Image() {
   const [fonts, mascot] = await Promise.all([loadOgFonts(), loadOgMascot()]);
@@ -40,7 +42,7 @@ export default async function Image() {
         fontFamily: "Satoshi",
       }}
     >
-      {/* Name, signature line, headline and sections */}
+      {/* Name, signature line and the handwritten line */}
       <div style={{ display: "flex", flexDirection: "column", width: 740 }}>
         <div
           style={{
@@ -94,44 +96,21 @@ export default async function Image() {
         <div
           style={{
             display: "flex",
-            marginTop: 24,
-            fontFamily: "Erode",
-            fontSize: 30,
-            lineHeight: 1.4,
-            color: MUTED,
+            marginTop: 26,
+            fontFamily: "Caveat",
+            fontSize: 46,
+            fontWeight: 600,
+            lineHeight: 1.2,
+            flexDirection: "column",
           }}
         >
-          {profile.headline}
-        </div>
-
-        <div style={{ display: "flex", gap: 14, marginTop: 40 }}>
-          {mainNav.map((item, index) => (
-            <div
-              key={item.href}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "9px 20px",
-                backgroundColor: "#ffffff",
-                border: `2px solid ${LINE}`,
-                borderRadius: 9999,
-                fontSize: 22,
-                fontWeight: 500,
-                color: INK,
-              }}
-            >
-              <span
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 9999,
-                  backgroundColor: DOTS[index % DOTS.length],
-                }}
-              />
-              {item.label}
-            </div>
-          ))}
+          <span style={{ color: BROWN }}>
+            Designing secure software systems,
+          </span>
+          <div style={{ display: "flex", gap: 12 }}>
+            <span style={{ color: CAP_RED }}>from the platform</span>
+            <span style={{ color: HOODIE_GREEN }}>to the application</span>
+          </div>
         </div>
       </div>
 
