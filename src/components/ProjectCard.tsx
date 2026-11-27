@@ -99,23 +99,12 @@ export default function ProjectCard({
           Read the overview
           <ArrowRight className="size-3.5" aria-hidden />
         </span>
-        {project.links.code ? (
-          <a
-            href={project.links.code}
-            target="_blank"
-            rel="noreferrer"
-            className="relative z-20 inline-flex items-center gap-1 font-sans text-[13px] text-gl-text-muted transition-colors hover:text-gl-text"
-          >
-            Code
-            <ArrowUpRight className="size-3.5" aria-hidden />
-          </a>
-        ) : null}
         {project.links.live ? (
           <a
             href={project.links.live}
             target="_blank"
             rel="noreferrer"
-            className="relative z-20 inline-flex items-center gap-1 font-sans text-[13px] text-gl-text-muted transition-colors hover:text-gl-text"
+            className="link-arrow relative z-20"
           >
             Live
             <ArrowUpRight className="size-3.5" aria-hidden />

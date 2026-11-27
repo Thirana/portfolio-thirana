@@ -36,7 +36,7 @@ outcomes:
   - "The change shipped with no forced mobile app update and no mass logout: installed versions of the mobile app kept working, and old sessions were upgraded in place."
 ---
 
-This is the first of two notes on rebuilding session management at MO Marketplace. This one is the backend. Part 2 covers the website, where the browser adds its own rules.
+This is the first of two notes on rebuilding session management at MO Marketplace. This one is the backend. [Part 2](/work/session-management-website) covers the website, where the browser adds its own rules.
 
 The general mechanics - how access and refresh tokens work, signing with a key pair, rotation and reuse detection, and the races that look like theft - are explained in [Session Security in Practice](/blog/session-security-in-practice). This note is about the decisions this system needed on top of them.
 
@@ -254,7 +254,7 @@ The backend now issues sessions that can be trusted, renewed and ended. One thin
 | Mobile app _(this note)_ | The response body, then the phone's secure storage | There is no web page for an injected script to run in         |
 | Website _(Part 2)_       | An HttpOnly cookie that page scripts cannot read   | Anything JavaScript can read, an injected script can read too |
 
-Part 2 picks up from there: moving the website's refresh token into an HttpOnly cookie, and everything that change forced - a real CORS allowlist, an origin check on refresh, and keeping a shopper signed in across tabs without a backend outage ever logging them out.
+[Part 2](/work/session-management-website) picks up from there: moving the website's refresh token into an HttpOnly cookie, and everything that change forced - a real CORS allowlist, an origin check on refresh, and keeping a shopper signed in across tabs without a backend outage ever logging them out.
 
 ## Why this mattered
 
