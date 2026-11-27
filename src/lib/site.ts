@@ -4,11 +4,18 @@ function stripTrailingSlash(value: string) {
   return value.endsWith("/") ? value.slice(0, -1) : value;
 }
 
+/**
+ * Where the site is served, for canonical URLs, the sitemap and share
+ * images. `NEXT_PUBLIC_SITE_URL` wins. Without it, a Vercel build uses the
+ * project's production domain (so preview builds still point at
+ * production), and a local build uses the dev server.
+ */
 function resolveSiteUrl() {
+  const vercelProduction = process.env.VERCEL_PROJECT_PRODUCTION_URL;
   const configured =
     process.env.NEXT_PUBLIC_SITE_URL ??
     process.env.SITE_URL ??
-    DEFAULT_SITE_URL;
+    (vercelProduction ? `https://${vercelProduction}` : DEFAULT_SITE_URL);
 
   try {
     const normalized = new URL(configured).toString();
@@ -19,7 +26,7 @@ function resolveSiteUrl() {
 }
 
 export const siteConfig = {
-  name: "Thirana's Personal Blog",
+  name: "Thirana Embuldeniya",
   description:
     "Thirana Embuldeniya engineers secure software systems for people, from cloud platforms and servers to the networks that connect them. Projects and writing.",
   url: resolveSiteUrl(),

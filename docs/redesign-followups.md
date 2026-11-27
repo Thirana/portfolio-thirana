@@ -58,6 +58,16 @@ Not yet tested: mobile nav drawer, sticky header scroll state, keyboard focus or
 - [ ] Update `CLAUDE.md`: document `content/work/*.mdx` (frontmatter: company id from experience.ts, highlights, glance, outcomes, draft) and the `work` revalidate scope; light "paper notebook" theme with hex tokens (not dark/OKLCH), add `Ongoing` status, point to `DESIGN.md` + `PRODUCT.md` as design source of truth, fix the missing `AGENTS.md` reference.
 - [ ] Optional: `PRODUCT.md` `## Register` section is no longer read by the impeccable skill; delete it or run `/impeccable init` to refresh.
 
+## Pre-merge hardening (done 2026-11-27)
+
+- [x] Redirects in `next.config.ts` for URLs that were public on `main`: draft posts -> `/blog` (307, remove a slug from `unpublishedPosts` when it is published again), removed projects -> `/projects` (308), `/about` -> `/` (307).
+- [x] Site URL falls back to `VERCEL_PROJECT_PRODUCTION_URL` when `NEXT_PUBLIC_SITE_URL` is not set (`src/lib/site.ts`).
+- [x] Home page share image (`src/app/opengraph-image.tsx`, `twitter-image.tsx`); root Twitter card is `summary_large_image`.
+- [x] Security headers on every response: HSTS, nosniff, X-Frame-Options, Referrer-Policy, Permissions-Policy, and a CSP with only `frame-ancestors`, `base-uri`, `form-action`, `object-src` (a full CSP needs nonces for Next.js inline scripts).
+- [x] `src/app/not-found.tsx` in the site's style.
+- [x] Removed the unused `assets.chanhdai.com` image host.
+- [x] Site name is now "Thirana Embuldeniya" (was "Thirana's Personal Blog").
+
 ## Before merging
 
 - [ ] `npm run build` (prerenders every post and project)
