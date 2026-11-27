@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "How Safe Order Creation Works with Idempotency and Transactions"
 date: "2026-04-10"
 summary: "A practical guide to retry safe order creation using request fingerprints, transaction boundaries, row locking, and post commit side effects."
@@ -78,14 +79,14 @@ sequenceDiagram
   participant DB as Postgres
   participant N as Notification Worker
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     C->>API: POST /v1/orders with Idempotency Key
     API->>API: Build canonical fingerprint
     API->>DB: Begin transaction
     API->>DB: Insert idempotency record
   end
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     API->>DB: Lock product rows
     API->>DB: Create order and order items
     API->>DB: Persist notification intent
@@ -94,7 +95,7 @@ sequenceDiagram
     API-->>C: Return successful order response
   end
 
-  rect rgb(61, 49, 20)
+  rect rgb(247, 237, 216)
     API->>N: Schedule notification delivery
     N->>DB: Update notification status
   end
@@ -108,10 +109,9 @@ If a client reuses the same key for a different basket, the backend needs a way 
 
 That is why it is best to store a `sha256` request fingerprint built from the canonical payload:
 
-<CodeToggle
-  title="Show TypeScript snippet: order fingerprint"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: order fingerprint">
+
+```typescript
 // Build a normalized view of the order request before hashing it.
 const buildCanonicalOrderFingerprintPayload = (
     createOrderDto: CreateOrderDto,
@@ -136,8 +136,9 @@ export const createOrderRequestFingerprint = (
             "utf8",
         )
         .digest("hex");
-  `}
-/>
+```
+
+</CodeToggle>
 
 This matters because:
 
@@ -153,10 +154,9 @@ Once the fingerprint is created, the server should reserve the idempotency key a
 
 That usually means inserting a row into a dedicated table inside the transaction:
 
-<CodeToggle
-  title="Show TypeScript snippet: idempotency reservation"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: idempotency reservation">
+
+```typescript
 // Reserve the retry key inside the database before doing the main order work.
 private async createIdempotencyRecord(
     manager: EntityManager,
@@ -175,8 +175,9 @@ private async createIdempotencyRecord(
         }),
     );
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 The important detail is the unique constraint on the key.
 
@@ -198,10 +199,9 @@ That transaction usually includes:
 
 The shape looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: transactional order workflow"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: transactional order workflow">
+
+```typescript
 // Run the entire order workflow inside one database transaction.
 const { order, notification } = await this.dataSource.transaction(
     async (manager) => {
@@ -238,8 +238,9 @@ const { order, notification } = await this.dataSource.transaction(
         };
     },
 );
-  `}
-/>
+```
+
+</CodeToggle>
 
 > This is the point where order creation stops being a plain insert and becomes a controlled business transaction.
 
@@ -251,10 +252,9 @@ Under concurrent load, two requests can both see the same stock and both succeed
 
 That is why it is best to use a locking query on the product rows involved in the order:
 
-<CodeToggle
-  title="Show TypeScript snippet: inventory row locking"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: inventory row locking">
+
+```typescript
 // Load the target products with a write lock before checking or reducing stock.
 const products = await manager
     .getRepository(Product)
@@ -264,8 +264,9 @@ const products = await manager
     .andWhere("product.deleted_at IS NULL")
     .orderBy("product.id", "ASC")
     .getMany();
-  `}
-/>
+```
+
+</CodeToggle>
 
 Two things matter here:
 
@@ -284,19 +285,19 @@ sequenceDiagram
   participant API as Order Service
   participant DB as Postgres
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     A->>API: Create order for product X
     API->>DB: Lock product X row
     DB-->>API: Lock granted
   end
 
-  rect rgb(61, 49, 20)
+  rect rgb(247, 237, 216)
     B->>API: Create order for product X
     API->>DB: Try to lock product X row
     DB-->>API: Wait for existing lock
   end
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     A->>DB: Deduct stock and commit
     DB-->>A: Transaction committed
     DB-->>API: Lock released for request B
@@ -316,10 +317,9 @@ If the fingerprints match, the server returns the original order response. If th
 
 That logic looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: replay versus conflict"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: replay versus conflict">
+
+```typescript
 // If the retry key already exists, decide whether this is a safe replay or a conflict.
 private async replayExistingOrderOrThrow(
     idempotencyKey: string,
@@ -350,8 +350,9 @@ private async replayExistingOrderOrThrow(
     // Otherwise return the original order result for this logical request.
     return loadAndReturnOriginalOrder(idempotencyRecord.orderId);
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 This gives the client a meaningful contract:
 
@@ -370,30 +371,30 @@ sequenceDiagram
   participant Idem as Idempotency Store
   participant Orders as Order Read Model
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     Client->>API: Retry order creation with idempotency key
     API->>Idem: Load existing idempotency record
   end
 
   alt Record missing or replay is unsafe
-    rect rgb(61, 49, 20)
+    rect rgb(247, 237, 216)
       Idem-->>API: No safe replay record
       API-->>Client: Return 409 conflict
     end
   else Record exists
-    rect rgb(18, 58, 39)
+    rect rgb(229, 241, 232)
       Idem-->>API: Stored fingerprint and order reference
       API->>API: Compare stored fingerprint with new fingerprint
     end
 
     alt Same logical request
-      rect rgb(18, 58, 39)
+      rect rgb(229, 241, 232)
         API->>Orders: Load original order
         Orders-->>API: Original order payload
         API-->>Client: Replay original success response
       end
     else Different logical request
-      rect rgb(61, 49, 20)
+      rect rgb(247, 237, 216)
         API-->>Client: Return 409 conflict
       end
     end
@@ -411,10 +412,9 @@ So the safer pattern is:
 
 That often looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: post commit notification scheduling"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: post commit notification scheduling">
+
+```typescript
 // Record that notification delivery should happen for this successful order.
 this.logger.info({
     event: "notification.created",
@@ -426,8 +426,9 @@ this.logger.info({
 
 // Trigger the actual delivery after the order transaction has completed.
 this.notificationsService.scheduleDelivery(notification.id);
-  `}
-/>
+```
+
+</CodeToggle>
 
 This separation matters because:
 

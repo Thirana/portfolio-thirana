@@ -1,0 +1,552 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {},
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "h_user",
+      "x": 0,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#17150f",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1001,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "h_user_t",
+      "x": 0,
+      "y": 14,
+      "width": 140,
+      "height": 23,
+      "text": "Real user",
+      "originalText": "Real user",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "h_api",
+      "x": 250,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#5258ad",
+      "backgroundColor": "#eaebf5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1003,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "h_api_t",
+      "x": 250,
+      "y": 14,
+      "width": 140,
+      "height": 23,
+      "text": "API",
+      "originalText": "API",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1004,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "h_att",
+      "x": 500,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#a2412e",
+      "backgroundColor": "#f8e6e1",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1005,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "h_att_t",
+      "x": 500,
+      "y": 14,
+      "width": 140,
+      "height": 23,
+      "text": "Attacker",
+      "originalText": "Attacker",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1006,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "line",
+      "id": "ll_user",
+      "x": 70,
+      "y": 52,
+      "width": 0,
+      "height": 448,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          448
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1007,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "line",
+      "id": "ll_api",
+      "x": 320,
+      "y": 52,
+      "width": 0,
+      "height": 448,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          448
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1008,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "line",
+      "id": "ll_att",
+      "x": 570,
+      "y": 52,
+      "width": 0,
+      "height": 448,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          448
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1009,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "leak_t",
+      "x": 70,
+      "y": 72,
+      "width": 500,
+      "height": 20,
+      "text": "a copy of refresh token T1 leaks",
+      "originalText": "a copy of refresh token T1 leaks",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1101,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "leak",
+      "x": 72,
+      "y": 100,
+      "width": 496,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          496,
+          0
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1102,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "strokeStyle": "dotted"
+    },
+    {
+      "type": "text",
+      "id": "a1_t",
+      "x": 320,
+      "y": 140,
+      "width": 250,
+      "height": 20,
+      "text": "refresh with T1",
+      "originalText": "refresh with T1",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1201,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a1",
+      "x": 568,
+      "y": 168,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -246,
+          0
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1202,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "a2_t",
+      "x": 320,
+      "y": 196,
+      "width": 250,
+      "height": 20,
+      "text": "T2 issued, T1 marked used",
+      "originalText": "T2 issued, T1 marked used",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1203,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a2",
+      "x": 322,
+      "y": 224,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          246,
+          0
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1204,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "a2_s",
+      "x": 320,
+      "y": 232,
+      "width": 250,
+      "height": 18,
+      "text": "looks like a normal refresh",
+      "originalText": "looks like a normal refresh",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#767268",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1205,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "u1_t",
+      "x": 70,
+      "y": 286,
+      "width": 250,
+      "height": 20,
+      "text": "refresh with T1",
+      "originalText": "refresh with T1",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1301,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "u1",
+      "x": 72,
+      "y": 314,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          246,
+          0
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1302,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "detect",
+      "x": 200,
+      "y": 346,
+      "width": 240,
+      "height": 76,
+      "strokeColor": "#a45740",
+      "backgroundColor": "#f6ebe5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1401,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "detect_t",
+      "x": 200,
+      "y": 357,
+      "width": 240,
+      "height": 23,
+      "text": "T1 was already used",
+      "originalText": "T1 was already used",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1402,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "detect_s",
+      "x": 200,
+      "y": 386,
+      "width": 240,
+      "height": 20,
+      "text": "reuse detected",
+      "originalText": "reuse detected",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#a45740",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1403,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "r1_t",
+      "x": 70,
+      "y": 446,
+      "width": 250,
+      "height": 20,
+      "text": "401, log in again",
+      "originalText": "401, log in again",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1501,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "r1",
+      "x": 318,
+      "y": 474,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -246,
+          0
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1502,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "r2_t",
+      "x": 335,
+      "y": 440,
+      "width": 230,
+      "height": 40,
+      "text": "T2 is revoked with it:\nthe thief is logged out too",
+      "originalText": "T2 is revoked with it:\nthe thief is logged out too",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1503,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "line",
+      "id": "div",
+      "x": 0,
+      "y": 520,
+      "width": 640,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          640,
+          0
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1601,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "foot",
+      "x": 0,
+      "y": 540,
+      "width": 640,
+      "height": 44,
+      "text": "Whoever refreshes second exposes the copy. The server cannot\ntell who the thief is, so it ends the session for both.",
+      "originalText": "Whoever refreshes second exposes the copy. The server cannot\ntell who the thief is, so it ends the session for both.",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1602,
+      "lineHeight": 1.25
+    }
+  ]
+}

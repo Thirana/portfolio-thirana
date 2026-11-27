@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "How Cursor Pagination Works on Large Production Tables"
 date: "2026-04-09"
 summary: "A practical guide to stable pagination on large production tables using opaque cursors, deterministic sort order, continuation predicates, and index aware query design."
@@ -45,13 +46,13 @@ If the API relies only on `OFFSET`-based pagination, several problems appear:
 
 Assume the client requests page `20` with a page size of `50`:
 
-<CodeToggle
-  title="Show HTTP example: OFFSET request"
-  language="bash"
-  code={`
+<CodeToggle title="Show HTTP example: OFFSET request">
+
+```bash
 GET /v1/products?page=20&size=50
-  `}
-/>
+```
+
+</CodeToggle>
 
 With one based page numbering, that becomes:
 
@@ -60,10 +61,9 @@ With one based page numbering, that becomes:
 
 The SQL shape usually looks like this:
 
-<CodeToggle
-  title="Show SQL snippet: OFFSET query for page 20"
-  language="sql"
-  code={`
+<CodeToggle title="Show SQL snippet: OFFSET query for page 20">
+
+```sql
 SELECT
     id,
     name,
@@ -74,15 +74,15 @@ WHERE deleted_at IS NULL
   AND is_active = true
 ORDER BY created_at DESC, id DESC
 LIMIT 50 OFFSET 950;
-  `}
-/>
+```
+
+</CodeToggle>
 
 And the response often looks something like this:
 
-<CodeToggle
-  title="Show JSON snippet: OFFSET response shape"
-  language="json"
-  code={`
+<CodeToggle title="Show JSON snippet: OFFSET response shape">
+
+```json
 {
     "items": [
         "... 50 visible products ..."
@@ -93,8 +93,9 @@ And the response often looks something like this:
         "hasNextPage": true
     }
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 The problem is not only the response shape. It is the database work behind it.
 
@@ -126,20 +127,19 @@ The first cursor based request usually does not include a cursor at all.
 
 It simply asks for the first visible page:
 
-<CodeToggle
-  title="Show HTTP example: first cursor request"
-  language="bash"
-  code={`
+<CodeToggle title="Show HTTP example: first cursor request">
+
+```bash
 GET /v1/products?limit=50
-  `}
-/>
+```
+
+</CodeToggle>
 
 The database returns the first `50` visible rows in the agreed order. A practical SQL shape looks like this:
 
-<CodeToggle
-  title="Show SQL snippet: first page query"
-  language="sql"
-  code={`
+<CodeToggle title="Show SQL snippet: first page query">
+
+```sql
 SELECT
     id,
     name,
@@ -150,15 +150,15 @@ WHERE deleted_at IS NULL
   AND is_active = true
 ORDER BY created_at DESC, id DESC
 LIMIT 51;
-  `}
-/>
+```
+
+</CodeToggle>
 
 And the response carries both the rows and a cursor derived from the last visible row in the returned page:
 
-<CodeToggle
-  title="Show JSON snippet: first page response"
-  language="json"
-  code={`
+<CodeToggle title="Show JSON snippet: first page response">
+
+```json
 {
     "items": [
         "... first 50 visible products ..."
@@ -169,8 +169,9 @@ And the response carries both the rows and a cursor derived from the last visibl
         "nextCursor": "c_20260409_prd1050"
     }
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 So if no cursor is sent, the table simply returns the first visible `50` rows and gives the client a continuation token for the next request.
 
@@ -182,10 +183,9 @@ Clients need a token they can send back, but they should not need to understand 
 
 That is why its best practice to encode the position into an opaque cursor:
 
-<CodeToggle
-  title="Show TypeScript snippet: opaque cursor encode and decode"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: opaque cursor encode and decode">
+
+```typescript
 // This describes the two values that define one exact row position.
 export type ProductsCursor = {
     createdAt: string;
@@ -216,8 +216,9 @@ export const decodeProductsCursor = (cursor: string): ProductsCursor => {
         id: decoded.id,
     };
 };
-  `}
-/>
+```
+
+</CodeToggle>
 
 This helps in two ways:
 
@@ -243,13 +244,13 @@ That gives each row one stable position in the ordered result set.
 
 In SQL, the ordering looks like this:
 
-<CodeToggle
-  title="Show SQL snippet: deterministic ordering"
-  language="sql"
-  code={`
+<CodeToggle title="Show SQL snippet: deterministic ordering">
+
+```sql
 ORDER BY created_at DESC, id DESC
-  `}
-/>
+```
+
+</CodeToggle>
 
 > Without a tie breaker, cursor pagination becomes subtly unsafe.
 
@@ -259,44 +260,43 @@ Once the client sends a cursor back, the next page should load rows after that s
 
 The next request now looks like this:
 
-<CodeToggle
-  title="Show HTTP example: second cursor request"
-  language="bash"
-  code={`
+<CodeToggle title="Show HTTP example: second cursor request">
+
+```bash
 GET /v1/products?limit=50&cursor=c_20260409_prd1050
-  `}
-/>
+```
+
+</CodeToggle>
 
 Before building the query, the server decodes the cursor back into its logical position:
 
-<CodeToggle
-  title="Show TypeScript snippet: decode cursor before querying"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: decode cursor before querying">
+
+```typescript
 const decodedCursor = decodeProductsCursor(cursor);
 
 const cursorCreatedAt = decodedCursor.createdAt;
 const cursorId = decodedCursor.id;
-  `}
-/>
+```
+
+</CodeToggle>
 
 For a descending sort on `created_at DESC, id DESC`, the continuation rule becomes:
 
-<CodeToggle
-  title="Show SQL snippet: continuation predicate"
-  language="sql"
-  code={`
+<CodeToggle title="Show SQL snippet: continuation predicate">
+
+```sql
 created_at < :cursorCreatedAt
 OR (created_at = :cursorCreatedAt AND id < :cursorId)
-  `}
-/>
+```
+
+</CodeToggle>
 
 That predicate is then added to the full query:
 
-<CodeToggle
-  title="Show SQL snippet: second page query"
-  language="sql"
-  code={`
+<CodeToggle title="Show SQL snippet: second page query">
+
+```sql
 SELECT
     id,
     name,
@@ -311,15 +311,15 @@ WHERE deleted_at IS NULL
   )
 ORDER BY created_at DESC, id DESC
 LIMIT 51;
-  `}
-/>
+```
+
+</CodeToggle>
 
 In a query builder, it looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: query builder continuation"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: query builder continuation">
+
+```typescript
 const queryBuilder = this.productsRepository
     .createQueryBuilder("product")
     .where("product.deleted_at IS NULL")
@@ -337,15 +337,15 @@ if (cursor) {
         },
     );
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 And the response continues the same pattern:
 
-<CodeToggle
-  title="Show JSON snippet: second page response"
-  language="json"
-  code={`
+<CodeToggle title="Show JSON snippet: second page response">
+
+```json
 {
     "items": [
         "... next 50 visible products ..."
@@ -356,8 +356,9 @@ And the response continues the same pattern:
         "nextCursor": "c_20260409_prd1100"
     }
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 This is the core of stable continuation. The query is not saying "skip 950 rows." It is saying "continue after this exact visible position."
 
@@ -373,10 +374,9 @@ One simple way to do that is to fetch one extra row:
 
 That logic looks like this:
 
-<CodeToggle
-  title="Show TypeScript snippet: limit plus one paging"
-  language="typescript"
-  code={`
+<CodeToggle title="Show TypeScript snippet: limit plus one paging">
+
+```typescript
 const products = await queryBuilder.getMany();
 const hasNextPage = products.length > limit;
 const items = hasNextPage ? products.slice(0, limit) : products;
@@ -396,8 +396,9 @@ return {
                 : null,
     },
 };
-  `}
-/>
+```
+
+</CodeToggle>
 
 This avoids needing a separate count query just to answer "is there another page?"
 
@@ -420,15 +421,15 @@ Cursor pagination is strongest when the database index matches the actual listin
 
 For a public catalog, that often means indexing only the rows that can actually appear:
 
-<CodeToggle
-  title="Show SQL snippet: public listing index"
-  language="sql"
-  code={`
+<CodeToggle title="Show SQL snippet: public listing index">
+
+```sql
 CREATE INDEX IDX_products_public_listing
 ON products (created_at DESC, id DESC)
 WHERE deleted_at IS NULL AND is_active = true;
-  `}
-/>
+```
+
+</CodeToggle>
 
 This is useful because:
 

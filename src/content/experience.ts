@@ -4,6 +4,7 @@ export const WORK_EXPERIENCE: ExperienceItemType[] = [
   {
     id: "mo-marketplace",
     companyName: "MO Marketplace",
+    companyLogo: "/logos/mo-marketplace.png",
     isCurrentEmployer: true,
     positions: [
       {
@@ -29,6 +30,7 @@ export const WORK_EXPERIENCE: ExperienceItemType[] = [
   {
     id: "zoomi-softlab",
     companyName: "ZOOMi Softlab",
+    companyLogo: "/logos/layernext.png",
     role: {
       title: "Associate Software Engineer",
       employmentPeriod: { start: "09.2025", end: "06.2026" },
@@ -81,6 +83,7 @@ export const WORK_EXPERIENCE: ExperienceItemType[] = [
   {
     id: "lseg",
     companyName: "London Stock Exchange Group",
+    companyLogo: "/logos/lseg.png",
     positions: [
       {
         id: "lseg-intern",

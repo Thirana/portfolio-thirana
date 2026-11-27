@@ -1,0 +1,524 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {},
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "h_client",
+      "x": 0,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#a45740",
+      "backgroundColor": "#f6ebe5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1001,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "h_client_t",
+      "x": 0,
+      "y": 14,
+      "width": 140,
+      "height": 23,
+      "text": "Client",
+      "originalText": "Client",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "h_api",
+      "x": 250,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#17150f",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1003,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "h_api_t",
+      "x": 250,
+      "y": 14,
+      "width": 140,
+      "height": 23,
+      "text": "API",
+      "originalText": "API",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1004,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "h_db",
+      "x": 500,
+      "y": 0,
+      "width": 140,
+      "height": 50,
+      "strokeColor": "#9a5574",
+      "backgroundColor": "#f3ebee",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1005,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "h_db_t",
+      "x": 500,
+      "y": 14,
+      "width": 140,
+      "height": 23,
+      "text": "Database",
+      "originalText": "Database",
+      "fontSize": 18,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1006,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "line",
+      "id": "ll_client",
+      "x": 70,
+      "y": 52,
+      "width": 0,
+      "height": 448,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          448
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1007,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "line",
+      "id": "ll_api",
+      "x": 320,
+      "y": 52,
+      "width": 0,
+      "height": 448,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          448
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1008,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "line",
+      "id": "ll_db",
+      "x": 570,
+      "y": 52,
+      "width": 0,
+      "height": 448,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          448
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1009,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "m1_t",
+      "x": 70,
+      "y": 74,
+      "width": 250,
+      "height": 20,
+      "text": "POST /auth/refresh",
+      "originalText": "POST /auth/refresh",
+      "fontSize": 15,
+      "fontFamily": 3,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#24292f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1101,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "m1",
+      "x": 72,
+      "y": 104,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          246,
+          0
+        ]
+      ],
+      "strokeColor": "#a45740",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1102,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "m1_s",
+      "x": 70,
+      "y": 112,
+      "width": 250,
+      "height": 18,
+      "text": "refresh token rides in a cookie",
+      "originalText": "refresh token rides in a cookie",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1103,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "m2_t",
+      "x": 320,
+      "y": 160,
+      "width": 250,
+      "height": 20,
+      "text": "find the row by its hash",
+      "originalText": "find the row by its hash",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1201,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "m2",
+      "x": 322,
+      "y": 188,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          246,
+          0
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1202,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "m3_t",
+      "x": 320,
+      "y": 222,
+      "width": 250,
+      "height": 20,
+      "text": "mark it used (or delete it)",
+      "originalText": "mark it used (or delete it)",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#a45740",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1301,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "m3",
+      "x": 322,
+      "y": 250,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          246,
+          0
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1302,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "m3_s",
+      "x": 320,
+      "y": 258,
+      "width": 250,
+      "height": 18,
+      "text": "the old token is now used up",
+      "originalText": "the old token is now used up",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1303,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "m4_t",
+      "x": 320,
+      "y": 306,
+      "width": 250,
+      "height": 20,
+      "text": "store the new token's hash",
+      "originalText": "store the new token's hash",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1401,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "m4",
+      "x": 322,
+      "y": 334,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          246,
+          0
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1402,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow",
+      "id": "m5",
+      "x": 322,
+      "y": 372,
+      "width": 50,
+      "height": 30,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          50,
+          0
+        ],
+        [
+          50,
+          30
+        ],
+        [
+          2,
+          30
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1501,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "text",
+      "id": "m5_t",
+      "x": 384,
+      "y": 367,
+      "width": 200,
+      "height": 40,
+      "text": "sign a new\naccess token",
+      "originalText": "sign a new\naccess token",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1502,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "m6_t",
+      "x": 70,
+      "y": 428,
+      "width": 250,
+      "height": 20,
+      "text": "new pair",
+      "originalText": "new pair",
+      "fontSize": 16,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1601,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "m6",
+      "x": 318,
+      "y": 456,
+      "width": 246,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -246,
+          0
+        ]
+      ],
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1602,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "m6_s",
+      "x": 70,
+      "y": 464,
+      "width": 250,
+      "height": 36,
+      "text": "access token in the body,\nrefresh token in a new cookie",
+      "originalText": "access token in the body,\nrefresh token in a new cookie",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1603,
+      "lineHeight": 1.25
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+---
+title: "Drydock"
+date: "2026-11-14"
+summary: "A networking guide I built: a fundamentals course, a Google Cloud networking course, and Harbour - a GCP platform with 17 network defects planted on purpose, the commands that find them, and the order they have to be fixed in."
+status: "Live"
+tech:
+  [
+    "Google Cloud",
+    "VPC",
+    "Firewall policies",
+    "IAP",
+    "Load balancing",
+    "Cloud NAT",
+  ]
+links:
+  live: "https://drydock-coral.vercel.app/"
+featured: true
+priority: 1
+domains:
+  [
+    "Addressing and routing",
+    "Transport and protocols",
+    "GCP network controls",
+    "Load balancing and the edge",
+    "Remediation order",
+    "Verification",
+  ]
+constraints:
+  [
+    "subnets, gateways, ARP, NAT and how a router picks a route",
+    "what TCP, UDP, DNS, HTTP and TLS each add to one request",
+    "VPCs, routes, firewall rules and policies, IAP, Cloud NAT and private access",
+    "the HTTPS load balancer chain, health checks, Cloud Armor and Cloudflare in front",
+    "which fix blocks which, and why one rule has to be deleted last",
+    "a command that finds each defect and a check that confirms the fix",
+  ]
+metrics:
+  - label: "Method"
+    value: "One company and one address book in every chapter"
+  - label: "Hands-on"
+    value: "Interactive widgets in most chapters"
+  - label: "Course"
+    value: "26 chapters on Google Cloud"
+  - label: "Lab"
+    value: "Harbour defects D8 and D12-D15"
+  - label: "Sequence"
+    value: "6 phases, each with its prerequisites and risk"
+  - label: "Commands"
+    value: "gcloud, dig, curl, ip route"
+outcomes:
+  - "Two courses with 61 chapters: 35 on networking fundamentals and 26 on networking in Google Cloud, both following one fictional company and its addresses."
+  - "158 interactive widgets and 63 diagrams, so most ideas can be tried by hand: subnet calculators, simulators, byte dumps and quizzes."
+  - "Harbour, a fictional marketplace on Google Cloud with 17 network defects, each with the command that finds it, the change that closes it and the check that confirms it."
+  - "A remediation sequence in six phases that lists what blocks each fix, with a map that redraws as each phase is applied."
+  - "Every defect links to the course sections that teach it, and those chapters link back to the defects."
+  - "Free and fully static: no account or sign-up, with full-text search and a glossary of 166 terms."
+highlights:
+  - "Google Cloud networking course"
+  - "17 network defects planted on purpose"
+  - "the order they have to be fixed in"
+parts:
+  - name: "Networking fundamentals"
+    detail: "35 chapters"
+  - name: "Networking on GCP"
+    detail: "26 chapters"
+  - name: "Harbour lab"
+    detail: "17 planted defects"
+preview: "/images/projects/drydock/network.svg"
+previewAlt: "A network diagram from Drydock: shoppers reach a load balancer, which sends traffic to kade-api in the sn-app subnet of kade-vpc; kade-api talks to kade-db in sn-data. A firewall rule marked in red opens SSH to 0.0.0.0/0."
+---
+
+# Drydock
+
+Drydock is a guide to how networks work, in three steps: a networking fundamentals course, a course on networking in Google Cloud, and Harbour - a fictional platform on Google Cloud whose network I misconfigured on purpose. I built it while working through Google Cloud networking end to end. The courses teach the concepts, and Harbour tests them.
+
+<Diagram
+  src="/diagrams/projects/drydock/path.svg"
+  alt="Three steps from left to right. 1: Fundamentals, 35 chapters, from a laptop to a server. 2: Networking on GCP, 26 chapters, Kadé on Google Cloud. Both courses follow Kadé, one grocery shop with one address book. 3: Harbour, a marketplace built wrong, with 17 planted defects fixed in order. Arrows run back from Harbour to both courses: Learn it on each defect links to the sections that teach it, and See it broken in each of those sections lists its defects."
+  width={720}
+  height={307}
+  caption="Two courses that teach, and a lab that tests, linked both ways"
+/>
+
+## The two courses
+
+Both courses follow **Kadé**, a small online grocery shop in Colombo. The reader is its backend engineer. Chapter 0 of each course holds the story, the network map and an address book, and every later chapter uses those same addresses.
+
+- **Fundamentals** follows one request from a laptop on home Wi-Fi to a server: addressing, ARP, NAT, routing, TCP and UDP, DNS, HTTP, TLS, and the proxies and load balancers in between.
+- **Networking on GCP** moves Kadé into Google Cloud: VPCs, firewall rules and policies, IAP, Cloud NAT, private access, Cloud Run, load balancing, Cloud Armor, Cloudflare, hybrid links and governance.
+
+Most chapters have an interactive widget, such as a CIDR calculator, a DNS resolution simulator or a TCP congestion window simulator.
+
+## Harbour: a platform built wrong on purpose
+
+Harbour is a fictional marketplace for independent sellers. Four paths keep it running: shoppers loading product pages, checkout charging the card through a payment gateway, a nightly job paying sellers, and a courier reading order status over a private link. Each of its 17 defects started as a reasonable shortcut that nobody revisited, such as SSH opened to the internet so the founders could deploy from anywhere.
+
+<Diagram
+  src="/diagrams/projects/drydock/harbour-map.svg"
+  alt="Harbour as found. Shoppers go through Cloudflare and a global external load balancer (D8, the origin is not locked to Cloudflare) to harbour-api on Cloud Run, but a dashed red path shows the run.app URL skipping Cloudflare and the WAF (D6). The load balancer also sends traffic to legacy-api, VMs with public IPs (D3b), inside harbour-vpc, where one rule allows all ingress (D1). Engineers reach the bastion over SSH from anywhere (D2). rabbitmq-1 has no Google API access (D4). legacy-api reaches Cloud SQL on a public IP (D5), partner-vpc is peered to reach it (D11), and harbour-api calls PayGate, which allow-lists caller IPs (D7)."
+  width={720}
+  height={704}
+  caption="Harbour as found, with 9 of its 17 defects marked"
+/>
+
+Each defect page has the symptom, the impact, the command that finds it, what blocks the fix, the state before and after, and the change that closes it.
+
+<CodeToggle title="Show the command that finds D1">
+
+```bash
+# D1 - ingress rules open to the whole internet
+gcloud compute firewall-rules list --format="table(
+  name,priority,direction,sourceRanges.list(),targetTags.list(),
+  allowed[].map().firewall_rule().list())" \
+  --filter="direction=INGRESS AND sourceRanges:0.0.0.0/0"
+```
+
+</CodeToggle>
+
+## The order of the fixes
+
+A list of 17 findings does not say where to start. Several fixes cannot begin until another one is finished, so Harbour fixes them in six phases:
+
+<Diagram
+  src="/diagrams/projects/drydock/fix-order.svg"
+  alt="Six phases from left to right: 1 Groundwork, 2 Secure access, 3 Close the bypasses, 4 Private data path, 5 Egress and load balancer, 6 Govern and tighten. Each defect sits under the phase that fixes it, colored by severity. Arrows show what has to be fixed first: D12 before D13 and D14, D4 and D5 before D3b, D2 before D3a and D16, and D2, D6 and D9 before D1, which is deleted last once nothing relies on it."
+  width={718}
+  height={508}
+  caption="Each arrow points from a fix to the one it unblocks"
+/>
+
+- **Add before removing.** The IAP-only SSH rule is tested on every VM before the open SSH rule is deleted. In the other order, every engineer is locked out.
+- **The legacy VMs keep their public IPs until phase 4.** They use them to reach Google APIs and the database, so the IPs can only go once Private Google Access is on and Cloud SQL has a private IP.
+- **The allow-all rule goes last.** Deleting it shows what was relying on it, so every service first needs its own narrow rule, checked VM by VM.
+
+<MoreDetail title="All 17 defects, in the order they are fixed">
+
+| Phase | ID  | Defect                                          | Severity | Blocked by   |
+| ----- | --- | ----------------------------------------------- | -------- | ------------ |
+| 1     | D4  | Private Google Access is off on the data subnet | Medium   | -            |
+| 1     | D12 | No proxy-only subnet                            | Low      | -            |
+| 2     | D2  | SSH open to the internet                        | High     | -            |
+| 2     | D3a | Bastion carries an external IP                  | Medium   | D2           |
+| 2     | D16 | Metadata SSH keys instead of OS Login           | Medium   | D2           |
+| 3     | D6  | Cloud Run ingress is left at all                | Critical | -            |
+| 3     | D8  | The origin is not locked to Cloudflare          | High     | -            |
+| 4     | D5  | Cloud SQL is on a public IP                     | Critical | -            |
+| 4     | D3b | legacy-api instances carry external IPs         | Medium   | D4, D5       |
+| 5     | D7  | Cloud Run egress is private-ranges-only         | High     | -            |
+| 5     | D9  | Egress is completely unrestricted               | High     | -            |
+| 5     | D13 | TCP health check on a web backend               | Medium   | D12          |
+| 5     | D14 | No Cloud Armor on the legacy backend service    | High     | D12          |
+| 5     | D15 | No SSL policy on the HTTPS proxy                | Medium   | -            |
+| 6     | D10 | No policy above the project                     | Medium   | -            |
+| 6     | D11 | Partner expects transitive access               | Low      | -            |
+| 6     | D1  | One allow rule opens everything                 | Critical | D2, D6, D9   |
+
+</MoreDetail>
+
+## Following the traffic
+
+Six packet journeys trace one request hop by hop: a product page, a health check, a card charge, the nightly job, an SSH session and the partner reaching the database. Each journey and each defect can be viewed as found or fixed, and a phase rail on the map moves the whole platform through the sequence.
+
+Harbour is fictional. It is not a production template or an audit of a real system, and its names and addresses are invented. More Harbour tracks, such as IAM, are planned.

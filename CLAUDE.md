@@ -43,6 +43,7 @@ There is no test suite in this project.
 - Do not duplicate content metadata between frontmatter/`src/content/*` and UI.
 - Reuse styling tokens from `src/app/globals.css`; do not introduce disconnected color or type systems.
 - Use ASCII punctuation in authored copy. Use `-` instead of em dash or en dash.
+- Write authored copy (blogs, work notes) in plain, factual language. No figurative or dramatic flourishes ("old versions in people's pockets", "tokens sitting on phones", "the customer door", "mint a token") and no self-praising framing ("the interesting part", "the risk is obvious", "bugs no test had caught", "now means something", "without anyone noticing"). State what happened and why it matters; let the facts carry the weight.
 - For dense mobile content, use progressive disclosure (collapsible/details) rather than hiding information.
 
 ## Content Rules

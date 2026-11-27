@@ -28,19 +28,18 @@ export default async function Image({ params }: Props) {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        backgroundColor: "#0b0f14",
-        color: "#f8fafc",
+        backgroundColor: "#faf9f7",
+        color: "#17150f",
         padding: "56px",
-        fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui",
+        fontFamily: "Satoshi, ui-sans-serif, system-ui",
       }}
     >
       <div
         style={{
           display: "flex",
           fontSize: 20,
-          letterSpacing: "0.18em",
-          textTransform: "uppercase",
-          color: "#94a3b8",
+          letterSpacing: "-0.01em",
+          color: "#767268",
         }}
       >
         Blog Note
@@ -61,7 +60,7 @@ export default async function Image({ params }: Props) {
             display: "flex",
             fontSize: 26,
             lineHeight: 1.35,
-            color: "#cbd5e1",
+            color: "#6b6862",
           }}
         >
           {summary}
@@ -73,7 +72,7 @@ export default async function Image({ params }: Props) {
           alignItems: "center",
           gap: "16px",
           fontSize: 22,
-          color: "#94a3b8",
+          color: "#767268",
         }}
       >
         <span
@@ -81,7 +80,7 @@ export default async function Image({ params }: Props) {
             width: "8px",
             height: "28px",
             borderRadius: "9999px",
-            backgroundColor: "#22d3ee",
+            backgroundColor: "#a45740",
           }}
         />
         {siteConfig.name}

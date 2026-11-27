@@ -1,0 +1,510 @@
+{
+ "type": "excalidraw",
+ "version": 2,
+ "source": "https://excalidraw.com",
+ "elements": [
+  {
+   "type": "text",
+   "id": "kade",
+   "x": 0,
+   "y": 0,
+   "width": 450,
+   "height": 17.5,
+   "text": "Both courses follow Kad\u00e9: one grocery shop, one address book",
+   "originalText": "Both courses follow Kad\u00e9: one grocery shop, one address book",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#9a5574",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1001,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "line",
+   "id": "kade_l",
+   "x": 0,
+   "y": 26,
+   "width": 450,
+   "height": 8,
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     450,
+     8
+    ],
+    [
+     450,
+     0
+    ]
+   ],
+   "strokeColor": "#9a5574",
+   "backgroundColor": "transparent",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1002,
+   "startArrowhead": null,
+   "endArrowhead": null,
+   "roundness": null
+  },
+  {
+   "type": "text",
+   "id": "harb",
+   "x": 500,
+   "y": 0,
+   "width": 200,
+   "height": 17.5,
+   "text": "A marketplace, built wrong",
+   "originalText": "A marketplace, built wrong",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#a2412e",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1003,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "line",
+   "id": "harb_l",
+   "x": 500,
+   "y": 26,
+   "width": 200,
+   "height": 8,
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     200,
+     8
+    ],
+    [
+     200,
+     0
+    ]
+   ],
+   "strokeColor": "#a2412e",
+   "backgroundColor": "transparent",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1004,
+   "startArrowhead": null,
+   "endArrowhead": null,
+   "roundness": null
+  },
+  {
+   "type": "rectangle",
+   "id": "fund",
+   "x": 0,
+   "y": 50,
+   "width": 200,
+   "height": 100,
+   "strokeColor": "#17150f",
+   "backgroundColor": "#ffffff",
+   "fillStyle": "solid",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1005,
+   "roundness": {
+    "type": 3
+   }
+  },
+  {
+   "type": "text",
+   "id": "fund_t",
+   "x": 0,
+   "y": 70.25,
+   "width": 200,
+   "height": 22.5,
+   "text": "Fundamentals",
+   "originalText": "Fundamentals",
+   "fontSize": 18,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#17150f",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1006,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "text",
+   "id": "fund_s",
+   "x": 0,
+   "y": 94.75,
+   "width": 200,
+   "height": 35.0,
+   "text": "35 chapters\nlaptop to server",
+   "originalText": "35 chapters\nlaptop to server",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#6b6862",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1007,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "rectangle",
+   "id": "gcp",
+   "x": 250,
+   "y": 50,
+   "width": 200,
+   "height": 100,
+   "strokeColor": "#257a91",
+   "backgroundColor": "#e5eff2",
+   "fillStyle": "solid",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1008,
+   "roundness": {
+    "type": 3
+   }
+  },
+  {
+   "type": "text",
+   "id": "gcp_t",
+   "x": 250,
+   "y": 70.25,
+   "width": 200,
+   "height": 22.5,
+   "text": "Networking on GCP",
+   "originalText": "Networking on GCP",
+   "fontSize": 18,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#17150f",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1009,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "text",
+   "id": "gcp_s",
+   "x": 250,
+   "y": 94.75,
+   "width": 200,
+   "height": 35.0,
+   "text": "26 chapters\nKad\u00e9 on Google Cloud",
+   "originalText": "26 chapters\nKad\u00e9 on Google Cloud",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#6b6862",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1010,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "rectangle",
+   "id": "hb",
+   "x": 500,
+   "y": 50,
+   "width": 200,
+   "height": 100,
+   "strokeColor": "#a2412e",
+   "backgroundColor": "#f8e6e1",
+   "fillStyle": "solid",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1011,
+   "roundness": {
+    "type": 3
+   }
+  },
+  {
+   "type": "text",
+   "id": "hb_t",
+   "x": 500,
+   "y": 70.25,
+   "width": 200,
+   "height": 22.5,
+   "text": "Harbour",
+   "originalText": "Harbour",
+   "fontSize": 18,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#17150f",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1012,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "text",
+   "id": "hb_s",
+   "x": 500,
+   "y": 94.75,
+   "width": 200,
+   "height": 35.0,
+   "text": "17 planted defects\nfixed in order",
+   "originalText": "17 planted defects\nfixed in order",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#6b6862",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1013,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "text",
+   "id": "n1",
+   "x": 10,
+   "y": 58,
+   "width": 30,
+   "height": 17.5,
+   "text": "1",
+   "originalText": "1",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "left",
+   "verticalAlign": "top",
+   "strokeColor": "#767268",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1014,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "text",
+   "id": "n2",
+   "x": 260,
+   "y": 58,
+   "width": 30,
+   "height": 17.5,
+   "text": "2",
+   "originalText": "2",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "left",
+   "verticalAlign": "top",
+   "strokeColor": "#767268",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1015,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "text",
+   "id": "n3",
+   "x": 510,
+   "y": 58,
+   "width": 30,
+   "height": 17.5,
+   "text": "3",
+   "originalText": "3",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "left",
+   "verticalAlign": "top",
+   "strokeColor": "#767268",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1016,
+   "lineHeight": 1.25
+  },
+  {
+   "type": "arrow",
+   "id": "a1",
+   "x": 202,
+   "y": 100,
+   "width": 46,
+   "height": 0,
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     46,
+     0
+    ]
+   ],
+   "strokeColor": "#6b6862",
+   "backgroundColor": "transparent",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1017,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "roundness": null
+  },
+  {
+   "type": "arrow",
+   "id": "a2",
+   "x": 452,
+   "y": 100,
+   "width": 46,
+   "height": 0,
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     46,
+     0
+    ]
+   ],
+   "strokeColor": "#6b6862",
+   "backgroundColor": "transparent",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1018,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "roundness": null
+  },
+  {
+   "type": "arrow",
+   "id": "b1",
+   "x": 560,
+   "y": 152,
+   "width": 210,
+   "height": 48,
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     48
+    ],
+    [
+     -210,
+     48
+    ],
+    [
+     -210,
+     0
+    ]
+   ],
+   "strokeColor": "#a45740",
+   "backgroundColor": "transparent",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1019,
+   "startArrowhead": "arrow",
+   "endArrowhead": "arrow",
+   "roundness": null
+  },
+  {
+   "type": "arrow",
+   "id": "b2",
+   "x": 640,
+   "y": 152,
+   "width": 540,
+   "height": 84,
+   "points": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     84
+    ],
+    [
+     -540,
+     84
+    ],
+    [
+     -540,
+     0
+    ]
+   ],
+   "strokeColor": "#a45740",
+   "backgroundColor": "transparent",
+   "strokeWidth": 2,
+   "strokeStyle": "solid",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1020,
+   "startArrowhead": "arrow",
+   "endArrowhead": "arrow",
+   "roundness": null
+  },
+  {
+   "type": "text",
+   "id": "bl",
+   "x": 0,
+   "y": 252,
+   "width": 700,
+   "height": 35.0,
+   "text": "\"Learn it\" on each defect links to the sections that teach it.\n\"See it broken\" in each of those sections lists its defects.",
+   "originalText": "\"Learn it\" on each defect links to the sections that teach it.\n\"See it broken\" in each of those sections lists its defects.",
+   "fontSize": 14,
+   "fontFamily": 5,
+   "textAlign": "center",
+   "verticalAlign": "top",
+   "strokeColor": "#6b6862",
+   "backgroundColor": "transparent",
+   "roughness": 1,
+   "opacity": 100,
+   "seed": 1021,
+   "lineHeight": 1.25
+  }
+ ],
+ "appState": {
+  "viewBackgroundColor": "#ffffff",
+  "gridSize": 20,
+  "exportBackground": false
+ },
+ "files": {}
+}

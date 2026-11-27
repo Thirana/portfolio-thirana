@@ -1,54 +1,54 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 @plugin "tailwindcss-animate";
 @config "../../tailwind.config.mts";
 
 :root {
-  /* GL Design Tokens — forest-charcoal dark system */
-  --gl-bg: #161918;
-  --gl-bg-subtle: #101210;
-  --gl-surface: #1d201e;
-  --gl-surface-2: #252924;
-  --gl-border: #2c312d;
-  --gl-border-strong: #d8ddd6;
-  --gl-border-input: #383d39;
-  --gl-text: #ffffff;
-  --gl-text-muted: #f5f7f5;
-  --gl-text-faint: #8c9690;
-  --gl-primary: #9488c2;
-  --gl-primary-hover: #a39ad0;
-  --gl-primary-soft: #16143a;
+  /* GL Design Tokens - warm paper notebook (light only) */
+  --gl-bg: #faf9f7;
+  --gl-bg-subtle: #f3f1ed;
+  --gl-surface: #ffffff;
+  --gl-surface-2: #f3f1ed;
+  --gl-border: #e6e3dd;
+  --gl-border-strong: #cdc8bf;
+  --gl-border-input: #d9d5ce;
+  --gl-text: #17150f;
+  --gl-text-muted: #6b6862;
+  --gl-text-faint: #767268;
+  --gl-primary: #a45740;
+  --gl-primary-hover: #8a4532;
+  --gl-primary-soft: #f6ebe5;
   --gl-primary-ink: #ffffff;
-  --gl-swatch-1: #8eceb4;
-  --gl-swatch-2: #a8abd8;
-  --gl-swatch-3: #ccaabc;
-  --gl-swatch-4: #d4b878;
-  --gl-swatch-5: #cc9888;
-  --gl-swatch-6: #80c8d8;
-  --gl-success: #69b598;
-  --gl-success-soft: #0d2419;
-  --gl-warning: #c4a05e;
-  --gl-warning-soft: #231a07;
-  --gl-danger: #b87060;
-  --gl-danger-soft: #261009;
+  --gl-ink: #17150f;
+  --gl-ink-fg: #faf9f7;
+  --gl-swatch-1: #33805a;
+  --gl-swatch-2: #5258ad;
+  --gl-swatch-3: #9a5574;
+  --gl-swatch-4: #95691a;
+  --gl-swatch-5: #b2553a;
+  --gl-swatch-6: #257a91;
+  --gl-success: #23683c;
+  --gl-success-soft: #e5f1e8;
+  --gl-warning: #855a12;
+  --gl-warning-soft: #f7edd8;
+  --gl-danger: #a2412e;
+  --gl-danger-soft: #f8e6e1;
   --gl-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.45), 0 6px 20px -8px rgba(0, 0, 0, 0.5);
+    0 1px 2px rgba(23, 21, 15, 0.05), 0 10px 28px -14px rgba(23, 21, 15, 0.14);
   --gl-shadow-lg:
-    0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 40px -12px rgba(0, 0, 0, 0.6);
-  --gl-shadow-hard: 4px 4px 0 #d8ddd6;
+    0 1px 2px rgba(23, 21, 15, 0.06), 0 18px 40px -16px rgba(23, 21, 15, 0.2);
 
-  /* Shadcn semantic variables → GL tokens */
+  /* Shadcn semantic variables -> GL tokens */
   --background: var(--gl-bg);
   --foreground: var(--gl-text);
   --card: var(--gl-surface);
   --card-foreground: var(--gl-text);
   --popover: var(--gl-surface);
   --popover-foreground: var(--gl-text);
-  --primary: var(--gl-primary);
-  --primary-foreground: var(--gl-primary-ink);
+  --primary: var(--gl-ink);
+  --primary-foreground: var(--gl-ink-fg);
   --secondary: var(--gl-surface-2);
   --secondary-foreground: var(--gl-text);
   --muted: var(--gl-surface-2);
@@ -60,24 +60,19 @@
   --input: var(--gl-border-input);
   --ring: var(--gl-primary);
   --panel: var(--gl-surface);
-  --radius: 0.625rem;
-  --sidebar: var(--gl-bg-subtle);
-  --sidebar-foreground: var(--gl-text);
-  --sidebar-primary: var(--gl-primary);
-  --sidebar-primary-foreground: var(--gl-primary-ink);
-  --sidebar-accent: var(--gl-surface-2);
-  --sidebar-accent-foreground: var(--gl-text);
-  --sidebar-border: var(--gl-border);
-  --sidebar-ring: var(--gl-primary);
+  --radius: 0.875rem;
 }
 
 @theme inline {
-  /* Font families */
+  /* Font families: Satoshi carries UI and headings, Erode carries reading text */
   --font-sans:
-    var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    var(--font-satoshi), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     sans-serif;
+  --font-serif: var(--font-erode), ui-serif, Georgia, serif;
   --font-mono:
     var(--font-jetbrains-mono), ui-monospace, "JetBrains Mono", monospace;
+  /* Handwriting for the footer signature only */
+  --font-signature: var(--font-caveat), "Segoe Print", cursive;
 
   /* GL color utilities */
   --color-gl-bg: var(--gl-bg);
@@ -94,6 +89,8 @@
   --color-gl-primary-hover: var(--gl-primary-hover);
   --color-gl-primary-soft: var(--gl-primary-soft);
   --color-gl-primary-ink: var(--gl-primary-ink);
+  --color-gl-ink: var(--gl-ink);
+  --color-gl-ink-fg: var(--gl-ink-fg);
   --color-gl-swatch-1: var(--gl-swatch-1);
   --color-gl-swatch-2: var(--gl-swatch-2);
   --color-gl-swatch-3: var(--gl-swatch-3);
@@ -127,129 +124,62 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-panel: var(--panel);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   /* Shadow utilities */
   --shadow-gl: var(--gl-shadow);
   --shadow-gl-lg: var(--gl-shadow-lg);
-  --shadow-gl-hard: var(--gl-shadow-hard);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 6px);
+  --radius-lg: calc(var(--radius) - 4px);
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) + 4px);
+}
+
+html {
+  background-color: var(--gl-bg);
+  color-scheme: light;
+  /* Keep deep-linked headings (#section) clear of the sticky header. */
+  scroll-padding-top: 5rem;
 }
 
 body {
   background-color: var(--gl-bg);
   color: var(--gl-text);
-  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.5;
   min-height: 100vh;
 }
 
 ::selection {
-  background-color: rgba(148, 136, 194, 0.22);
+  background-color: #f1dcd2;
   color: var(--gl-text);
 }
 
+html {
+  scrollbar-color: var(--gl-border-strong) transparent;
+}
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--gl-bg-subtle);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--gl-border);
-  border-radius: 3px;
+  border-radius: 999px;
+  border: 2px solid var(--gl-bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gl-text-faint);
+  background: var(--gl-border-strong);
 }
 
 :focus-visible {
   outline: 2px solid var(--gl-primary);
   outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* GL animation keyframes */
-@keyframes gl-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes gl-fade-up-lg {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes gl-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes gl-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.78);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes gl-cursor-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-.animate-fade-up {
-  animation: gl-fade-up 0.4s ease both;
-}
-.animate-fade-up-lg {
-  animation: gl-fade-up-lg 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.animate-fade-in {
-  animation: gl-fade-in 0.25s ease both;
-}
-.animate-scale-in {
-  animation: gl-scale-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-.animate-cursor-blink {
-  animation: gl-cursor-blink 1s steps(2) infinite;
+  border-radius: 6px;
 }
 
 @keyframes collapsible-down {
@@ -269,10 +199,32 @@ body {
   }
 }
 .animate-collapsible-down {
-  animation: collapsible-down 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: collapsible-down 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .animate-collapsible-up {
   animation: collapsible-up 180ms ease-out;
+}
+
+/* Hero facts ticker: each new fact rises out of a soft blur */
+@keyframes fact-in {
+  from {
+    opacity: 0;
+    transform: translateY(55%);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.fact-in {
+  animation: fact-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fact-in {
+    animation: none;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -283,51 +235,32 @@ body {
   scrollbar-width: none;
 }
 
-.animation-delay-100 {
-  animation-delay: 100ms;
-}
-.animation-delay-200 {
-  animation-delay: 200ms;
-}
-.animation-delay-300 {
-  animation-delay: 300ms;
-}
-.animation-delay-500 {
-  animation-delay: 500ms;
-}
-.animation-delay-700 {
-  animation-delay: 700ms;
-}
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  button,
+  nav,
+  label,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-sans);
+  }
 
-/* ─── Engineering coordinate grid — homepage ambient texture ─── */
-.page-bg-grid {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  /* Break out of the max-width page container to span full viewport */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  z-index: 0;
-  pointer-events: none;
-  /* Crosshair marks: 6px arms at each 20px grid intersection */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='1' fill='%239488c2'/%3E%3C/svg%3E");
-  background-size: 20px 20px;
-  opacity: 0.65;
-  /* Graduated mask: faint at top, stronger toward bottom */
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.18) 0%,
-    rgba(0, 0, 0, 0.35) 25%,
-    rgba(0, 0, 0, 0.6) 50%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.18) 0%,
-    rgba(0, 0, 0, 0.35) 25%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
 }
 
 @layer components {
@@ -335,222 +268,478 @@ body {
     position: relative;
     margin: 0 auto;
     width: 100%;
-    max-width: 48rem;
+    max-width: 42rem;
     padding: 0 1.5rem;
   }
 
-  .panel {
-    border: 1px solid var(--gl-border);
-    border-radius: 0.75rem;
-    background-color: var(--gl-surface);
-    padding: 1.25rem;
+  /* Pill heading that opens every section */
+  /*
+   * Hand-drawn outline, in the spirit of the Excalidraw sketches: two loose
+   * strokes with uneven corners instead of one ruled border. The fill sits on
+   * a pseudo-element so its edge follows the same wobble. Neighbouring list
+   * items get different corners so a row of tags does not look stamped out.
+   */
+  .sketch {
+    --sketch-ink: color-mix(in oklab, var(--gl-text-muted) 42%, transparent);
+    --sketch-fill: transparent;
+    --sketch-r1: 7px 11px 6px 10px / 10px 6px 11px 7px;
+    --sketch-r2: 11px 6px 10px 7px / 6px 11px 7px 10px;
+    position: relative;
+    isolation: isolate;
+    border-color: transparent !important;
+    background: transparent !important;
+  }
+  .sketch::before,
+  .sketch::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border: 1.25px solid var(--sketch-ink);
+  }
+  .sketch::before {
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--sketch-r1);
+    background: var(--sketch-fill);
+  }
+  .sketch::after {
+    inset: 1.5px -1px -1px 1.5px;
+    border-radius: var(--sketch-r2);
+    opacity: 0.4;
+  }
+  :where(li:nth-child(3n + 2)) > .sketch {
+    --sketch-r1: 11px 6px 10px 7px / 7px 10px 6px 11px;
+    --sketch-r2: 6px 11px 7px 10px / 11px 7px 10px 6px;
+  }
+  :where(li:nth-child(3n)) > .sketch {
+    --sketch-r1: 6px 10px 8px 11px / 11px 8px 10px 6px;
+    --sketch-r2: 9px 7px 11px 6px / 7px 11px 6px 9px;
+  }
+  /* Pill-shaped badges keep a pill silhouette, drawn loosely */
+  /* Drafts and other not-final states: the same hand, dashed */
+  .sketch.sketch-dashed::before,
+  .sketch.sketch-dashed::after {
+    border-style: dashed;
+  }
+  /* Outlined pills that are links fill in and darken on hover */
+  .sketch.pill:hover {
+    --sketch-fill: var(--gl-surface);
+    --sketch-ink: color-mix(in oklab, var(--gl-text-muted) 70%, transparent);
+  }
+  .sketch.sketch-pill {
+    --sketch-r1: 15px 13px 16px 12px / 13px 16px 12px 15px;
+    --sketch-r2: 12px 16px 13px 15px / 16px 12px 15px 13px;
+  }
+
+  /* Dashed seam between sections */
+  .seam {
+    height: 1px;
+    width: 100%;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--gl-border) 0,
+      var(--gl-border) 5px,
+      transparent 5px,
+      transparent 9px
+    );
+  }
+
+  /* White paper card */
+  .card {
+    border-radius: 14px;
+    background: var(--gl-surface);
     box-shadow: var(--gl-shadow);
   }
 
-  /* Solid panel — clear border, no gradient */
-  .glass-panel {
-    background-image: none;
-    border-color: var(--gl-border) !important;
+  /* Postage-stamp frame: solid content box, perforated 4px edge (64px total) */
+  .stamp {
+    display: inline-block;
+    padding: 4px;
+    background: #efe6d8;
+    -webkit-mask:
+      conic-gradient(#000 0 0) content-box,
+      radial-gradient(circle 2.6px, #0000 95%, #000) -4px -4px / 8px 8px;
+    mask:
+      conic-gradient(#000 0 0) content-box,
+      radial-gradient(circle 2.6px, #0000 95%, #000) -4px -4px / 8px 8px;
   }
 
-  /* Solid chip */
-  .glass-chip {
-    background: var(--gl-surface-2);
-    background-image: none;
-    border-color: var(--gl-border) !important;
-    box-shadow: none;
-  }
-
-  /* Status chips — solid colored */
-  .glass-chip-success {
-    background: var(--gl-success-soft);
-    background-image: none;
-    border-color: rgba(105, 181, 152, 0.28) !important;
-    box-shadow: none;
-    color: var(--gl-success);
-  }
-  .glass-chip-warning {
-    background: var(--gl-warning-soft);
-    background-image: none;
-    border-color: rgba(196, 160, 94, 0.28) !important;
-    box-shadow: none;
-    color: var(--gl-warning);
-  }
-  .glass-chip-muted {
-    background: var(--gl-surface-2);
-    background-image: none;
-    border-color: var(--gl-border) !important;
-    box-shadow: none;
-    color: var(--gl-text-muted);
-  }
-  .glass-chip-sky {
-    background: rgba(98, 174, 191, 0.1);
-    background-image: none;
-    border-color: rgba(98, 174, 191, 0.25) !important;
-    box-shadow: none;
-    color: var(--gl-swatch-6);
-  }
-
-  /* Primary button — solid teal fill */
-  .glass-btn-primary {
-    background: var(--gl-primary);
-    background-image: none;
-    border: 1px solid var(--gl-primary);
-    box-shadow: none;
-    color: var(--gl-primary-ink);
-    transition:
-      background 120ms,
-      border-color 120ms;
-  }
-  .glass-btn-primary:hover {
-    background: var(--gl-primary-hover);
-    border-color: var(--gl-primary-hover);
-    color: var(--gl-primary-ink);
-  }
-  .glass-btn-primary:active {
-    transform: scale(0.97);
-  }
-
-  /* Secondary button — outlined */
-  .glass-btn-secondary {
-    background: transparent;
-    background-image: none;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: none;
+  /* Outlined pill used for socials and secondary actions */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid var(--gl-border);
+    border-radius: 999px;
+    padding: 7px 13px 7px 11px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
     color: var(--gl-text);
+    background: transparent;
     transition:
-      background 120ms,
-      border-color 120ms;
+      border-color 150ms ease,
+      background-color 150ms ease;
   }
-  .glass-btn-secondary:hover {
-    background: var(--gl-surface-2);
-    border-color: rgba(255, 255, 255, 0.22);
+  .pill:hover {
+    border-color: var(--gl-border-strong);
+    background: var(--gl-surface);
   }
-  .glass-btn-secondary:active {
+
+  /* Solid ink pill - the one primary action */
+  .pill-ink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--gl-ink-fg);
+    background: var(--gl-ink);
+    transition:
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+  .pill-ink:hover {
+    background: #36322a;
+  }
+  .pill-ink:active {
     transform: scale(0.97);
+  }
+
+  /* Rust text link with trailing arrow */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gl-primary);
+    transition: color 150ms ease;
+  }
+  .link-arrow:hover {
+    color: var(--gl-primary-hover);
+  }
+  .link-arrow svg {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-arrow:hover svg {
+    transform: translateX(2px);
   }
 }
 
-@layer base {
-  .prose :where(h1) {
-    letter-spacing: -0.022em;
-    color: var(--gl-text);
-  }
+/* Long-form reading: Erode body, Satoshi headings.
+   Unlayered so it beats @tailwindcss/typography defaults. */
+.prose {
+  --tw-prose-body: var(--gl-text);
+  --tw-prose-headings: var(--gl-text);
+  --tw-prose-links: var(--gl-primary);
+  --tw-prose-bold: var(--gl-text);
+  --tw-prose-counters: var(--gl-text-faint);
+  --tw-prose-bullets: var(--gl-border-strong);
+  --tw-prose-hr: var(--gl-border);
+  --tw-prose-quotes: var(--gl-text);
+  --tw-prose-captions: var(--gl-text-faint);
+  --tw-prose-code: var(--gl-text);
+  --tw-prose-th-borders: var(--gl-border-strong);
+  --tw-prose-td-borders: var(--gl-border);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
 
-  .prose :where(h2) {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-family: var(--font-sans);
-    font-size: 1.25rem;
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: -0.018em;
-    color: var(--gl-text);
-    margin-top: 2.5rem;
-    margin-bottom: 1.25rem;
-  }
+.prose :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--gl-text);
+}
 
-  .prose :where(h2)::after {
-    content: "";
-    flex: 1;
-    display: block;
-    height: 1px;
-    background-color: var(--gl-border);
-  }
+.prose :where(h1) {
+  letter-spacing: -0.025em;
+}
 
-  .prose :where(h3) {
-    letter-spacing: -0.018em;
-    color: var(--gl-text);
-  }
+.prose :where(h2) {
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+  margin-top: 2.75rem;
+  margin-bottom: 1rem;
+}
 
-  .prose :where(h4, h5, h6) {
-    color: var(--gl-text);
-  }
+.prose :where(h3) {
+  font-size: 1.125rem;
+  letter-spacing: -0.015em;
+  margin-top: 2rem;
+}
 
-  .prose :where(p, li, ol, ul) {
-    color: var(--gl-text);
-  }
+.prose :where(h4) {
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
 
-  .prose ul > li::marker,
-  .prose ol > li::marker {
-    color: var(--gl-primary);
-  }
+.prose :where(th) {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
 
-  .prose :where(strong) {
-    color: var(--gl-text);
-  }
+.prose a {
+  color: var(--gl-primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--gl-primary) 35%, transparent);
+  text-underline-offset: 3px;
+  transition:
+    color 0.15s,
+    text-decoration-color 0.15s;
+}
 
-  .prose a {
-    color: var(--gl-primary);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    transition: color 0.15s;
-  }
+.prose a:hover {
+  color: var(--gl-primary-hover);
+  text-decoration-color: currentColor;
+}
 
-  .prose a:hover {
-    color: var(--gl-primary-hover);
-  }
+.prose :where(code):not(:where(pre code)) {
+  border: 1px solid var(--gl-border);
+  border-radius: 0.375rem;
+  background: var(--gl-surface);
+  color: var(--gl-text);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.8125em;
+  font-weight: 400;
+}
 
-  .prose code {
-    border: 1px solid var(--gl-border);
-    border-radius: 0.375rem;
-    background: var(--gl-surface-2);
-    color: var(--gl-text-muted);
-    padding: 0.15rem 0.4rem;
-    font-size: 0.8125rem;
-  }
+.prose :where(code):not(:where(pre code))::before,
+.prose :where(code):not(:where(pre code))::after {
+  content: none;
+}
 
-  .prose pre code {
-    border: none;
-    background: transparent;
-    color: var(--gl-text);
-    padding: 0;
-    font-size: inherit;
-  }
+.prose pre code {
+  border: none;
+  background: transparent;
+  color: var(--gl-text);
+  padding: 0;
+  font-size: inherit;
+}
 
-  .prose blockquote {
-    border-left: 3px solid var(--gl-primary);
-    border-top: none;
-    border-right: none;
-    border-bottom: none;
-    background: var(--gl-surface);
-    color: var(--gl-text);
-    font-style: normal;
-    padding: 1rem 1.25rem;
-    border-radius: 0 0.75rem 0.75rem 0;
-  }
+/* Colored words in a code block, written as /word/#color in the fence meta
+   (rehype-pretty-code). Used to trace one value through a formula; the
+   colors are the site swatches, so they can match a nearby diagram. */
+.prose pre mark[data-highlighted-chars] {
+  background: transparent;
+  font-weight: 600;
+}
+.prose pre mark[data-highlighted-chars] span {
+  color: inherit !important;
+}
+.prose pre mark[data-chars-id="indigo"] {
+  color: var(--gl-swatch-2);
+}
+.prose pre mark[data-chars-id="plum"] {
+  color: var(--gl-swatch-3);
+}
+.prose pre mark[data-chars-id="teal"] {
+  color: var(--gl-swatch-6);
+}
+.prose pre mark[data-chars-id="amber"] {
+  color: var(--gl-warning);
+}
+.prose pre mark[data-chars-id="green"] {
+  color: var(--gl-success);
+}
 
-  .prose :where(hr) {
-    border-color: var(--gl-border);
-  }
+.prose :where(hr) {
+  border: 0;
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--gl-border) 0,
+    var(--gl-border) 5px,
+    transparent 5px,
+    transparent 9px
+  );
+}
 
-  .content-with-hero > h1:first-child {
-    display: none;
-  }
+.content-with-hero > h1:first-child {
+  display: none;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
+}
+
+/*
+ * Work case studies: tables sit on the paper instead of a white card,
+ * ruled top and bottom like the post list, with cell text aligned to the prose.
+ * Unlayered so it wins over the shared table utilities in mdx-components.
+ */
+.work-prose .mdx-table {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  border-block: 1px solid var(--gl-border);
+}
+
+.work-prose .mdx-table :is(th, td):first-child {
+  padding-left: 0;
+}
+
+.work-prose .mdx-table :is(th, td):last-child {
+  padding-right: 0;
+}
+
+/*
+ * Phones: every table row becomes a block instead of the table scrolling
+ * sideways. The first cell reads as the row's heading; each other cell is
+ * named by its column, which rehype-table-labels copies into data-label.
+ * Unlayered so it wins over the table utilities in mdx-components.
+ */
+@media (max-width: 639.98px) {
+  .mdx-table :is(table, tbody, tr, td) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mdx-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .mdx-table tr {
+    padding: 12px 16px;
+  }
+
+  .mdx-table tr + tr {
+    border-top: 1px solid var(--gl-border);
+  }
+
+  .mdx-table td {
+    border-top: 0;
+    padding: 0;
+  }
+
+  .mdx-table td:first-child {
+    font-weight: 500;
+  }
+
+  .mdx-table td + td {
+    margin-top: 8px;
+  }
+
+  .mdx-table td + td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 1px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gl-text-faint);
+  }
+
+  .mdx-table code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .work-prose .mdx-table tr {
+    padding-inline: 0;
   }
 }
 
-/* Unlayered — beats @tailwindcss/typography plugin styles regardless of specificity */
-.prose-invert {
-  --tw-prose-invert-bullets: var(--gl-primary);
-}
+/* Project card: a paper card like the others, with a pencil line traced
+   loosely around it - uneven corners, a fraction of a degree off. The line
+   settles onto the card on hover. */
+@layer components {
+  .sketch-card {
+    position: relative;
+    isolation: isolate;
+  }
 
-.prose-invert {
-  --tw-prose-invert-counters: var(--gl-primary);
-}
+  .sketch-card::before,
+  .sketch-card::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
 
-.prose ul > li::marker,
-.prose-invert ul > li::marker,
-.prose ol > li::marker,
-.prose-invert ol > li::marker {
-  color: var(--gl-primary);
+  .sketch-card::before {
+    inset: 0;
+    z-index: -1;
+    border-radius: 14px;
+    background: var(--gl-surface);
+    box-shadow: var(--gl-shadow);
+  }
+
+  .sketch-card::after {
+    inset: -4px -3px -3px -4px;
+    border: 1.5px solid color-mix(in oklab, var(--gl-text) 40%, transparent);
+    border-radius: 20px 14px 22px 16px / 14px 22px 16px 20px;
+    transform: rotate(-0.4deg);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* The project's own screenshot, pinned on so it breaks out of the
+     card's top edge, tilted a little. It straightens on hover. */
+  .preview-shot {
+    overflow: hidden;
+    border: 1px solid var(--gl-border-strong);
+    border-radius: 10px;
+    background: var(--gl-surface);
+    box-shadow: var(--gl-shadow-lg);
+    transform: rotate(-1.5deg);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (min-width: 40rem) {
+    .preview-shot {
+      transform: rotate(2deg);
+    }
+  }
+
+  .sketch-card:hover .preview-shot {
+    transform: rotate(0deg) translateY(-3px);
+  }
+
+  /* Highlighter pen over a key phrase: a yellow band across the lower
+     part of the words, slanted at the ends, unbroken across line wraps. */
+  .marker {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    margin: 0 -0.15em;
+    padding: 0 0.15em;
+    background-color: transparent;
+    background-image: linear-gradient(
+      100deg,
+      transparent 0.15em,
+      oklch(0.9 0.16 98 / 0.75) 0.3em,
+      oklch(0.9 0.16 98 / 0.6) calc(100% - 0.3em),
+      transparent calc(100% - 0.15em)
+    );
+    background-position: 0 85%;
+    background-repeat: no-repeat;
+    background-size: 100% 0.6em;
+    color: var(--gl-text);
+  }
+
+  .sketch-card:hover::after {
+    transform: rotate(0deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sketch-card::after,
+    .preview-shot {
+      transition: none;
+    }
+  }
 }

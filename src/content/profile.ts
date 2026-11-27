@@ -11,14 +11,14 @@ import {
   Linkedin,
   Mail,
   Route,
-  Twitter,
 } from "lucide-react";
+import { XLogo } from "@/components/icons/XLogo";
 
 export const profile = {
   name: "Thirana Embuldeniya",
   handle: "@_Thirana",
   headline:
-    "I enjoy taking backend ideas from concept to working systems. I study how real platforms handle reliability, scale, and architecture decisions, then I implement and validate those patterns through practical projects.",
+    "Engineering secure software systems for people - from cloud platforms and servers to the networks that connect them.",
   highlights: [
     "Explores real world backend and architecture patterns through self driven learning.",
     "Keeps current with modern tools, technologies, and engineering concepts.",
@@ -44,7 +44,7 @@ export const socials = [
   {
     label: "X",
     href: "https://x.com/_Thirana",
-    icon: Twitter,
+    icon: XLogo,
     handle: "@_Thirana",
   },
   {

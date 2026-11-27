@@ -1,0 +1,252 @@
+---
+title: "Moving the admin panels behind Identity-Aware Proxy"
+cardTitle: "Admin panels behind Identity-Aware Proxy"
+date: "2026-10-29"
+summary: "I moved both MO Marketplace admin panels off Firebase Hosting onto Cloud Run, behind a Google sign-in gate (IAP), with keyless tag-based deploys, least-privilege identities and a one-step rollback at every stage."
+company: "mo-marketplace"
+featured: true
+priority: 1
+mark: "/diagrams/work/admin-panels-cloud-run-iap/mark.svg"
+highlights:
+  - icon: "shield"
+    label: "Identity-Aware Proxy"
+  - icon: "key"
+    label: "Least-privilege IAM"
+  - icon: "tag"
+    label: "Keyless tag deploys"
+  - icon: "route"
+    label: "Staged DNS cutover"
+tech:
+  [
+    "Cloud Run",
+    "Cloud Load Balancing",
+    "IAP",
+    "Cloud Build",
+    "Artifact Registry",
+    "Certificate Manager",
+    "nginx",
+    "Docker",
+    "Cloudflare DNS",
+  ]
+glance:
+  - label: "Before"
+    value: "A public login page, deploys using a long-lived key stored in GitHub"
+  - label: "After"
+    value: "Staff-only access after Google sign-in, deploys from release tags, no stored keys, and Google-managed certificates that renew on their own"
+outcomes:
+  - "The admin panels are no longer reachable from the internet: only staff on an access list get through, after Google sign-in."
+  - "Deploys no longer depend on a stored credential. The service account key kept in GitHub is deleted; Cloud Build deploys from release tags."
+  - "Staging and production each have their own service, image repository, build trigger and two narrowly scoped service accounts. They share nothing except permission to write logs."
+  - "The old Firebase sites, deploy workflows and DNS records are gone, and the panels now live in the same Google Cloud project as the rest of the platform."
+---
+
+## The problem
+
+MO Marketplace has two internal admin panels, one for staging and one for production, used by marketing, sales, support and engineering. They were React single-page apps hosted on Firebase Hosting, and anyone on the internet could open their login page. The only thing between a stranger and the admin UI was a password form.
+
+Three other things made this worse than it looked:
+
+- **There was no way to add a gate in place.** Google's sign-in gate for web apps, Identity-Aware Proxy (IAP), is a setting on a Google Cloud load balancer. Firebase Hosting serves sites from Google's shared edge, which you cannot put a load balancer in front of, and it always keeps the `*.web.app` and `*.firebaseapp.com` addresses open as side doors.
+- **Deploys used a long-lived key.** GitHub Actions deployed both panels with a service account key stored as a repository secret.
+- **The panels lived in a separate Google Cloud project**, apart from everything else the platform runs.
+
+<Callout title="The goal">
+
+Both panels open only to staff on an access list, after Google sign-in, deployed without stored keys, and moved without interrupting the people who use them every day.
+
+</Callout>
+
+## Checking what the move would break
+
+Before choosing anything, I checked four things that could have made the move much harder:
+
+| Question                         | Finding                                                     | Why it mattered                                                                         |
+| -------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Does the panel use Firebase Auth? | No. Login goes to the platform's own backend.               | Firebase Auth's sign-in handler lives on the Firebase site; closing it would break login. |
+| Who uses the panels?             | Only company Google Workspace accounts.                     | IAP's Google-managed sign-in only admits Workspace accounts, so nobody is locked out.    |
+| What does Firebase actually do?  | One rewrite: every path to `/index.html`.                   | Nothing Firebase-specific to rebuild. nginx does the same in one line.                   |
+| Do deep links survive a reload?  | Yes. The app uses hash routing (`/#/orders/2027`).          | The server only ever sees `/` and `/static/...`, so relative asset paths stay safe.      |
+
+Nothing blocked the move, so the plan became: serve the built app from Cloud Run, put a load balancer with IAP in front of it, and deploy it from Cloud Build.
+
+## The setup after the move
+
+<Diagram
+  src="/diagrams/work/admin-panels-cloud-run-iap/setup-after.svg"
+  alt="Two paths meet at the Cloud Run service. Request path: staff browser over HTTPS to a load balancer with a Google-managed certificate, then the IAP gate (Google sign-in plus access group), where strangers are stopped and allowed staff continue to Cloud Run. Release path: a release tag (v1.2.3 for staging, prod-v1.2.3 for production) triggers Cloud Build with its own identity per environment, which pushes the image to Artifact Registry and deploys a new revision to Cloud Run. Cloud Run accepts traffic only from the load balancer, has no public URL, and runs as an identity with no roles."
+  width={635}
+  height={694}
+  caption="Two independent paths, one locked service"
+/>
+
+The backend API the panels call did not change. What changed is where the panels are built and deployed from, where their files are served from, and who is allowed to load them.
+
+## Decision 1: which load balancer
+
+IAP needs a load balancer, and there were four reasonable layouts. A load balancer here means a forwarding rule, an HTTPS proxy and a URL map; different hostnames can route to different backends.
+
+| Option          | Layout                                                                 | Touches a live load balancer          | Extra cost   |
+| --------------- | ---------------------------------------------------------------------- | ------------------------------------- | ------------ |
+| A               | Both panels on the existing internal analytics load balancer           | Yes: its certificate moves on a live proxy | $0           |
+| B               | Two new load balancers, one per environment                            | No                                    | ~$14.60/month |
+| **C - chosen**  | Production gets its own; staging joins the staging website's as a host rule | Once, staging only, validated first  | ~$7.30/month |
+| D               | One new load balancer shared by both panels                            | No                                    | ~$7.30/month |
+
+The project already had more than five global forwarding rules, so each new one is billed at about $7.30 a month. Option C cost the same as D but kept production completely separate:
+
+- **Production shares nothing** with staging or the analytics tool, so a mistake elsewhere cannot take it down.
+- **Staging is where risky changes go first** - TLS policies, headers, new host rules - and under C those tests never touch production.
+- **The staging proxy already used a certificate map**, so adding a hostname needed one new entry, not a rebuild.
+
+Its one cost was a careful edit of a live URL map, covered below.
+
+## Decision 2: identities that can do one job each
+
+Instead of a broad default service account, each environment got two identities of its own:
+
+- **Runtime identity** - what the container runs as. nginx only serves files and never calls a Google API, so this account has **no roles at all**.
+- **Build identity** - what Cloud Build runs as. Each of its grants sits on a single resource rather than the whole project, except writing logs, which cannot be scoped smaller. The diagram in Decision 4 shows every grant at the step that uses it.
+
+One of those grants matters more than it looks. A Cloud Run service can do whatever its service account can, so choosing the account is itself a permission (`iam.serviceAccountUser`, often called actAs). Granting it on one specific account, not the project, means a build that is compromised cannot deploy code running as a more powerful identity.
+
+The deploy role has one gap: it can change a service's ingress setting. That is covered by the pipeline, which re-applies every lock on each deploy (below), so a manual change is reverted at the next release.
+
+## Decision 3: one image repository per app and environment
+
+The staging admin panel and the production admin panel each get an image repository of their own, instead of sharing one with the project's other apps. That brings four benefits:
+
+- **Write access limited to one repository.** Each environment's Cloud Build service account can push only to its own repository, so it cannot overwrite any other app's images.
+- **Clear ownership.** The repository name says whose images are inside.
+- **A clean-up rule for this app alone.** It keeps the newest 10 images, so a rollback always has an image to go back to.
+- **Easy removal.** Retiring the app later means deleting one repository.
+
+## Decision 4: every deploy starts from a tag
+
+I set up release-please on the `develop` branch to cut versioned releases, and made those version tags the starting point of every deploy:
+
+- **Staging** deploys when release-please creates a `vX.Y.Z` tag.
+- **Production** deploys from a `prod-vX.Y.Z` tag, created by a small workflow when `develop` is merged into `main`.
+
+<Diagram
+  src="/diagrams/work/admin-panels-cloud-run-iap/build-and-deploy.svg"
+  alt="A staging release from merge to running revision. In GitHub, a merge to develop makes release-please create the tag v1.2.3. Through the GitHub App, the tag reaches Google Cloud, where the Cloud Build trigger matching ^v\d+\.\d+\.\d+$ starts a build that runs as the build service account. Its steps: check the tag; docker build with the staging URLs baked in, failing if one is empty; push the image, using Artifact Registry writer on this repository only, where it is tagged with the version and commit SHA; deploy a new revision and re-apply every lock, using run.developer on this service only and actAs on the runtime service account only. Every step writes logs to Cloud Logging, the one project-wide grant. Cloud Run pulls the image itself, and the new revision takes 100% of traffic, running as the runtime service account, which has no roles. Production is the same flow from a prod-v1.2.3 tag created by a workflow on main, with its own trigger, build service account, image repository and Cloud Run service."
+  width={740}
+  height={755}
+  caption="One release, from merge to running revision"
+/>
+
+The trigger patterns, `^v\d+\.\d+\.\d+$` and `^prod-v\d+\.\d+\.\d+$`, cannot overlap because `^` anchors the start. A merge to `main` with no new version finds its `prod-v` tag already there and deploys nothing. Each production deploy leaves a tag behind: a record of what shipped when, and a point to roll back to.
+
+The React build bakes its API URLs in at build time, so each environment needs its own image. The two build files - one per environment - live in git and are reviewed in pull requests, rather than as trigger settings in the console where nobody reviews a change.
+
+Every deploy also re-applies the service's locks, so the settings live in git and drift fixes itself on the next release:
+
+```bash
+gcloud run deploy "$_SERVICE" \
+  --image="$IMAGE" \
+  --service-account="$_RUNTIME_SA" \
+  --ingress=internal-and-cloud-load-balancing \
+  --no-allow-unauthenticated \
+  --no-default-url \
+  --port=8080 --cpu=1 --memory=512Mi \
+  --min-instances=0 --max-instances="$_MAX_INSTANCES"
+```
+
+## Three locks, not one
+
+A single page load passes three independent checks:
+
+<Diagram
+  src="/diagrams/work/admin-panels-cloud-run-iap/three-locks.svg"
+  alt="A staff browser request over HTTPS passes three locks in order before Cloud Run returns index.html. Lock 1, identity: IAP requires Google sign-in and membership of the access group; on a first visit it sends a 302 back to Google sign-in, and strangers or staff not on the list are stopped here. Lock 2, network: the service accepts traffic only from the load balancer and has no public URL, which stops direct calls to the run.app URL. Lock 3, caller identity: only IAP's service agent holds the invoker role, which stops any Google Cloud caller without it."
+  width={630}
+  height={672}
+  caption="Three independent locks on every page load"
+/>
+
+| Who tries to get in                                             | What stops them                                                                 |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Someone without a staff account, or not on the access list      | **Identity:** IAP rejects them at the load balancer                             |
+| Someone calling the Cloud Run service directly                  | **Network:** no public service URL, and ingress accepts only the load balancer  |
+| Anything inside Google Cloud without the invoker role           | **Caller identity:** only IAP's service agent is allowed to invoke the service  |
+
+Any one lock would stop a stranger. Together, one mistake - IAP switched off, or a public URL re-enabled - still leaves the panels closed.
+
+Access is managed through groups, not individual grants. Each gated app has its own access group, and engineers are kept once in an engineering group nested into each. A new engineer is added in one place; a leaver is removed in one place.
+
+## Certificates without touching the live sites
+
+Both panels needed a Google-managed certificate on their new load balancer, issued and working before any DNS record moved. Two details made that more than one command.
+
+### One address, two names
+
+Staging's admin hostname joined the load balancer that already served the staging website, so one IP now answers for two names. Every request has its name read twice:
+
+<Diagram
+  src="/diagrams/work/admin-panels-cloud-run-iap/one-address-two-names.svg"
+  alt="Requests for the staging website and the staging admin panel arrive at the same IP on port 443 and reach one shared HTTPS proxy. Step 1, the TLS handshake: the name sent in SNI is looked up in the certificate map, which maps the website name to the website certificate and the admin panel name to the new admin certificate; a name with no matching entry fails the handshake. Step 2, the HTTP request: the URL map reads the Host header and its host rules send the request to the website backend or to the admin panel backend, which was added with a new host rule."
+  width={624}
+  height={696}
+  caption="The name is read twice: once for the certificate, once for the backend"
+/>
+
+- **The certificate is chosen during the TLS handshake.** The browser sends the hostname it wants (SNI) before any HTTP happens, and Certificate Manager's certificate map picks the matching certificate. Adding the admin panel meant one new map entry; the forwarding rule, proxy and IP did not change. A name with no entry fails the handshake outright, so a mistake shows up at once rather than as the wrong site.
+- **The backend is chosen after it.** The URL map reads the Host header and sends the request to the right backend, through the host rule added in the live URL map edit described below.
+
+Production has its own load balancer and its own certificate map, so it shares neither with staging.
+
+### A DNS name that was already taken
+
+Before issuing a certificate, Certificate Manager needs proof that you control the domain, through a DNS record it tells you to create. Its default type puts that record at `_acme-challenge.<host>`. Firebase Hosting already had a TXT record at exactly that name for its own certificate, and DNS does not allow a CNAME to share a name with any other record.
+
+| DNS authorization type          | Record it needs                                                        | Result here                                                                                     |
+| ------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Fixed record (default)          | CNAME at `_acme-challenge.<host>`                                      | Clashes with Firebase's TXT; Firebase's record would have to go first, while it still served users |
+| **Per-project record - chosen** | CNAME at `_acme-challenge_<label>.<host>`, with a label fixed per project | Its own name, so no clash. Both certificates were active on the first try                       |
+
+That kept the old and new setups independent: Firebase kept serving with its own certificate until the switch, and the new certificates were issued while no user was pointed at them. Before any DNS change, I checked each new load balancer by its IP with `openssl s_client -servername <host>` to confirm it presented the right certificate for that name.
+
+One rule outlives the move: the per-project CNAMEs stay forever. Google-managed certificates renew through them, and deleting one does not fail on the day - renewals stop quietly and the certificate expires months later. I wrote that into each DNS authorization's description, and Firebase's old TXT records were removed in the clean-up.
+
+## Serving a React build properly
+
+The container is a two-stage image: Node builds the app, then only the built files go into a small nginx image that runs as a non-root user on port 8080. Two details I cared about:
+
+- **The build fails if an API URL is empty.** A `test -n` check stops the build, so a panel calling `undefined/api` can never ship.
+- **Caching is split by file type.**
+
+| Request                         | Answer                                         |
+| ------------------------------- | ---------------------------------------------- |
+| `/` or any unknown path         | `index.html` with `no-cache`                   |
+| `/static/js/main.<hash>.js`     | The file, cached for a year as `immutable`     |
+| A missing file under `/static/` | 404, never `index.html`                        |
+
+`no-cache` still caches, but checks with the server every time: unchanged costs a cheap 304, changed returns the new `index.html` that points at new hashed file names. A new release reaches users on their next page load, and the large files are downloaded only once per release.
+
+## Switching over without risk
+
+Every part was built beside the live Firebase sites, so users kept working while nothing pointed at the new setup yet. Each test got one step closer to real users and only ran once the one before had passed:
+
+1. **Local container** - cache headers checked with `curl` against a local Docker run.
+2. **Pipeline with test tags** - a temporary trigger pattern (`admin-test-*`) proved tag-to-revision end to end without using up a real version number.
+3. **Load balancer by IP** - `curl --resolve` against the new IP, expecting IAP's 302 redirect, before DNS pointed anywhere.
+4. **One browser** - a single `/etc/hosts` line on one laptop: sign-in, panel login, data loading and deep-link reload all checked through IAP.
+5. **DNS, staging first** - switched, confirmed by an engineer, then production.
+
+One part needed extra care: **the live URL map.** Staging's admin hostname had to be added to the load balancer that already served the staging website. I exported the URL map, added the host rule plus built-in routing tests, validated it, then imported it. Those tests stay in the URL map: Google runs them on every later edit and refuses any change that breaks them. The certificates were already active by then, as described above.
+
+Firebase stayed untouched until both environments were confirmed, so rollback was always one step: put the old DNS record back.
+
+Once real users had confirmed both environments, I closed the old path: removed the Firebase deploy workflows from the repository, disabled the Firebase sites so the side-door addresses stopped serving, deleted the GitHub secret and the service account key behind it, and removed Firebase's old DNS records.
+
+## Why this mattered
+
+Marketing, sales, support and engineering use the admin panels to run the platform every day. Before this work, the only thing protecting them was a login form open to the whole internet. Now:
+
+- **A much smaller attack surface.** Nobody reaches the panels without a company Google account on the access list. Password guessing and bugs in the login page are no longer exposed to strangers, because they are stopped at the load balancer.
+- **No keys to leak.** Deploys run as Google Cloud identities, with no stored service account keys anywhere, so there is no long-lived credential that someone could copy and use to deploy.
+- **Every release is traceable.** Each deploy starts from a version tag and a build file reviewed in a pull request. The team can see what shipped and when, and roll back to any earlier tag.
+- **Access managed in one place.** Giving someone access to a panel, or taking it away, is one group change, not a list of separate grants.
+- **A pattern ready to reuse.** A runtime identity with no roles, a build identity per environment, an image repository per app and IAP in front: the next internal tool that needs to be private can follow the same setup.
+
+And the people who use the panels every day kept working throughout the move.

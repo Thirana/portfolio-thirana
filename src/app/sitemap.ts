@@ -1,18 +1,19 @@
 import type { MetadataRoute } from "next";
-import { getAllBlogPosts, getAllProjects } from "@/lib/content";
+import { getAllBlogPosts, getAllProjects, getAllWork } from "@/lib/content";
 import { absoluteUrl } from "@/lib/site";
 
 const staticRoutes = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
+  { path: "/work", changeFrequency: "weekly", priority: 0.9 },
   { path: "/projects", changeFrequency: "weekly", priority: 0.9 },
   { path: "/blog", changeFrequency: "weekly", priority: 0.9 },
-  { path: "/about", changeFrequency: "monthly", priority: 0.7 },
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, projects] = await Promise.all([
+  const [posts, projects, work] = await Promise.all([
     getAllBlogPosts(),
     getAllProjects(),
+    getAllWork(),
   ]);
 
   const now = new Date();
@@ -38,5 +39,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...blogEntries, ...projectEntries];
+  const workEntries: MetadataRoute.Sitemap = work.map((item) => ({
+    url: absoluteUrl(`/work/${item.slug}`),
+    lastModified: new Date(item.date),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...workEntries, ...blogEntries, ...projectEntries];
 }

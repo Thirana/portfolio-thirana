@@ -4,3 +4,8 @@ build/
 node_modules/
 public/
 *.mdx
+.claude/
+.github/skills/
+.github/agents/
+.github/hooks/
+.impeccable/

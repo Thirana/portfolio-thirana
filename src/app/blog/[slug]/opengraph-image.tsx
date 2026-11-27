@@ -28,21 +28,18 @@ export default async function Image({ params }: Props) {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        backgroundColor: "#0b0f14",
-        backgroundImage:
-          "radial-gradient(circle at 15% -10%, rgba(148, 163, 184, 0.22), transparent 45%)",
-        color: "#f8fafc",
+        backgroundColor: "#faf9f7",
+        color: "#17150f",
         padding: "56px",
-        fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui",
+        fontFamily: "Satoshi, ui-sans-serif, system-ui",
       }}
     >
       <div
         style={{
           display: "flex",
           fontSize: 22,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: "#94a3b8",
+          letterSpacing: "-0.01em",
+          color: "#767268",
         }}
       >
         Engineering Blog
@@ -63,7 +60,7 @@ export default async function Image({ params }: Props) {
             display: "flex",
             fontSize: 28,
             lineHeight: 1.35,
-            color: "#cbd5e1",
+            color: "#6b6862",
           }}
         >
           {summary}
@@ -75,7 +72,7 @@ export default async function Image({ params }: Props) {
           alignItems: "center",
           gap: "16px",
           fontSize: 22,
-          color: "#94a3b8",
+          color: "#767268",
         }}
       >
         <span
@@ -83,7 +80,7 @@ export default async function Image({ params }: Props) {
             width: "8px",
             height: "32px",
             borderRadius: "9999px",
-            backgroundColor: "#34d399",
+            backgroundColor: "#a45740",
           }}
         />
         {siteConfig.name}

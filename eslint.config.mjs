@@ -13,6 +13,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Locally installed agent skills (not site code):
+    ".claude/**",
+    ".github/skills/**",
+    ".impeccable/**",
   ]),
   {
     files: ["src/**/*.ts", "src/**/*.tsx"],

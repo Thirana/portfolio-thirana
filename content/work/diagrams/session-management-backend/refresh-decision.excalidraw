@@ -1,0 +1,1044 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "ellipse",
+      "id": "start",
+      "x": 20,
+      "y": 0,
+      "width": 260,
+      "height": 66,
+      "strokeColor": "#a45740",
+      "backgroundColor": "#f6ebe5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1001
+    },
+    {
+      "type": "text",
+      "id": "start_t",
+      "x": 28,
+      "y": 11.25,
+      "width": 244,
+      "height": 21.25,
+      "text": "Refresh token arrives",
+      "originalText": "Refresh token arrives",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1002,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "start_s",
+      "x": 28,
+      "y": 38.5,
+      "width": 244,
+      "height": 16.25,
+      "text": "at the refresh endpoint",
+      "originalText": "at the refresh endpoint",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1003,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "a_s",
+      "x": 150,
+      "y": 68,
+      "width": 0,
+      "height": 30,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          30
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1004,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "q1",
+      "x": 0,
+      "y": 100,
+      "width": 300,
+      "height": 66,
+      "strokeColor": "#5258ad",
+      "backgroundColor": "#eaebf5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1005,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "q1_t",
+      "x": 8,
+      "y": 111.75,
+      "width": 284,
+      "height": 42.5,
+      "text": "Unknown, other surface\nor expired",
+      "originalText": "Unknown, other surface\nor expired",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1006,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "q1_n",
+      "x": 150,
+      "y": 168,
+      "width": 0,
+      "height": 50,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1007,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "q1_nl",
+      "x": 160,
+      "y": 174,
+      "width": 40,
+      "height": 17.5,
+      "text": "no",
+      "originalText": "no",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1008,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "q2",
+      "x": 0,
+      "y": 220,
+      "width": 300,
+      "height": 80,
+      "strokeColor": "#5258ad",
+      "backgroundColor": "#eaebf5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1009,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "q2_t",
+      "x": 8,
+      "y": 228.875,
+      "width": 284,
+      "height": 21.25,
+      "text": "Not revoked yet",
+      "originalText": "Not revoked yet",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1010,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "q2_s",
+      "x": 8,
+      "y": 256.125,
+      "width": 284,
+      "height": 35.0,
+      "text": "claim it with one\natomic update",
+      "originalText": "claim it with one\natomic update",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1011,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "q2_n",
+      "x": 150,
+      "y": 302,
+      "width": 0,
+      "height": 42,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          42
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1012,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "q2_nl",
+      "x": 160,
+      "y": 308,
+      "width": 40,
+      "height": 17.5,
+      "text": "no",
+      "originalText": "no",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1013,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "q3",
+      "x": 0,
+      "y": 346,
+      "width": 300,
+      "height": 66,
+      "strokeColor": "#5258ad",
+      "backgroundColor": "#eaebf5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1014,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "q3_t",
+      "x": 8,
+      "y": 356.625,
+      "width": 284,
+      "height": 21.25,
+      "text": "Revoked, no replacement",
+      "originalText": "Revoked, no replacement",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1015,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "q3_s",
+      "x": 8,
+      "y": 383.875,
+      "width": 284,
+      "height": 17.5,
+      "text": "ended on purpose",
+      "originalText": "ended on purpose",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1016,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "q3_n",
+      "x": 150,
+      "y": 414,
+      "width": 0,
+      "height": 40,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          40
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1017,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "q3_nl",
+      "x": 160,
+      "y": 420,
+      "width": 40,
+      "height": 17.5,
+      "text": "no",
+      "originalText": "no",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1018,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "q4",
+      "x": 0,
+      "y": 456,
+      "width": 300,
+      "height": 66,
+      "strokeColor": "#5258ad",
+      "backgroundColor": "#eaebf5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1019,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "q4_t",
+      "x": 8,
+      "y": 466.625,
+      "width": 284,
+      "height": 21.25,
+      "text": "Revoked seconds ago",
+      "originalText": "Revoked seconds ago",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1020,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "q4_s",
+      "x": 8,
+      "y": 493.875,
+      "width": 284,
+      "height": 17.5,
+      "text": "the client is retrying",
+      "originalText": "the client is retrying",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1021,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "q4_n",
+      "x": 150,
+      "y": 524,
+      "width": 0,
+      "height": 40,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          40
+        ]
+      ],
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1022,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "text",
+      "id": "q4_nl",
+      "x": 160,
+      "y": 530,
+      "width": 40,
+      "height": 17.5,
+      "text": "no",
+      "originalText": "no",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1023,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "q5",
+      "x": 0,
+      "y": 566,
+      "width": 300,
+      "height": 66,
+      "strokeColor": "#5258ad",
+      "backgroundColor": "#eaebf5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1024,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "q5_t",
+      "x": 8,
+      "y": 576.625,
+      "width": 284,
+      "height": 21.25,
+      "text": "Revoked longer ago",
+      "originalText": "Revoked longer ago",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1025,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "q5_s",
+      "x": 8,
+      "y": 603.875,
+      "width": 284,
+      "height": 17.5,
+      "text": "a copy is in use",
+      "originalText": "a copy is in use",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1026,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "o1a",
+      "x": 302,
+      "y": 133,
+      "width": 96,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1027,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "o1",
+      "x": 400,
+      "y": 106,
+      "width": 240,
+      "height": 54,
+      "strokeColor": "#a2412e",
+      "backgroundColor": "#f8e6e1",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1028,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "o1_t",
+      "x": 408,
+      "y": 110.625,
+      "width": 224,
+      "height": 21.25,
+      "text": "401",
+      "originalText": "401",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1029,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "o1_s",
+      "x": 408,
+      "y": 137.875,
+      "width": 224,
+      "height": 17.5,
+      "text": "row left untouched",
+      "originalText": "row left untouched",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1030,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "o2a",
+      "x": 302,
+      "y": 257,
+      "width": 96,
+      "height": 31,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          48,
+          0
+        ],
+        [
+          48,
+          -31
+        ],
+        [
+          96,
+          -31
+        ]
+      ],
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1031,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "rectangle",
+      "id": "o2",
+      "x": 400,
+      "y": 200,
+      "width": 240,
+      "height": 52,
+      "strokeColor": "#23683c",
+      "backgroundColor": "#e5f1e8",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1032,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "o2_t",
+      "x": 408,
+      "y": 215.375,
+      "width": 224,
+      "height": 21.25,
+      "text": "Won: new token pair",
+      "originalText": "Won: new token pair",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1033,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "o2b",
+      "x": 302,
+      "y": 257,
+      "width": 96,
+      "height": 31,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          48,
+          0
+        ],
+        [
+          48,
+          31
+        ],
+        [
+          96,
+          31
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1034,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
+      "roundness": null
+    },
+    {
+      "type": "rectangle",
+      "id": "o2b_box",
+      "x": 400,
+      "y": 262,
+      "width": 240,
+      "height": 54,
+      "strokeColor": "#a2412e",
+      "backgroundColor": "#f8e6e1",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1035,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "o2b_box_t",
+      "x": 408,
+      "y": 266.625,
+      "width": 224,
+      "height": 21.25,
+      "text": "Lost the race: 401",
+      "originalText": "Lost the race: 401",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1036,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "o2b_box_s",
+      "x": 408,
+      "y": 293.875,
+      "width": 224,
+      "height": 17.5,
+      "text": "\"already used\"",
+      "originalText": "\"already used\"",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1037,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "o3a",
+      "x": 302,
+      "y": 379,
+      "width": 96,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1038,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "o3",
+      "x": 400,
+      "y": 352,
+      "width": 240,
+      "height": 54,
+      "strokeColor": "#a2412e",
+      "backgroundColor": "#f8e6e1",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1039,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "o3_t",
+      "x": 408,
+      "y": 356.625,
+      "width": 224,
+      "height": 21.25,
+      "text": "401",
+      "originalText": "401",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1040,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "o3_s",
+      "x": 408,
+      "y": 383.875,
+      "width": 224,
+      "height": 17.5,
+      "text": "session has ended",
+      "originalText": "session has ended",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1041,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "o4a",
+      "x": 302,
+      "y": 489,
+      "width": 96,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ],
+      "strokeColor": "#23683c",
+      "backgroundColor": "transparent",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1042,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "o4",
+      "x": 400,
+      "y": 462,
+      "width": 240,
+      "height": 54,
+      "strokeColor": "#23683c",
+      "backgroundColor": "#e5f1e8",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1043,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "o4_t",
+      "x": 408,
+      "y": 466.625,
+      "width": 224,
+      "height": 21.25,
+      "text": "Issue a fresh pair",
+      "originalText": "Issue a fresh pair",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1044,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "o4_s",
+      "x": 408,
+      "y": 493.875,
+      "width": 224,
+      "height": 17.5,
+      "text": "from the token that replaced it",
+      "originalText": "from the token that replaced it",
+      "fontSize": 14,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1045,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "arrow",
+      "id": "o5a",
+      "x": 302,
+      "y": 599,
+      "width": 96,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ],
+      "strokeColor": "#a2412e",
+      "backgroundColor": "transparent",
+      "strokeWidth": 3,
+      "roughness": 1,
+      "seed": 1046,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "o5",
+      "x": 400,
+      "y": 566,
+      "width": 240,
+      "height": 66,
+      "strokeColor": "#a2412e",
+      "backgroundColor": "#f8e6e1",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1,
+      "seed": 1047,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "o5_t",
+      "x": 408,
+      "y": 577.25,
+      "width": 224,
+      "height": 21.25,
+      "text": "Revoke the whole session",
+      "originalText": "Revoke the whole session",
+      "fontSize": 17,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#17150f",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1048,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "o5_s",
+      "x": 408,
+      "y": 604.5,
+      "width": 224,
+      "height": 16.25,
+      "text": "REUSE_DETECTED",
+      "originalText": "REUSE_DETECTED",
+      "fontSize": 13,
+      "fontFamily": 3,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#36322a",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1049,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "line",
+      "id": "div",
+      "x": 0,
+      "y": 676,
+      "width": 640,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          640,
+          0
+        ]
+      ],
+      "strokeColor": "#cdc8bf",
+      "backgroundColor": "transparent",
+      "strokeWidth": 1,
+      "roughness": 1,
+      "seed": 1050,
+      "strokeStyle": "dashed"
+    },
+    {
+      "type": "text",
+      "id": "k1",
+      "x": 0,
+      "y": 692,
+      "width": 640,
+      "height": 18.75,
+      "text": "Lost response vs theft: same token, same row. Only the timing differs.",
+      "originalText": "Lost response vs theft: same token, same row. Only the timing differs.",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#6b6862",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1051,
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}

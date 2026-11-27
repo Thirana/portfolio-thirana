@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Idempotency in API Design: How to Make Retries Safe"
 date: "2026-03-04"
 summary: "A practical guide to idempotency patterns that prevent duplicate side effects during request retries, with a URL shortener implementation walkthrough."
@@ -65,14 +66,14 @@ sequenceDiagram
   participant API as API
   participant DB as Postgres
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     C->>API: POST /v1/links (intent X)
     API->>DB: INSERT intent X
     DB-->>API: success
     API-->>C: 201 Created
   end
 
-  rect rgb(30, 58, 89)
+  rect rgb(229, 238, 246)
     C->>API: Retry same POST (intent X)
     API->>DB: FIND by intent X
     DB-->>API: existing row
@@ -92,10 +93,9 @@ You can find full implementation references in the Trimly links below.
 
 Use normalized values so the same logical request always maps to one key.
 
-<CodeToggle
-  title="Show Go snippet - Deterministic intent key"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Deterministic intent key">
+
+```go
 // Same normalized input must always produce the same key.
 func BuildIntentKey(longURL string, expiresAt *time.Time) string {
     // Builder avoids repeated string allocations for hot paths.
@@ -118,17 +118,17 @@ func BuildIntentKey(longURL string, expiresAt *time.Time) string {
     b.WriteString(expiresAt.UTC().Format(time.RFC3339Nano))
     return b.String()
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 2) Check existing intent before writing
 
 Fast pre-check handles common retry cases and returns the existing resource.
 
-<CodeToggle
-  title="Show Go snippet - Service duplicate handling"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Service duplicate handling">
+
+```go
 // First read path: check if this logical request already exists.
 existing, ok, err := s.store.FindByIntent(ctx, normalizedURL, normalizedExpiry)
 if err != nil {
@@ -140,8 +140,9 @@ if ok {
     // Returning existing prevents duplicate inserts.
     return existing, false, nil
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 3) Handle write races with DB uniqueness
 
@@ -156,10 +157,9 @@ The DB uniqueness constraint on the intent key is the final safety layer:
 
 > This is what makes idempotency reliable even when requests arrive in parallel.
 
-<CodeToggle
-  title="Show Go snippet - Unique constraint mapping"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - Unique constraint mapping">
+
+```go
 // Convert low-level DB write errors into domain-level service errors.
 func mapWriteError(err error) error {
     var pgErr *pgconn.PgError
@@ -177,17 +177,17 @@ func mapWriteError(err error) error {
     // Unknown DB error: bubble up as-is.
     return err
 }
-  `}
-/>
+```
+
+</CodeToggle>
 
 ### 4) Return deterministic HTTP status
 
 > Keep API responses explicit: `201` for first successful create, `200` for duplicate intent.
 
-<CodeToggle
-  title="Show Go snippet - 201 for new, 200 for duplicate"
-  language="go"
-  code={`
+<CodeToggle title="Show Go snippet - 201 for new, 200 for duplicate">
+
+```go
 // Service returns created=true only for first successful logical write.
 link, created, err := h.svc.Create(c.Request.Context(), req.LongURL, req.ExpiresAt)
 if err != nil {
@@ -202,8 +202,9 @@ if created {
 }
 // Response payload remains the same logical resource in both paths.
 c.JSON(status, resp)
-  `}
-/>
+```
+
+</CodeToggle>
 
 ## Concurrency Guardrail Diagram
 
@@ -215,14 +216,14 @@ sequenceDiagram
   participant S as Service
   participant DB as Postgres
 
-  rect rgb(18, 58, 39)
+  rect rgb(229, 241, 232)
     A->>S: Create(intent X)
     S->>DB: INSERT intent X
     DB-->>S: success
     S-->>A: created=true
   end
 
-  rect rgb(61, 49, 20)
+  rect rgb(247, 237, 216)
     B->>S: Create(intent X)
     S->>DB: INSERT intent X
     DB-->>S: unique violation (23505)

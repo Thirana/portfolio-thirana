@@ -1,0 +1,208 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "ellipse",
+      "id": "ck",
+      "x": 6,
+      "y": 8,
+      "width": 86,
+      "height": 86,
+      "strokeColor": "#855a12",
+      "backgroundColor": "#f1dcb4",
+      "fillStyle": "solid",
+      "strokeWidth": 4,
+      "roughness": 1.4,
+      "seed": 7163,
+      "opacity": 100
+    },
+    {
+      "type": "ellipse",
+      "id": "bite",
+      "x": 69,
+      "y": -3,
+      "width": 34,
+      "height": 34,
+      "strokeColor": "#ffffff",
+      "backgroundColor": "#ffffff",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "roughness": 0,
+      "seed": 81295,
+      "opacity": 100
+    },
+    {
+      "type": "line",
+      "id": "bitearc",
+      "x": 87.77698387555012,
+      "y": 30.906872221260645,
+      "width": 18.776983875550115,
+      "height": 18.776983875550112,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -1.7769838755501155,
+          0.09312777873935474
+        ],
+        [
+          -3.553967751100231,
+          0.0
+        ],
+        [
+          -5.311482619452022,
+          -0.27836300878594855
+        ],
+        [
+          -7.030272779924218,
+          -0.7389114442430333
+        ],
+        [
+          -8.69150680783872,
+          -1.376599441336431
+        ],
+        [
+          -10.276983875550115,
+          -2.1844403569251867
+        ],
+        [
+          -11.769333164522152,
+          -3.1535833168865395
+        ],
+        [
+          -13.15220418365071,
+          -4.273410188144943
+        ],
+        [
+          -14.410445908665821,
+          -5.531651913160051
+        ],
+        [
+          -15.530272779924218,
+          -6.914522932288602
+        ],
+        [
+          -16.499415739885578,
+          -8.406872221260645
+        ],
+        [
+          -17.307256655474333,
+          -9.99234928897204
+        ],
+        [
+          -17.944944652567727,
+          -11.653583316886536
+        ],
+        [
+          -18.405493088024812,
+          -13.372373477358739
+        ],
+        [
+          -18.683856096810757,
+          -15.129888345710532
+        ],
+        [
+          -18.776983875550115,
+          -16.90687222126064
+        ],
+        [
+          -18.683856096810757,
+          -18.683856096810757
+        ]
+      ],
+      "strokeColor": "#855a12",
+      "backgroundColor": "transparent",
+      "strokeWidth": 4,
+      "roughness": 1.2,
+      "seed": 1000,
+      "startArrowhead": null,
+      "endArrowhead": null,
+      "roundness": null
+    },
+    {
+      "type": "ellipse",
+      "id": "c1",
+      "x": 26,
+      "y": 32,
+      "width": 10,
+      "height": 9,
+      "strokeColor": "#5c3d0b",
+      "backgroundColor": "#5c3d0b",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 45900,
+      "opacity": 100
+    },
+    {
+      "type": "ellipse",
+      "id": "c2",
+      "x": 50,
+      "y": 54,
+      "width": 11,
+      "height": 10,
+      "strokeColor": "#5c3d0b",
+      "backgroundColor": "#5c3d0b",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 20098,
+      "opacity": 100
+    },
+    {
+      "type": "ellipse",
+      "id": "c3",
+      "x": 24,
+      "y": 64,
+      "width": 9,
+      "height": 9,
+      "strokeColor": "#5c3d0b",
+      "backgroundColor": "#5c3d0b",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 11225,
+      "opacity": 100
+    },
+    {
+      "type": "ellipse",
+      "id": "c4",
+      "x": 52,
+      "y": 26,
+      "width": 8,
+      "height": 8,
+      "strokeColor": "#5c3d0b",
+      "backgroundColor": "#5c3d0b",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 60525,
+      "opacity": 100
+    },
+    {
+      "type": "ellipse",
+      "id": "c5",
+      "x": 70,
+      "y": 66,
+      "width": 8,
+      "height": 7,
+      "strokeColor": "#5c3d0b",
+      "backgroundColor": "#5c3d0b",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 1.4,
+      "seed": 98531,
+      "opacity": 100
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}

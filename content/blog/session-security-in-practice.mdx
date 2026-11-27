@@ -2,26 +2,58 @@
 title: "Session Security in Practice: JWTs, Token Rotation, and Reuse Detection"
 date: "2026-05-20"
 featured: true
-summary: "A practical guide to how JWT access tokens and refresh tokens work together to secure a session, covering stateless verification, claim based authorization, rotating refresh tokens, bcrypt hashed storage, and stolen token detection."
+summary: "A practical guide to how JWT access tokens and refresh tokens work together to keep a session secure - from the simplest safe design to one that catches stolen tokens and survives real traffic."
 tags:
   [
     "Authentication",
     "JWT",
     "Session Security",
+    "Token Rotation",
     "API Design",
     "Security",
     "Authorization",
   ]
 track: "Backend Engineering"
 level: "Intermediate"
-appliesTo: ["Auth endpoints", "Session management", "Multi-device login flows"]
-takeaway: "Refresh token rotation makes every token single-use. Reuse detection turns a suspicious refresh into a full session wipe, giving stolen tokens a window that closes the moment the attacker tries to use one."
-project: "grow-logs"
+appliesTo:
+  [
+    "Auth endpoints",
+    "Session management",
+    "Multi-device login flows",
+    "Services that verify tokens",
+  ]
+takeaway: "Refresh token rotation makes every token single-use. Reuse detection turns a suspicious refresh into an ended session, giving stolen tokens a window that closes the moment the attacker tries to use one."
+mark: "/diagrams/blog/session-security-in-practice/mark.svg"
 ---
 
 # Session Security in Practice: JWTs, Token Rotation, and Reuse Detection
 
-> This article covers the session security model used in the [Grow Logs project](/projects/grow-logs), a full-stack SaaS where users authenticate across sessions and devices. The same pattern applies to any API that issues refresh tokens.
+> The parts build on each other. Parts 1 and 3 give a safe design for one API and one frontend; Parts 2 and 4 cover what changes when several services, many devices or unreliable mobile networks are involved. Each part opens with an "In short" box, so you can get the gist first and read the detail only where you need it. For these ideas applied to a real production backend, see [Session management, part 1](/work/session-management-backend).
+
+<GuideMap
+  items={[
+    {
+      href: "#access-tokens",
+      title: "Access tokens",
+      summary: "What a JWT carries, how the server checks it, and what 401 and 403 mean.",
+    },
+    {
+      href: "#signing-and-ending-tokens-early",
+      title: "Signing, and ending a token early",
+      summary: "A shared secret or a key pair, algorithm confusion, and ways to end a session before its token expires.",
+    },
+    {
+      href: "#refresh-tokens",
+      title: "Refresh tokens: rotation and reuse detection",
+      summary: "Hashed storage, single-use rotation, catching a stolen token, and keeping it out of JavaScript.",
+    },
+    {
+      href: "#hardening-for-real-traffic",
+      title: "Hardening for real traffic",
+      summary: "Token families, concurrent refreshes and lost responses - the normal events that look like theft.",
+    },
+  ]}
+/>
 
 ## The Session Architecture
 
@@ -29,28 +61,44 @@ A complete session in this system has three separate pieces, each stored differe
 
 | Piece             | What it is                        | Where it lives                        |
 | ----------------- | --------------------------------- | ------------------------------------- |
-| Access token      | Short-lived JWT (1 hour)          | Memory and sessionStorage             |
+| Access token      | Short-lived JWT (15 minutes)      | Memory and sessionStorage             |
 | Refresh token     | Long-lived opaque string (7 days) | `HTTP-only` cookie on the API origin  |
 | Session indicator | Non-secret flag cookie            | Regular cookie on the frontend origin |
 
-The access token authenticates individual API requests. The refresh token extends the session without asking the user to log in again. The indicator cookie tells the frontend middleware a session exists without exposing any secret value.
+Each piece has one job:
 
-## How Access Tokens Work
+- **Access token** - authenticates each API request. It is checked on every request, so it must be cheap to verify.
+- **Refresh token** - extends the session without a new login. It is used rarely, so it can afford a database lookup - and that lookup is what makes it revocable.
+- **Session indicator** - tells the frontend middleware a session exists, without exposing any secret value.
 
-### Why JWT
+<Part id="access-tokens" number={1} total={4} title="Access tokens">
+
+- An access token is a signed JWT the server can verify without touching a database.
+- Its claims carry identity; anyone can read them, so keep them small and never secret.
+- `401` means "log in again"; `403` means "you are logged in, but not allowed".
+
+</Part>
+
+<MoreDetail title="Background: why signed tokens instead of server-side sessions?">
 
 HTTP is stateless. Every request arrives at the server with no memory of what came before; the server treats each one as if it is the first.
 
-That works for fetching a public page. It breaks down the moment the application needs to know who is making the request — to return a user's own log entries, check whether their plan allows a feature, or decide whether they can reach an admin endpoint.
+That works for fetching a public page. It breaks down the moment the application needs to know who is making the request, for example to:
+
+- return a user's own records,
+- check whether their plan allows a feature,
+- decide whether they can reach a privileged endpoint.
 
 > Something needs to carry identity across requests, and the choice of how to carry it affects the performance and security of every protected route in the application.
 
 Two approaches exist:
 
-- **Server-side sessions** — store the user's data in a database, give the client an opaque session ID, and look it up on every request. Simple, but adds a database round trip to every single protected request.
-- **Server-signed tokens** — embed session data directly in the token and sign it cryptographically. The client holds the token. On every request, the server verifies the signature and reads the data out of the token itself, with no database involved.
+- **Server-side sessions** - store the user's data in a database, give the client an opaque session ID, and look it up on every request. Simple, but adds a database round trip to every single protected request.
+- **Server-signed tokens** - embed session data directly in the token and sign it cryptographically. The client holds the token. On every request, the server verifies the signature and reads the data out of the token itself, with no database involved.
 
-JWT (JSON Web Token) is the most widely used format for server-signed tokens. The server signs a payload containing the user's ID, role, and expiry time using a secret key. Any server that knows the secret can verify the token independently, without contacting a session store.
+JWT (JSON Web Token) is the most widely used format for server-signed tokens, and any service that holds the verification key can check one on its own.
+
+</MoreDetail>
 
 ### Structure
 
@@ -60,82 +108,261 @@ A JWT is three `Base64url`-encoded segments joined by dots:
 header.payload.signature
 ```
 
-The **header** declares the signing algorithm. The **payload** holds the claims — the data embedded in the token. The **signature** is a cryptographic hash of the header and payload using the server's secret key.
+- **Header** - declares the signing algorithm (`alg`) and, optionally, which key signed it (`kid`).
+- **Payload** - holds the claims, the data embedded in the token.
+- **Signature** - computed over the header and payload with the server's key.
 
-> The signature is what makes the token trustworthy. Anyone can decode the payload (it is just `Base64url`), but no one can produce a valid signature without the server's secret. A token with a tampered payload will fail verification immediately.
+### How the Signature Is Made
+
+The header and payload are only encoded, not encrypted. Everything that protects them is in the signature, and it takes three steps to make:
+
+```text /header/#indigo /payload/#plum /signingInput/#teal /secretKey/#amber /signature/#green
+signingInput = base64url(header) + "." + base64url(payload)
+signature    = base64url( HMAC-SHA256(signingInput, secretKey) )
+token        = signingInput + "." + signature
+```
+
+HMAC is a hash that also takes a key. The same input and the same key always give the same output; change one character of the input, or use a different key, and the output is completely different. The output reveals nothing about the key.
+
+<Diagram
+  src="/diagrams/blog/session-security-in-practice/signature-anatomy.svg"
+  alt="Two panels. Panel 1, how the signature is made: the header JSON (alg HS256, typ JWT) and the payload JSON (sub, role USER, iat, exp) are each base64url-encoded and joined with a dot into the signing input. The signing input and the secret key, which only the server has, go into HMAC-SHA256, and the base64url of the result is the signature, q1GWe8_wS0vg... The token is header, payload and signature joined by dots. Panel 2, someone edits the payload: role changes from USER to ADMIN but the old signature is kept. The server recomputes HMAC-SHA256 over the edited header and payload with its secret key and gets CT_8XJImipIZN0_7..., which does not match the attached q1GWe8_wS0vg..., so the request gets a 401. Without the secret key nobody can compute the right signature, and editing the header fails the same way because it is signed too."
+  width={660}
+  height={1150}
+  caption="The signature is a keyed hash of the header and payload. Change either one and the hash no longer matches."
+/>
+
+To verify, the server does not decrypt anything. It recomputes the HMAC over the header and payload it received, with its own key, and compares the result with the signature attached to the token:
+
+- **Edit the payload** - say `"role": "USER"` becomes `"ADMIN"` - and the signing input changes, so the correct signature changes with it. The attached one no longer matches.
+- **Edit the header** and the same thing happens: the header is part of the signing input too.
+- **Re-sign the edited token** and you need the secret key, which never leaves the server.
+
+The one way around this is a verifier that lets the token's header choose the algorithm - see [algorithm confusion](#algorithm-confusion). With a key pair (`RS256`), the shape is the same: the private key produces the signature and the public key checks it, so a verifier can check a token but never sign one.
+
+<MoreDetail title="Example: a real token, decoded">
+
+This is a real `HS256` token, signed with the demo secret `demo-secret-for-this-post-only`. Paste it into a JWT debugger with that secret and the signature checks out. It is split at the dots here for reading; the real token is one line.
+
+```text
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.eyJzdWIiOiI4ZjE0ZTQ1Zi1jZWVhLTRlN2EtOWIxYy0yZDZjMWYwZTdhMzEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc3OTI2NzYwMCwiZXhwIjoxNzc5MjY4NTAwfQ
+.q1GWe8_wS0vgyEt-YnLtQIYK32OOfyeF5w4d-UN0_oU
+```
+
+The first segment decodes to the header:
+
+```jsonc
+{
+  "alg": "HS256", // HMAC with SHA-256, using a shared secret
+  "typ": "JWT" // the token type
+}
+```
+
+The second decodes to the payload:
+
+```jsonc
+{
+  "sub": "8f14e45f-ceea-4e7a-9b1c-2d6c1f0e7a31", // the user ID
+  "role": "USER", // a custom claim
+  "iat": 1779267600, // issued at: 2026-05-20 09:00:00 UTC
+  "exp": 1779268500 // expires at: 09:15:00 UTC, 15 minutes later
+}
+```
+
+The third segment, `q1GWe8_wS0vgyEt-YnLtQIYK32OOfyeF5w4d-UN0_oU`, does not decode to anything readable. It is the 32-byte HMAC output, base64url-encoded.
+
+Now the tampered copy from the diagram. With `role` set to `ADMIN`, the second segment becomes `...LCJyb2xlIjoiQURNSU4iLCJp...`, but the attached signature is still `q1GWe8_w...`. The correct signature for the edited payload is `CT_8XJImipIZN0_7tCXz2PTsAJ4C6AfOKklaof-YjpE`, and only someone holding the secret can compute it.
+
+Notice that everything above was readable without the secret. A JWT payload is public: never put anything in it you would not show the user.
+
+</MoreDetail>
 
 ### What Goes in the Payload
 
 When a user logs in, the server signs a token with these claims:
 
-<CodeToggle
-  title="JWT access token signing"
-  language="typescript"
-  code={`
+<CodeToggle title="JWT access token signing">
+
+```typescript
 const accessToken = this.jwtService.sign(
   { sub: user.id, role: user.role },
-  { expiresIn: "1h" },
+  { expiresIn: "15m" },
 );
-  `}
-/>
+```
+
+</CodeToggle>
 
 | Claim  | Value             | Purpose                                       |
 | ------ | ----------------- | --------------------------------------------- |
 | `sub`  | User UUID         | Scopes every database query to the right user |
-| `role` | `USER` or `ADMIN` | Controls access to admin endpoints            |
+| `role` | `USER` or `ADMIN` | Controls access to privileged endpoints       |
 | `exp`  | Unix timestamp    | Token is rejected after this point            |
 | `iat`  | Unix timestamp    | When the token was issued                     |
 
+### Other Claims Worth Knowing
+
+With one API and one frontend, the four claims above are enough. A system with several clients or several services usually needs a few more:
+
+| Claim | Meaning                                        | Why it helps                                                                                          |
+| ----- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `aud` | Audience: who the token is for                 | A token issued for one app or surface can be refused by another, even though the signature is valid |
+| `iss` | Issuer: who created the token                  | Verifiers can reject tokens from an unexpected issuer                                                 |
+| `jti` | A unique ID for this one token                 | Lets the server name and deny-list a single token                                                     |
+| `sid` | A session ID, kept for the whole login         | Ties every access token back to one login, so that login can be ended on its own                      |
+
+`sub`, `aud`, `iss`, `exp`, `iat` and `jti` are registered claims in the JWT spec (RFC 7519). `sid` is a common convention borrowed from OpenID Connect.
+
 ### How the Backend Verifies It
 
-Verification has two steps:
+Verification has three parts:
 
-1. Check the signature using the server's secret key. A tampered payload produces a mismatched signature and is rejected immediately.
-2. Check the `exp` claim. If the current time is past the expiry, the token is dead regardless of the signature.
+1. **Check the signature with the expected algorithm and key.** The verifier decides which algorithm it accepts; the token's header does not. A tampered payload produces a mismatched signature and is rejected immediately.
+2. **Check `exp`.** If the current time is past the expiry, the token is dead regardless of the signature.
+3. **Check the context claims you use**, such as `aud` and `iss`.
 
-No database. No session store. The token is self-contained.
+[Ending a session early](#when-waiting-for-expiry-is-not-enough) covers when one lookup per request is worth adding back.
 
 ### What the Claims Are Used For
 
-Once verified, the claims drive two things on every protected request.
+Once verified, the claims drive two things on every protected request:
 
-The `sub` claim becomes the `userId` for every database query:
+- **`sub` scopes the data.** It becomes the `userId` for every database query, so a user with a valid token can only ever reach their own records. The scoping happens at the service layer on every query, not just at the route level.
+- **`role` gates access.** A roles guard checks it on privileged endpoints. A user with a valid token but the wrong role is still blocked: authentication (who are you?) and authorization (are you allowed?) are separate checks.
 
-<CodeToggle
-  title="Ownership-scoped database query"
-  language="typescript"
-  code={`
+<CodeToggle title="Ownership-scoped database query">
+
+```typescript
 // No matter what the client sends in the request body,
-// userId always comes from the verified token — never from user input.
+// userId always comes from the verified token - never from user input.
 const entries = await prisma.entry.findMany({
   where: { userId: currentUser.sub },
 });
-  `}
-/>
+```
 
-> This is how data isolation works. A user with a valid token can only ever reach their own records. The scoping happens at the service layer on every query — not just at the route level.
+</CodeToggle>
 
-The `role` claim is checked by the roles guard on admin endpoints:
+<CodeToggle title="Role-based route guard">
 
-<CodeToggle
-  title="Role-based admin route guard"
-  language="typescript"
-  code={`// A regular user with a valid token is still blocked here.
+```typescript
+// A regular user with a valid token is still blocked here.
 // Authentication (who are you?) and authorization (are you allowed?) are separate.
 @Roles('ADMIN')
 @Get('admin/users')
-findAllUsers() { ... }`}
+findAllUsers() { ... }
+```
+
+</CodeToggle>
+
+### Roles in the Token, or in the Database?
+
+Putting the role in the token saves a lookup, but it freezes the role at login time. If a user loses a role, their token keeps claiming it until it expires.
+
+| Roles live in...  | Cost                         | When a role changes                         |
+| ----------------- | ---------------------------- | ------------------------------------------- |
+| The token         | Nothing extra per request    | Takes effect when the token expires         |
+| The database      | One lookup per request       | Takes effect on the next request            |
+
+How to choose:
+
+- **Keep roles in the token** when they rarely change and a change can wait up to 15 minutes, until the token expires.
+- **Read roles from the database** when permissions change often, or when losing access must be immediate. The token then carries identity only.
+- **Check what you already load.** Many APIs read the user row on every request anyway, and then the database option costs almost nothing.
+
+### 401 or 403?
+
+The two refusals mean different things, and clients act on the difference:
+
+- **`401 Unauthorized`** means "I do not know who you are": the token is missing, invalid, expired, or no longer accepted. The client should refresh or send the user to log in.
+- **`403 Forbidden`** means "I know who you are, and you are not allowed". Logging in again will not help.
+
+Keep that line sharp. If a failed role check returns `401`, a client that logs out on `401` will throw out a perfectly good session.
+
+<Part id="signing-and-ending-tokens-early" number={2} total={4} title="Signing, and ending a token early">
+
+- With a key pair, other services can verify tokens but never forge them.
+- Fix the algorithm per key in server config; never let the token's header choose it.
+- A JWT cannot be revoked on its own. A per-user cut-off time or an account check gives the server that power back.
+
+</Part>
+
+### Signing: A Shared Secret or a Key Pair
+
+There are two families of JWT signing algorithms, and the choice decides who can create tokens.
+
+<Diagram
+  src="/diagrams/blog/session-security-in-practice/signing-keys.svg"
+  alt="Side-by-side comparison. Left, one shared secret (HS256): the auth service signs with the secret and hands a copy of the same secret to Service A and Service B, so both can verify and also sign; any service holding the secret can create a valid token. Right, a key pair (RS256 or ES256): the auth service signs with the private key and hands only the public key to Service A and Service B, which can verify but never sign; a leaked public key cannot be used to forge a token. Below, an example token header: alg RS256, kid key-2, which tells the verifier which key to check with."
+  width={680}
+  height={501}
+  caption="With a shared secret every verifier is also a signer. With a key pair, only one service can sign."
 />
 
-### Why Access Tokens Are Short Lived
+- **Symmetric (`HS256`)** - one secret both signs and verifies. Simple and fast, and fine when the service that issues tokens is the only one that checks them. But every service that verifies a token holds the secret, so every one of them could also forge one.
+- **Asymmetric (`RS256`, `ES256`)** - a private key signs, and a public key verifies. Only the auth service holds the private key. Other services get the public key, which is safe to hand out: it can check a token but never create one.
 
-JWTs cannot be invalidated after they are issued. The server has no way to revoke one; it will keep working until the `exp` claim passes. If a token is stolen, the attacker has access for whatever remains of its lifetime — one hour limits that window to something manageable.
+Wherever the private key or secret lives, keep it in a secrets manager rather than a config file, and make the service refuse to start without it.
 
-But one hour also means the user would need to log in every hour. That is where the refresh token comes in.
+#### Key IDs and Rotation
 
-## The Core Problem
+Keys need replacing from time to time, and tokens signed with the old key are still in circulation when you do. The `kid` (key ID) header handles this:
 
-A user logs in. The server issues two things: a short-lived access token (1 hour) and a longer-lived refresh token (7 days). When the access token expires, the client uses the refresh token to get a new pair silently — no login prompt required.
+- Each token names the key that signed it.
+- Verifiers keep a small set of trusted public keys and pick the right one by `kid`. Many systems publish this set as a JWKS (JSON Web Key Set) endpoint.
+- During a rotation the old and new keys are both trusted. Once tokens signed with the old key have expired, it is dropped.
+
+#### Algorithm Confusion
+
+The `alg` header is written by whoever made the token - including an attacker. If a verifier lets the header choose the algorithm, the attack takes three steps:
+
+1. The attacker takes the server's **public** key, which is not a secret.
+2. They use it as an `HS256` secret and sign a forged token with `"alg": "HS256"`.
+3. A careless verifier sees `HS256`, uses "its key" (the public key) as the secret, and the signature checks out.
+
+The defence is to never let the token choose: **each key is used with exactly one algorithm**, fixed in server configuration. Most JWT libraries take an explicit list of allowed algorithms - always pass it.
+
+#### Changing the Algorithm Without Logging Everyone Out
+
+Switching from `HS256` to `RS256` the simple way invalidates every token in circulation at once, which logs out every user. The safer pattern runs two verifiers side by side for a while:
+
+- New tokens are signed only with the new algorithm and key.
+- The verifier tries the new algorithm first, then the old one - each locked to its own key, so the transition does not reopen algorithm confusion.
+- Once the old tokens have expired, the old verifier is removed.
+
+Services that only verify tokens must accept both kinds **before** the issuer starts signing with the new one.
+
+### Ending a Session Before the Token Expires
+
+#### Why Access Tokens Are Short Lived
+
+A plain JWT cannot be invalidated after it is issued. The server keeps no record of it, so it will keep working until the `exp` claim passes. If a token is stolen, the attacker has access for whatever remains of its lifetime - 15 minutes limits that window to something manageable.
+
+But 15 minutes also means the user would need to log in every 15 minutes. That is where the refresh token comes in.
+
+#### When Waiting for Expiry Is Not Enough
+
+Logout, a banned account or a changed password should take effect now, not when the token happens to expire. There are a few standard ways to give the server that power back, each trading a little of the "no database" property for control:
+
+| Approach              | How it works                                                                       | Ends                       | Cost per request                         |
+| --------------------- | ---------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------- |
+| Short lifetime        | Wait for `exp`                                                                     | Nothing early              | None                                     |
+| Deny-list             | Store the `jti` of revoked tokens until they expire                                | One token                  | A lookup (often in a cache)              |
+| Per-user cut-off time | Store one "valid after" timestamp per user; reject tokens whose `iat` is older     | Every token for that user  | A timestamp comparison on the user row   |
+| Account check         | Load the user on every request; reject banned or inactive accounts                 | Every token for that user  | One lookup, often already being done     |
+
+The last two combine well: if the user row is already loaded for the request, checking its status and a cut-off timestamp needs no extra query. Refresh tokens are simpler: they live in the database, so revoking one means updating its row.
+
+<Part id="refresh-tokens" number={3} total={4} title="Refresh tokens: rotation and reuse detection">
+
+- Refresh tokens are random strings stored only as hashes, so a database leak gives no working tokens.
+- Every refresh uses the token up. A token that comes back a second time is a copy.
+- On reuse, end the session: the thief's new token is revoked with it.
+
+</Part>
+
+### The Core Problem
+
+A user logs in. The server issues two things: a short-lived access token (15 minutes) and a longer-lived refresh token (7 days). When the access token expires, the client uses the refresh token to get a new pair silently - no login prompt required.
 
 This works in the normal case. But what happens when the refresh token is leaked?
 
@@ -145,13 +372,16 @@ Common leak scenarios:
 - A database is breached and tokens are exposed
 - Traffic is intercepted on an insecure connection
 
-If the server accepts that token indefinitely, the attacker has 7 days of access and no one knows. If the server rotates on every use but does not detect reuse, the attacker can race the legitimate user and the server cannot tell the difference.
+What happens next depends on the server:
+
+- **It accepts the token as long as it is valid:** the attacker has 7 days of access, and nothing detects it.
+- **It rotates on every use but does not detect reuse:** the attacker can race the legitimate user, and the server cannot tell the difference.
 
 > Rotation without detection is not enough. A rotated token that is never checked for reuse gives the attacker a full replacement token pair on first use, with nothing to stop them from continuing.
 
-## Why Short Lived Access Tokens Alone Are Not Enough
+### Why Short Lived Access Tokens Alone Are Not Enough
 
-Short-lived JWTs are a good start. A leaked access token expires in an hour. But the refresh token backing it has a much longer window.
+Short-lived JWTs are a good start. A leaked access token expires in 15 minutes. But the refresh token backing it has a much longer window.
 
 If a refresh token is stolen and the server has no rotation or detection:
 
@@ -159,51 +389,38 @@ If a refresh token is stolen and the server has no rotation or detection:
 2. The legitimate user has no way to know their session is compromised.
 3. The server has no signal that anything is wrong.
 
-The access token lifetime limits the blast radius of one kind of leak. The refresh token needs its own protection.
+The access token lifetime limits how long a leaked access token can be used. The refresh token needs its own protection.
 
-## The Rotation and Detection Model
+### The Rotation and Detection Model
 
 The practical model has three rules:
 
 1. Every refresh token use issues a new refresh token and invalidates the old one.
 2. A rotated token that arrives again is a signal that something is wrong.
-3. When reuse is detected, all refresh tokens for that user are deleted immediately.
+3. When reuse is detected, the affected session is ended immediately - in the simplest version, every session the user has.
 
-Rule one makes every token single-use. Rule two creates the detection mechanism. Rule three is the response — a full session wipe across all devices.
+Rule one makes every token single-use. Rule two creates the detection mechanism. Rule three is the response.
 
-## Normal Refresh Flow
+### Normal Refresh Flow
 
-```mermaid
-sequenceDiagram
-  autonumber
-  participant C as Client
-  participant API as API
-  participant DB as Postgres
+<Diagram
+  src="/diagrams/blog/session-security-in-practice/refresh-flow.svg"
+  alt="Sequence between the client, the API and the database. The client sends POST /auth/refresh, with the refresh token riding in a cookie. The API finds the stored row by its hash, marks it used or deletes it so the old token can never work again, stores the hash of the new refresh token, and signs a new access token. It returns the new pair: the access token in the body and the refresh token in a new cookie."
+  width={660}
+  height={520}
+  caption="One refresh: the old token is used up before the new pair is issued"
+/>
 
-  rect rgb(18, 58, 39)
-    C->>API: POST /auth/refresh (refresh token via HTTP-only cookie)
-    API->>DB: Load active refresh tokens for user
-    API->>API: Compare incoming token against stored hashes
-    API->>DB: Delete matched token
-  end
-
-  rect rgb(30, 58, 89)
-    API->>DB: Insert new refresh token hash with fresh 7-day expiry
-    API->>API: Sign new JWT access token
-    API-->>C: New access token in body + new refresh token in HTTP-only cookie
-  end
-```
-
-## 1. Store Refresh Tokens as Hashes, Not Plain Strings
+### 1. Store Refresh Tokens as Hashes, Not Plain Strings
 
 A refresh token should never be stored in plain text. If the database is breached, plain tokens give the attacker immediate access to every active session.
 
-The safer approach is to store only the `bcrypt` hash of the token and return the raw value to the client exactly once, at the moment of issuance.
+The safer approach is to store only a hash of the token and return the raw value to the client exactly once, at the moment of issuance. This example uses `bcrypt`:
 
-<CodeToggle
-  title="Storing refresh token as bcrypt hash"
-  language="typescript"
-  code={`// Generate an opaque random string. This is never stored.
+<CodeToggle title="Storing refresh token as bcrypt hash">
+
+```typescript
+// Generate an opaque random string. This is never stored.
 const rawToken = randomBytes(64).toString("hex");
 
 // Store only the hash in the database.
@@ -218,12 +435,29 @@ await prisma.refreshToken.create({
 });
 
 // The raw token goes to the client. This is the last time it exists in plain form.
-return rawToken;`}
-/>
+return rawToken;
+```
 
-An opaque random string is used instead of a JWT for one reason: a JWT is self-contained and cannot be invalidated without a blocklist. An opaque token tied to a database row is gone the moment the row is deleted.
+</CodeToggle>
 
-## 2. Rotate on Every Use
+An opaque random string is used instead of a JWT for one reason: a JWT is self-contained and cannot be invalidated without a deny-list. An opaque token tied to a database row is gone the moment the row is revoked or deleted.
+
+#### bcrypt or a Fast Hash?
+
+`bcrypt` is built for passwords, and a refresh token is not a password:
+
+- **Passwords are short and guessable**, so `bcrypt` is deliberately slow: it makes brute-forcing a leaked hash expensive.
+- **A refresh token is 64 random bytes** that cannot be guessed, however fast the hash. So a plain `SHA-256` is just as safe here.
+- **`SHA-256` is also deterministic:** the same token always produces the same hash, so the server can look the row up directly with a unique index.
+
+| Hash      | Same input, same hash? | Finding the row                                  |
+| --------- | ---------------------- | ------------------------------------------------ |
+| `bcrypt`  | No (random salt)       | Load the user's tokens and compare one by one    |
+| `SHA-256` | Yes                    | One indexed lookup by hash                       |
+
+`bcrypt` is still correct, and with one or two sessions per user the difference does not matter (see step 3). With many sessions per user, or no user ID to narrow the search, `SHA-256` is the better fit.
+
+### 2. Rotate on Every Use
 
 When the client sends a refresh token, the server:
 
@@ -232,10 +466,10 @@ When the client sends a refresh token, the server:
 3. Deletes that token.
 4. Issues a new token pair with a fresh expiry.
 
-<CodeToggle
-  title="Rotating a refresh token on use"
-  language="typescript"
-  code={`async function rotateRefreshToken(incomingToken: string, userId: string) {
+<CodeToggle title="Rotating a refresh token on use">
+
+```typescript
+async function rotateRefreshToken(incomingToken: string, userId: string) {
   const activeTokens = await prisma.refreshToken.findMany({
     where: { userId },
   });
@@ -244,7 +478,7 @@ When the client sends a refresh token, the server:
   const matched = await findMatchingToken(incomingToken, activeTokens);
 
   if (!matched) {
-    // No match found — either invalid or already rotated.
+    // No match found - either invalid or already rotated.
     // Treat this as a stolen token scenario.
     await prisma.refreshToken.deleteMany({ where: { userId } });
     throw new UnauthorizedException(
@@ -256,19 +490,21 @@ When the client sends a refresh token, the server:
   await prisma.refreshToken.delete({ where: { id: matched.id } });
 
   return issueNewTokenPair(userId);
-}`}
-/>
+}
+```
 
-> The delete happens before the new token is issued. This is intentional — if the issue step fails, the user logs in again rather than ending up with two active tokens for the same session.
+</CodeToggle>
 
-## 3. Find the Matching Token with bcrypt
+> The delete happens before the new token is issued. This is intentional - if the issue step fails, the user logs in again rather than ending up with two active tokens for the same session.
 
-Because tokens are stored as hashes, finding the matching one requires comparing the incoming raw token against each stored hash.
+### 3. Find the Matching Token with bcrypt
 
-<CodeToggle
-  title="Finding a stored token by bcrypt comparison"
-  language="typescript"
-  code={`async function findMatchingToken(
+Because tokens are stored as salted hashes, finding the matching one requires comparing the incoming raw token against each stored hash.
+
+<CodeToggle title="Finding a stored token by bcrypt comparison">
+
+```typescript
+async function findMatchingToken(
   incomingToken: string,
   storedTokens: RefreshToken[],
 ): Promise<RefreshToken | null> {
@@ -277,70 +513,61 @@ Because tokens are stored as hashes, finding the matching one requires comparing
     if (isMatch) return stored;
   }
   return null;
-}`}
-/>
+}
+```
 
-This is a linear scan over the user's active sessions. Most users have one or two active sessions, so the cost is low. If a user has many active devices, this can be optimized by adding a short hash prefix as a lookup index, but at typical scale the simple loop is correct and fast enough.
+</CodeToggle>
 
-## 4. Detect Reuse and Wipe All Sessions
+This is a linear scan over the user's active sessions. Most users have one or two active sessions, so the cost is low. With a `SHA-256` hash, this whole step becomes a single indexed query.
+
+### 4. Detect Reuse and Wipe All Sessions
 
 If a token arrives and no active match is found, there are two possibilities:
 
 1. The token has already been rotated by the legitimate user.
 2. An attacker used the token first, and now the legitimate user is trying to refresh.
 
-> The server cannot tell the difference. The only safe response is to treat both cases as a breach and delete every active session for that user immediately.
+> The server cannot tell the difference. The only safe response is to treat both cases as a breach and end the session. The simplest safe version deletes every active session for that user immediately.
 
-<CodeToggle
-  title="Wiping all sessions on reuse detection"
-  language="typescript"
-  code={`if (!matched) {
+<CodeToggle title="Wiping all sessions on reuse detection">
+
+```typescript
+if (!matched) {
   // A rotated token was presented again.
   // This could be an attacker who used the token before the legitimate user could.
   // Wipe all sessions to force re-authentication on every device.
   await prisma.refreshToken.deleteMany({ where: { userId } });
   throw new UnauthorizedException("Session invalidated. Please log in again.");
-}`}
-/>
-
-This is the nuclear option. A legitimate user who triggers this (for example, a buggy client that retries a refresh request) will have to log in again. That is an acceptable tradeoff — the alternative is leaving stolen sessions open.
-
-## Token Theft and Reuse Detection Flow
-
-```mermaid
-sequenceDiagram
-  autonumber
-  participant U as Legitimate User
-  participant A as Attacker
-  participant API as API
-  participant DB as Postgres
-
-  rect rgb(61, 49, 20)
-    A->>API: POST /auth/refresh with stolen refresh token
-    API->>DB: Find matching token — match found
-    API->>DB: Delete matched token, insert new token
-    API-->>A: New token pair issued to attacker
-  end
-
-  rect rgb(30, 58, 89)
-    U->>API: POST /auth/refresh with original token (now rotated)
-    API->>DB: Find matching token — no match found
-    API->>API: Reuse detected
-    API->>DB: Delete ALL refresh tokens for this user
-    API-->>U: 401 Unauthorized — all sessions wiped
-  end
+}
 ```
 
-The attacker gets one token pair. The moment the legitimate user tries to refresh, the system detects the reuse and ends every session. The attacker's new token is also now gone.
+</CodeToggle>
 
-## 5. Deliver Tokens via HTTP-only Cookies
+This is the strictest response. A legitimate user who triggers this (for example, a buggy client that retries a refresh request) will have to log in again. For a small app that is an acceptable tradeoff - the alternative is leaving stolen sessions open. The next sections cover how a larger system ends fewer sessions on reuse and raises fewer false alarms.
 
-A refresh token stored in JavaScript — in memory, `localStorage`, or `sessionStorage` — can be read by any script running on the page. `HTTP-only` cookies are not accessible to JavaScript at all. They are sent automatically by the browser on every matching request and never exposed to the page itself.
+### Token Theft and Reuse Detection Flow
 
-<CodeToggle
-  title="Delivering refresh token via HTTP-only cookie"
-  language="typescript"
-  code={`// The refresh token goes into an HTTP-only cookie.
+<Diagram
+  src="/diagrams/blog/session-security-in-practice/reuse-detection.svg"
+  alt="Sequence between the real user, the API and an attacker. A copy of refresh token T1 leaks to the attacker. The attacker refreshes with T1 first; the API issues T2 and marks T1 used, which looks like a normal refresh. Later the real user refreshes with T1. The API sees that T1 was already used: reuse detected. It returns 401 to the real user, and revokes T2 with it, so the thief is logged out too. Whoever refreshes second exposes the copy; the server cannot tell who the thief is, so it ends the session for both."
+  width={660}
+  height={604}
+  caption="It does not matter who refreshes first: the second use of a token gives the copy away"
+/>
+
+The attacker gets one token pair. The moment the legitimate user tries to refresh, the system detects the reuse and ends the session. The attacker's new token is also now gone.
+
+### 5. Deliver Tokens via HTTP-only Cookies
+
+Where the refresh token lives decides who can read it:
+
+- **In JavaScript** - memory, `localStorage` or `sessionStorage` - any script running on the page can read it.
+- **In an `HTTP-only` cookie**, JavaScript cannot read it at all. The browser sends it automatically on every matching request and never exposes it to the page.
+
+<CodeToggle title="Delivering refresh token via HTTP-only cookie">
+
+```typescript
+// The refresh token goes into an HTTP-only cookie.
 // JavaScript on the page cannot read or steal this value.
 response.cookie("refresh_token", rawToken, {
   httpOnly: true,
@@ -350,49 +577,147 @@ response.cookie("refresh_token", rawToken, {
 });
 
 // Only the short-lived access token goes into the response body.
-return { accessToken };`}
-/>
+return { accessToken };
+```
 
-This removes XSS as a viable attack vector for stealing refresh tokens. An attacker who can run JavaScript on the page can read the access token from memory, but it expires in an hour. The refresh token stays out of reach.
+</CodeToggle>
 
-### Cross-origin requests and withCredentials
+So an injected script cannot steal the refresh token:
+
+- **The access token** can still be read from memory by an injected script, but it expires within 15 minutes.
+- **The refresh token** stays out of reach.
+- **The cookie's `Path`**, set to the auth routes, keeps it from being sent with every other API request too.
+
+#### Native Apps Are Different
+
+Cookies are a browser answer. A mobile app has no page for an injected script to run in, and it has secure storage built in (the iOS Keychain, the Android Keystore). So one backend often serves two delivery modes:
+
+- **Browsers** get the refresh token in an `HTTP-only` cookie.
+- **Native apps** get it in the response body and keep it in the platform's secure storage.
+
+<MoreDetail title="Gotcha: cookies on cross-origin requests (withCredentials and CORS)">
 
 In a setup where the frontend and API run on different origins, browsers strip cookies from cross-origin requests by default. `withCredentials: true` on the HTTP client tells the browser to include cookies on cross-origin requests:
 
-<CodeToggle
-  title="Configuring axios with withCredentials"
-  language="typescript"
-  code={`export const api = axios.create({
+<CodeToggle title="Configuring axios with withCredentials">
+
+```typescript
+export const api = axios.create({
   baseURL: env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
-});`}
-/>
+});
+```
 
-The backend must also respond with `Access-Control-Allow-Credentials: true` and an exact `Access-Control-Allow-Origin` value. A wildcard origin (`*`) is forbidden when credentials are included. Without both sides configured, the cookie is silently stripped from every request and the refresh mechanism fails with no useful error.
+</CodeToggle>
 
-### HTTP-only cookies cannot be cleared from JavaScript
+The backend must also respond with:
+
+- `Access-Control-Allow-Credentials: true`
+- an exact `Access-Control-Allow-Origin` value - a wildcard (`*`) is forbidden when credentials are included.
+
+Without both sides configured, the cookie is silently stripped from every request and the refresh mechanism fails with no useful error.
+
+</MoreDetail>
+
+<MoreDetail title="Gotcha: logout must go through the backend">
 
 Because the browser controls `HTTP-only` cookies completely, the frontend cannot delete the refresh token on logout.
 
-<CodeToggle
-  title="Why frontend-only logout cannot clear HTTP-only cookies"
-  language="typescript"
-  code={`// This does nothing for HTTP-only cookies — the browser ignores it.
-document.cookie = "refresh_token=; max-age=0";`}
+<CodeToggle title="Why frontend-only logout cannot clear HTTP-only cookies">
+
+```typescript
+// This does nothing for HTTP-only cookies - the browser ignores it.
+document.cookie = "refresh_token=; max-age=0";
+```
+
+</CodeToggle>
+
+The backend must clear it by responding with a `Set-Cookie` header that sets `Max-Age=0`. So logout must always call the backend. A frontend-only logout:
+
+- clears the access token and the indicator cookie,
+- but leaves the refresh token in the browser until the server revokes it or it expires.
+
+</MoreDetail>
+
+<Part id="hardening-for-real-traffic" number={4} total={4} title="Hardening for real traffic">
+
+- Track one token family per login, so reuse ends one session instead of every device.
+- Claim a refresh token with one conditional update, so two concurrent requests cannot both win.
+- A reuse within seconds is usually a lost response, not a theft - give it a short grace period.
+
+</Part>
+
+### Token Families: Ending One Session Instead of All
+
+The simple version above deletes used tokens and, on reuse, deletes every token the user has. That is simple and safe, but it has two blind spots:
+
+- **A deleted token looks the same as a random invalid one**, so the server cannot tell a replay from noise.
+- **One stolen phone logs the user out of every device.**
+
+A **token family** fixes both:
+
+- **Every login gets a session ID** (the `sid` claim from earlier). Each rotation creates a new row that shares it, so one login becomes a chain of rows.
+- **Used tokens are marked, not deleted**, and each points at the token that replaced it. A token that comes back after being exchanged is now provably a reused token, not just an unknown one.
+- **Reuse revokes the family**, not the whole account. The stolen session ends for both the thief and the user; the user's other devices keep working.
+- **Logout revokes one family**, and "log out everywhere" revokes all of them.
+
+Recording _why_ each row was revoked - rotated, logged out, reuse detected, account banned - costs one column and turns "why was I logged out?" into a single query.
+
+The used rows are what make detection work, so keep them until they expire. Cleaning them up early quietly switches reuse detection off.
+
+### Retries and Races
+
+Rotation makes every refresh token single-use. Real networks and real clients do not always cooperate with that, and two normal situations look exactly like theft.
+
+#### Two Refreshes at the Same Moment
+
+Two browser tabs, or a screen that fires two requests at once, can send the same refresh token twice within milliseconds. If rotation is written as "read the row, check it, then update it", both requests can read the row before either updates it:
+
+<Diagram
+  src="/diagrams/blog/session-security-in-practice/refresh-race.svg"
+  alt="Side-by-side comparison. Left, read then update: requests A and B carry the same token; both read the row and see it is not used yet; both mark it used and issue a new token, T2 and T2 prime; the result is two live tokens for one session. Right, one conditional update: the same two requests both run UPDATE refresh_tokens SET used = true WHERE id = $1 AND used = false; the database runs them one at a time, so one changes 1 row and gets a new pair, and the other changes 0 rows and is rejected. Exactly one winner, whatever the timing."
+  width={710}
+  height={480}
+  caption="Let the database pick the winner: the condition in the update is the lock"
 />
 
-The backend must clear it by responding with a `Set-Cookie` header that sets `Max-Age=0`. This means logout must always call the backend — a frontend-only logout will clear the access token and indicator cookie, but the refresh token stays in the browser until the server revokes it or it expires naturally.
+The fix is to make the check and the update one atomic step:
+
+```sql
+UPDATE refresh_tokens
+SET used = true
+WHERE id = $1 AND used = false;
+-- 1 row changed: this request won and issues the new pair
+-- 0 rows changed: another request got there first
+```
+
+Only one request can flip `used` from `false` to `true`. The loser can be refused with a plain `401` and retry with the token its client now holds - it should not be treated as theft.
+
+#### A Response That Never Arrived
+
+The server rotates the token, but the response is lost - a dropped mobile connection, a timeout. The client never received the new token, so it retries with the old one. To the server, that is the same token arriving twice: reuse.
+
+The difference is timing. A lost-response retry arrives within seconds; an attacker needs far longer to steal a token and use it. So a common answer (Auth0 calls it a "reuse interval") is a **short grace period**: a token used only seconds ago is treated as a retry, not a theft. During that window the server can either:
+
+- **hand back the token it already issued**, which means keeping it somewhere it can be read again, or
+- **issue a fresh pair from the replacement.**
+
+Outside the window, reuse detection applies as normal.
+
+On the client side, the best defence is to never send two refreshes at once: one refresh in flight, and every other request waits for its result.
+
+---
 
 ## Putting the Flow Together
 
-A complete session lifecycle:
+A complete session lifecycle in the simple version, before the hardening in Part 4:
 
 1. User logs in with email and password.
 2. Server validates credentials and issues a raw refresh token and a signed JWT access token.
 3. Refresh token is hashed with `bcrypt` and stored in the database with a 7-day expiry.
 4. Raw refresh token is set as an `HTTP-only` cookie. Access token is returned in the response body.
 5. Client stores the access token in memory and attaches it to API requests.
-6. Access token expires after 1 hour.
+6. Access token expires after 15 minutes.
 7. Client sends the refresh token cookie to the refresh endpoint.
 8. Server finds the matching hash, deletes that token, and issues a new pair.
 9. Fresh 7-day window begins. Old token is gone.
@@ -400,16 +725,26 @@ A complete session lifecycle:
 
 ## Practical Tradeoffs
 
-- **Rotation vs retry safety** — rotation makes tokens single-use, which means a client that accidentally sends a refresh request twice will trigger a session wipe.
-- **Reuse detection aggression** — a buggy mobile client that retries on timeout looks identical to a stolen token scenario. The tradeoff favors security over convenience.
-- **`bcrypt` comparison cost** — slower than a plain equality check, but refresh requests happen at most once per hour per session; the overhead is negligible at this frequency.
-- **`HTTP-only` cookies and CORS** — protect against XSS but require `CORS` and `SameSite` configuration to work correctly across different frontend and API origins.
-- **Full wipe vs partial revocation** — wiping all sessions on reuse is the safest default. A softer alternative (only revoking the affected session) is possible but leaves other sessions open if the attacker has broader access.
+- **Shared secret vs key pair** - a shared secret is simpler with one service; a key pair is worth it as soon as a second service verifies tokens.
+- **Roles in the token vs the database** - a lookup per request buys permission changes that apply immediately.
+- **Rotation vs retry safety** - rotation makes tokens single-use, so concurrent refreshes and lost responses look like reuse unless the update is atomic and retries get a short grace period.
+- **`bcrypt` vs `SHA-256`** - `bcrypt` is safe but needs a scan; for long random tokens, `SHA-256` is equally safe and allows an indexed lookup.
+- **`HTTP-only` cookies and CORS** - protect against XSS but require `CORS` and `SameSite` configuration to work correctly across different frontend and API origins.
+- **Full wipe vs token family** - wiping every session on reuse is the simplest safe default. Revoking only the affected family keeps the user's other devices signed in, at the cost of tracking a session ID per login.
 
-## How This Applies to Grow Logs
+## How Far to Go
 
-In [Grow Logs](/projects/grow-logs), refresh tokens are opaque random strings stored as `bcrypt` hashes in a dedicated `refresh_tokens` table. Every successful refresh rotates the token and resets the 7-day window. Tokens are delivered exclusively as `HTTP-only` cookies, keeping them out of JavaScript on the frontend.
+The simple version is a sound default: a short-lived JWT access token, an opaque refresh token stored as a hash, rotated on every use and kept in an `HTTP-only` cookie, and a full wipe of the user's sessions on reuse.
 
-If a token that has already been rotated is presented — meaning the original was used by someone else first — every refresh token for that user is deleted immediately, forcing re-authentication on all devices.
+It rests on one distinction: the access token is a JWT, but the refresh token is not. A JWT cannot be invalidated without extra state on the server, while an opaque token tied to a database row is gone the moment the row is revoked.
 
-The access token is a short-lived JWT (1 hour). The refresh token is not a JWT. That distinction matters: a JWT cannot be invalidated without a blocklist, but an opaque token tied to a database row is gone the moment the row is deleted.
+The heavier pieces earn their place as the system grows:
+
+| When the system has...                            | Add                                                       |
+| ------------------------------------------------- | --------------------------------------------------------- |
+| A second service that verifies tokens             | A key pair, so only the issuer can sign                   |
+| Bans or role changes that must apply immediately  | An account check on every request, plus a cut-off time    |
+| Users signed in on several devices                | Token families, so reuse ends one session, not all        |
+| Mobile clients on unreliable networks             | An atomic claim on refresh and a short grace window       |
+
+For all four applied to a real production backend - including moving to a new algorithm and token format without logging anyone out - see [Session management, part 1: sessions the backend can trust and end](/work/session-management-backend).

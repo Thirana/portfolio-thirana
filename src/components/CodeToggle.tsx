@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useState } from "react";
 import { ChevronDown, Code2 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -22,46 +22,46 @@ const SyntaxHighlighter = dynamic(
   },
 );
 
-const githubDarkDimmed: Record<string, CSSProperties> = {
+const githubLight: Record<string, CSSProperties> = {
   'code[class*="language-"]': {
-    color: "#adbac7",
+    color: "#24292f",
     background: "none",
     fontStyle: "normal",
   },
   'pre[class*="language-"]': {
-    color: "#adbac7",
+    color: "#24292f",
     background: "none",
     fontStyle: "normal",
   },
-  comment: { color: "#768390", fontStyle: "normal" },
-  prolog: { color: "#768390", fontStyle: "normal" },
-  doctype: { color: "#768390", fontStyle: "normal" },
-  cdata: { color: "#768390", fontStyle: "normal" },
-  punctuation: { color: "#adbac7" },
-  property: { color: "#6cb6ff" },
-  tag: { color: "#8ddb8c" },
-  boolean: { color: "#6cb6ff" },
-  number: { color: "#6cb6ff" },
-  constant: { color: "#6cb6ff" },
-  symbol: { color: "#dcbdfb" },
-  deleted: { color: "#f47067" },
-  selector: { color: "#8ddb8c" },
-  "attr-name": { color: "#6cb6ff" },
-  string: { color: "#96d0ff" },
-  char: { color: "#96d0ff" },
-  builtin: { color: "#8ddb8c" },
-  inserted: { color: "#b4f1b4" },
-  operator: { color: "#adbac7" },
-  entity: { color: "#adbac7" },
-  url: { color: "#96d0ff" },
-  variable: { color: "#adbac7" },
-  atrule: { color: "#f47067" },
-  "attr-value": { color: "#96d0ff" },
-  function: { color: "#dcbdfb" },
-  "class-name": { color: "#dcbdfb" },
-  keyword: { color: "#f47067" },
-  regex: { color: "#96d0ff" },
-  important: { color: "#f47067", fontWeight: "bold" },
+  comment: { color: "#6e7781", fontStyle: "normal" },
+  prolog: { color: "#6e7781", fontStyle: "normal" },
+  doctype: { color: "#6e7781", fontStyle: "normal" },
+  cdata: { color: "#6e7781", fontStyle: "normal" },
+  punctuation: { color: "#24292f" },
+  property: { color: "#0550ae" },
+  tag: { color: "#116329" },
+  boolean: { color: "#0550ae" },
+  number: { color: "#0550ae" },
+  constant: { color: "#0550ae" },
+  symbol: { color: "#8250df" },
+  deleted: { color: "#cf222e" },
+  selector: { color: "#116329" },
+  "attr-name": { color: "#0550ae" },
+  string: { color: "#0a3069" },
+  char: { color: "#0a3069" },
+  builtin: { color: "#116329" },
+  inserted: { color: "#116329" },
+  operator: { color: "#24292f" },
+  entity: { color: "#24292f" },
+  url: { color: "#0a3069" },
+  variable: { color: "#953800" },
+  atrule: { color: "#cf222e" },
+  "attr-value": { color: "#0a3069" },
+  function: { color: "#8250df" },
+  "class-name": { color: "#953800" },
+  keyword: { color: "#cf222e" },
+  regex: { color: "#0a3069" },
+  important: { color: "#cf222e", fontWeight: "bold" },
   bold: { fontWeight: "bold" },
   italic: { fontStyle: "normal" },
   namespace: { opacity: "0.7" } as CSSProperties,
@@ -69,13 +69,24 @@ const githubDarkDimmed: Record<string, CSSProperties> = {
 
 type CodeToggleProps = {
   title: string;
-  code: string;
+  /**
+   * Preferred: pass a fenced code block as children. MDX keeps its indentation
+   * and rehype-pretty-code highlights it at build time.
+   */
+  children?: ReactNode;
+  /**
+   * Legacy: code as a string prop. MDX strips leading whitespace from lines
+   * inside multi-line attribute expressions, so indentation is lost - use
+   * children instead.
+   */
+  code?: string;
   language?: string;
   defaultOpen?: boolean;
 };
 
 export default function CodeToggle({
   title,
+  children,
   code,
   language = "typescript",
   defaultOpen = false,
@@ -83,14 +94,14 @@ export default function CodeToggle({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="not-prose my-3 rounded-xl border border-gl-primary/30 bg-gl-surface p-3">
+    <div className="not-prose card my-4 p-2">
       <Collapsible open={open} onOpenChange={setOpen}>
         <CollapsibleTrigger asChild>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="h-auto w-full items-start justify-between whitespace-normal text-left border-gl-border bg-gl-surface-2 py-2 font-mono text-xs text-gl-text-muted hover:text-gl-text"
+            className="h-auto w-full items-start justify-between rounded-[10px] border-0 bg-transparent px-3 py-2 text-left font-sans text-[13px] font-medium whitespace-normal text-gl-text-muted shadow-none hover:bg-gl-surface-2 hover:text-gl-text"
           >
             <span className="flex min-w-0 flex-1 items-start gap-2">
               <Code2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
@@ -105,37 +116,43 @@ export default function CodeToggle({
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="overflow-hidden duration-300 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-          <div className="mt-3 overflow-x-auto rounded-lg border border-gl-primary/30 bg-gl-surface-2 [scrollbar-gutter:stable] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gl-border [&::-webkit-scrollbar-track]:bg-gl-bg-subtle">
-            <SyntaxHighlighter
-              language={language}
-              style={githubDarkDimmed}
-              customStyle={{
-                margin: 0,
-                padding: "1rem 1.25rem",
-                borderRadius: "0.5rem",
-                background: "transparent",
-                fontSize: "0.8rem",
-                lineHeight: "1.65",
-                whiteSpace: "pre",
-              }}
-              codeTagProps={{
-                style: {
-                  fontFamily:
-                    "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-                  whiteSpace: "pre",
+          {children ? (
+            <div className="mt-2 [&_figure]:m-0 [&_pre]:my-0 [&_pre]:rounded-[10px] [&_pre]:border [&_pre]:border-gl-border [&_pre]:bg-gl-bg [&_pre]:shadow-none [&_pre]:[scrollbar-width:thin]">
+              {children}
+            </div>
+          ) : (
+            <div className="mt-2 overflow-x-auto rounded-[10px] border border-gl-border bg-gl-bg [scrollbar-width:thin]">
+              <SyntaxHighlighter
+                language={language}
+                style={githubLight}
+                customStyle={{
+                  margin: 0,
+                  padding: "1rem 1.25rem",
+                  borderRadius: "0.5rem",
                   background: "transparent",
-                  border: "0",
-                  padding: "0",
-                  display: "block",
-                  fontStyle: "normal",
-                },
-              }}
-              showLineNumbers={false}
-              wrapLongLines={false}
-            >
-              {code.trim()}
-            </SyntaxHighlighter>
-          </div>
+                  fontSize: "0.8rem",
+                  lineHeight: "1.65",
+                  whiteSpace: "pre",
+                }}
+                codeTagProps={{
+                  style: {
+                    fontFamily:
+                      "var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
+                    whiteSpace: "pre",
+                    background: "transparent",
+                    border: "0",
+                    padding: "0",
+                    display: "block",
+                    fontStyle: "normal",
+                  },
+                }}
+                showLineNumbers={false}
+                wrapLongLines={false}
+              >
+                {(code ?? "").trim()}
+              </SyntaxHighlighter>
+            </div>
+          )}
         </CollapsibleContent>
       </Collapsible>
     </div>

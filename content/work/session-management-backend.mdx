@@ -1,0 +1,268 @@
+---
+title: "Session management, part 1: sessions the backend can trust and end"
+cardTitle: "Session management, part 1: the backend"
+date: "2026-10-22"
+summary: "I rebuilt how the MO Marketplace backend issues and checks login sessions: short-lived asymmetric access tokens, rotating refresh tokens with theft detection, sessions that can be ended per device or per person, and one account per person, so MO's internal staff can also shop without a second account - shipped without logging anyone out."
+company: "mo-marketplace"
+featured: true
+priority: 2
+mark: "/diagrams/work/session-management-backend/mark.svg"
+highlights:
+  - icon: "key"
+    label: "Asymmetric signing"
+  - icon: "lock"
+    label: "Revocable sessions"
+  - icon: "shield"
+    label: "Theft detection"
+  - icon: "door"
+    label: "One account, many surfaces"
+tech:
+  [
+    "TypeScript",
+    "JWT (RS256)",
+    "Refresh token rotation",
+    "Role-based access control",
+  ]
+glance:
+  - label: "Before"
+    value: "Long-lived tokens that the server had no way to end early"
+  - label: "After"
+    value: "A short access token and a rotating refresh token: any session can be ended, a stolen copy is detected, and staff use one account for both the admin panel and shopping"
+outcomes:
+  - "Logout, bans and password changes now take effect on the server: for one device, or for every device, on the next request."
+  - "A stolen refresh token is detected the moment both copies are used, and that session is ended for both."
+  - "Only the backend can sign a token. Other services can verify one, but never create one."
+  - "MO's internal staff use one account for both the admin panel and shopping on the mobile app or website, and their shopping sessions never carry admin permissions."
+  - "The change shipped with no forced mobile app update and no mass logout: installed versions of the mobile app kept working, and old sessions were upgraded in place."
+---
+
+This is the first of two notes on rebuilding session management at MO Marketplace. This one is the backend. [Part 2](/work/session-management-website) covers the website, where the browser adds its own rules.
+
+The general mechanics - how access and refresh tokens work, signing with a key pair, rotation and reuse detection, and the races that look like theft - are explained in [Session Security in Practice](/blog/session-security-in-practice). This note is about the decisions this system needed on top of them.
+
+## The problem
+
+Customers sign in on a mobile app and the website. MO's internal staff - the people who run the marketplace - sign in to an internal admin panel. This note calls each side a **surface**: the customer surface (mobile app and website) and the staff surface (admin panel). Other services accept the tokens these logins produce.
+
+Each login produced a long-lived signed token, and the server kept no record of the tokens it had issued. So nothing could end one early: logging out, banning an account or changing a password left an existing token working until it expired.
+
+The fix itself is well known: short access tokens plus refresh tokens the server can revoke. What made it hard was everything around it:
+
+- **Every logged-in request goes through this code.** A mistake here would log out every user, not break one feature.
+- **A mass logout was not acceptable.** Every customer signed out at once means abandoned carts and lost sales, and some of them may not come back.
+- **Installed mobile apps cannot be forced to update.** Older versions had to keep working.
+- **Other services check the same tokens** and deploy on their own schedules.
+
+<Callout title="The goal">
+
+Sessions that can be trusted and ended - for one device, for one person, or for a stolen copy - shipped without logging anyone out and without forcing a mobile app update.
+
+</Callout>
+
+## The design at a glance
+
+| Concern         | What I chose                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------- |
+| Signing         | RS256: the backend holds the private key, other services get only the public key                 |
+| Access token    | A 15-minute JWT that carries identity, the session ID and the audience - no roles                 |
+| Refresh token   | 32 random bytes, stored as a [SHA-256 hash](/blog/session-security-in-practice#bcrypt-or-a-fast-hash), rotated on every use, chained per login                |
+| Ending sessions | A per-user cut-off time plus an account check on every request; refresh tokens revoked row by row |
+| Surfaces        | One account per person, a separate session per login surface, roles filtered by audience         |
+
+Each row is a standard pattern, covered in [the blog post](/blog/session-security-in-practice). The rest of this note is what it took to make them work here, and to switch over without logging anyone out.
+
+## Moving to a key pair without logging anyone out
+
+Other services verify the backend's tokens, so a shared secret would have let any of them forge one. The backend now signs with RS256, and the others get only the public key ([the blog explains why that matters](/blog/session-security-in-practice#signing-a-shared-secret-or-a-key-pair)).
+
+- **The private key lives in a secrets store**, one per environment, that only authorized people and services can read. It is attached at deploy time, and the server refuses to start without it.
+- **Every token carries a key ID**, so a future key rotation can run two keys side by side.
+- **Signing happens in exactly one function**, so every path that issues a token gets the same algorithm, key ID, lifetime and audience.
+
+The hard part was the switch itself. If the server simply started verifying with the new algorithm, every token already issued would fail - the mass logout this work had to avoid. So for a while the server runs **two separate verifiers, each locked to one algorithm and one key**: one for new tokens, one for old ones. Locking each to its own key also keeps [algorithm confusion](/blog/session-security-in-practice#algorithm-confusion) closed during the transition; I tested this by sending a forged token, and it was rejected with a `401`. Once every old token has expired, the old verifier is deleted as its own change, without touching the new one.
+
+## A token that carries identity only
+
+The old payload carried far more than a token needs. Before changing the payload, I checked what every client and service actually reads from it. Removing a field a client depends on breaks that client. The token now identifies the user and the session, and little else:
+
+```json
+{
+  "sub": "<user id>",
+  "sid": "<session id>",
+  "aud": "<surface>",
+  "iat": 1759046400,
+  "exp": 1759047300
+}
+```
+
+- **`sid`** is created at login and kept for the life of that login, so one login can be ended on its own ([how the pieces fit](#sessions-that-can-be-ended)).
+- **`aud`** says which surface the token is for (covered below).
+- **There are no roles.** Roles are [read from the database](/blog/session-security-in-practice#roles-in-the-token-or-in-the-database) on every request, so a role change takes effect on the next request instead of when the token expires.
+
+## Every request checks the account, not just the signature
+
+A valid signature only proves the backend issued the token. It says nothing about whether the account is still allowed in. So both verifiers now call one function that loads the user and decides whether the request may continue:
+
+<Diagram
+  src="/diagrams/work/session-management-backend/request-checks.svg"
+  alt="An incoming request with a Bearer token passes four checks in order before it reaches the route handler. One: the signature is valid, RS256 first and then the old algorithm; a bad signature or expired token gets a 401. Two: the account is active and not banned or deactivated; otherwise 401. Three: the token was issued after the account's cut-off time; otherwise 401. Four: roles are loaded from the database and filtered to the token's audience; a role check that fails gets a 403. A 401 always means log in again, and a 403 means logged in but not allowed."
+  width={620}
+  height={799}
+  caption="Four checks on every request, and only two possible refusals"
+/>
+
+The server already loaded the user on every request before this work, so each new check is a comparison on data it already has, not an extra database query. A refused role check is always a `403`, never a `401`, because clients log out on a `401` ([401 or 403](/blog/session-security-in-practice#401-or-403)).
+
+### From token to `AuthUser`
+
+The account check above returns one typed object, `AuthUser`. It is everything a route ever sees of the token:
+
+```ts
+type AuthUser = {
+  id: string; // from the token's sub
+  sid?: string; // the login this request belongs to; missing on old tokens
+  aud: Audience; // which surface the token was issued for
+  roles: string[]; // loaded from the database, filtered to this surface
+  isStaff: boolean; // a staff token and a staff role actually held
+  // ...plus the few profile fields clients display
+};
+```
+
+A request moves through it in four steps:
+
+1. **The verifier** checks the signature and expiry, then hands the claims to the account check.
+2. **The account check builds `AuthUser`** from the claims and the freshly loaded account: the ID from `sub`, the session from `sid`, the surface from `aud`, and roles filtered to that surface. If any check fails, the request ends with a `401` and never reaches a route.
+3. **The controller asks for what it needs** - the whole `AuthUser`, or a single field such as the user ID - and the field name is checked against the type.
+4. **Each service method takes only the fields it reads**, never the whole user.
+
+```ts
+// before: untyped, so even a removed field name compiles
+getMyOrders(request: any) {
+  return this.orders.forUser(request.user.id);
+}
+
+// after: the field name is checked against AuthUser
+getMyOrders(@CurrentUser("id") userId: string) {
+  return this.orders.forUser(userId);
+}
+```
+
+Before this, much of the codebase read the request's user without a type. The new token gave that object fewer fields, so code reading a removed field would not crash; it would quietly get `undefined`. With `AuthUser` in place, a missing field became a compile error, the compiler found a few existing bugs, and they were fixed before the new token shipped.
+
+## Sessions that can be ended
+
+Sessions are now structured in three levels: one person (`sub`) has one session per login (`sid`), each session belongs to one surface (`aud`), and each session is a chain of refresh tokens that share its `sid`. Ending a session means cutting at one of those levels, and each cut has one function behind it:
+
+<Diagram
+  src="/diagrams/work/session-management-backend/session-tree.svg"
+  alt="One person, identified by sub, has three sessions, one per login: a mobile app login and a website login, both with aud customer, and an admin panel login with aud staff. Each session has its own sid and a chain of refresh tokens - two used, one live - where every row carries that sid. A stolen copy being used revokes that one chain. A logout revokes that one session. A third session that neither event touches keeps working. A ban, deactivation or password change sets the cut-off time, which ends every session under the person at once."
+  width={680}
+  height={540}
+  caption="Logout and theft end one branch. A ban or password change ends the whole tree."
+/>
+
+- **Logout** revokes this login's session (`sid`). The user's other devices stay signed in.
+- **A stolen refresh token being used** revokes that session's whole chain, so both the thief's copy and the real user's copy stop working.
+- **A ban, deactivation or password change** sets the account's **cut-off time** to now and revokes all its refresh tokens, in one database transaction.
+
+The cut-off time is one timestamp per user ([one of the standard ways](/blog/session-security-in-practice#when-waiting-for-expiry-is-not-enough) to end a JWT early). Any access token issued before it fails the request check - including tokens already issued to installed mobile apps, with no app release needed. It is stored in whole seconds, because a token's issue time (`iat`) has no fractions of a second:
+
+<Diagram
+  src="/diagrams/work/session-management-backend/cutoff-time.svg"
+  alt="A timeline with a cut-off time, set by a ban, deactivation or password change. A phone token and a website token issued before it are rejected with a 401 on their next request. A token from a new login issued after it is accepted. Zoomed in: the password is changed at 10:00:00.700 and the user logs back in at 10:00:00.900, so the new token's iat is 10:00:00. With the cut-off stored with milliseconds, 10:00:00.700, the iat is earlier and the user's own new token is rejected. With the cut-off stored in whole seconds, 10:00:00, the iat is not earlier and the token is accepted."
+  width={660}
+  height={532}
+  caption="One timestamp ends every older token. Rounding it down keeps the user's fresh login working."
+/>
+
+Refresh tokens last long for customers and much shorter for staff, and every use starts a fresh lifetime. Customers keep the session length they had before, so nobody logs in more often. Before the 15-minute access token was switched on, every client confirmed it could handle a `401` by refreshing and retrying the request, so no client received short tokens before it could renew them.
+
+## Rotation, and telling a retry from a theft
+
+Refresh tokens rotate on every use and form one chain per login (a [token family](/blog/session-security-in-practice#token-families-ending-one-session-instead-of-all), in the blog's terms). If a token that was already exchanged for a new one shows up again, that chain is ended. The harder part was the normal situations that look exactly like reuse, and deciding what each one means:
+
+<Diagram
+  src="/diagrams/work/session-management-backend/refresh-decision.svg"
+  alt="A refresh token arrives at the refresh endpoint. Unknown, from another surface, or expired: 401, and the row is left alone. Not revoked: an atomic update claims the row; the request that wins gets a new pair, and a request that lost the race gets 401 already used. Revoked with no replacement: the session was ended on purpose, 401. Revoked seconds ago: a retry after a lost response, so the server issues a fresh pair from the token that replaced it. Revoked longer ago: a copy is in use, so the whole session chain is revoked with reason REUSE_DETECTED."
+  width={660}
+  height={731}
+  caption="What happens to a refresh token, from normal use to theft"
+/>
+
+- **Two refreshes at once.** Two screens can send the same refresh token at the same moment. The token's row is claimed with [one conditional update](/blog/session-security-in-practice#two-refreshes-at-the-same-moment), so the database lets exactly one request win. The other gets a plain `401` and retries with the new token its client received from the winner. Losing the race is not treated as theft.
+- **[A response that never arrived](/blog/session-security-in-practice#a-response-that-never-arrived).** On a bad mobile connection, the server can rotate the token and send back a new one, but the response never reaches the mobile app. The app still holds only the old token, so it retries with that. So a token revoked only seconds ago is treated as that retry, and the server **issues a fresh pair from the token that replaced it**. It cannot simply resend the lost token: it stores only hashes, so it no longer knows the raw value it sent.
+- **A revoked token with no replacement** means the session was ended on purpose, by logout or a ban. If it is used again later, it is treated as an invalid token, not as theft, so nothing else is revoked.
+
+### Every ended session says why
+
+Whenever a refresh token is revoked, the server also records why: `ROTATED`, `LOGOUT`, `REUSE_DETECTED`, `ACCOUNT_BANNED`, `ACCOUNT_DEACTIVATED`, `ACCOUNT_INACTIVE` or `PASSWORD_CHANGED`. No code makes decisions based on it; it exists so "why was this user logged out?" can be answered with one query. Structured auth logs carry the same reasons, and an audit table records the events worth keeping. Neither ever stores a token or a hash.
+
+There is deliberately **no `EXPIRED` reason**. Expiry is a token's normal end, not a revocation, and the expiry date is already stored. What was missing was a record of sessions that actually ran out, which is what shows whether the staff lifetime is too short. Now, when someone tries to refresh a session that was never revoked but has expired, one audit event is written. Counting those events per surface answers the question with data.
+
+### Cleaning up without switching off theft detection
+
+One active session writes a new row every 15 minutes, so the table needs cleaning. Which rows are deleted is the important part:
+
+- **Deleting revoked rows early would silently switch off theft detection.** When someone uses a copy of a token that was already exchanged, detection works by finding that token's row. If the row is gone, the copy looks like an unknown token: the server rejects it but does not revoke the chain, and the attacker's newer token keeps working.
+- **Deleting expired rows is safe because of the order of the checks.** The refresh check looks at expiry first, so an expired token is refused before theft detection would need its row.
+
+The cleanup deletes by expiry date, keeps recent history for investigations, runs as a dry run by default, and deletes in batches so no single statement locks a large part of the table.
+
+## One account, a separate session per surface
+
+Every account used to belong to one surface only, so a staff member who wanted to shop on the mobile app or website needed a second account. The new design follows identity providers like Okta and Keycloak: **one person, one account, and a separate session for each surface they use.**
+
+The risk is a staff member's shopping session carrying their admin permissions, which would turn the shopping login into a way into admin functions. The token's audience (`aud`) prevents that:
+
+<Diagram
+  src="/diagrams/work/session-management-backend/surface-sessions.svg"
+  alt="One staff member's account holds a customer role and a staff role. It can sign in two ways. Left, the customer surface: the shopping login on the mobile app or website issues a token with the same user and aud customer. Right, the staff surface: the admin login on the admin panel issues a token with the same user and aud staff. The login route writes aud; the client cannot choose it. On every request, roles are filtered by the token's aud, so the shopping token sees customer roles only and the admin token sees staff roles only. An admin action needs a staff token and a staff role: from the shopping token it gets a 403, from the admin token it is allowed. The shopping session has the long customer lifetime and renews as a customer session; the admin session has the short staff lifetime and renews as a staff session. A missing or unknown aud is treated as a customer session, so a future bug loses access and never gains admin permissions."
+  width={660}
+  height={832}
+  caption="Same person, two sessions: what a request can do depends on which login issued its token"
+/>
+
+Three details the diagram does not show:
+
+- **The audience is a required argument** of the one function that creates sessions. A new login route that forgets it does not compile.
+- **Each refresh token row stores its audience**, and every rotation copies it forward. Without that, a staff member's shopping session would get the short staff lifetime, and they would have to log in again every day just to shop.
+- **Roles are granted when an account is created, never at login.** Adding the customer role on a staff member's first shopping login looks simpler, but a role change ends all of a user's sessions, so a login that granted a role would immediately end the session it had just created.
+
+## Shipping it without logging anyone out
+
+Auth changes were tested first on an isolated preview deployment that received no real traffic and had its own copy of the database. Every database change only added new columns or tables, so the migrations could reach production before the code that uses them, with no downtime.
+
+<Diagram
+  src="/diagrams/work/session-management-backend/rollout-order.svg"
+  alt="The rollout as a timeline. One: additive migrations ship first, with no downtime. Two: the other services deploy a change that accepts both the old and the new tokens. Three: the clients ship the 401, refresh, retry flow. Four: the backend starts signing RS256, while old tokens still verify. Five: installed versions of the mobile app keep working, and updated ones exchange their old token for a new session once. Six: after the old tokens have aged out, the legacy verifier is deleted."
+  width={630}
+  height={671}
+  caption="Each step only starts once the one before is live"
+/>
+
+- **Verifiers first, then the signer.** Every service that checks tokens deployed a change that accepts both kinds before the backend started signing RS256. There was no feature flag to switch signing on later, so the backend release waited until all of them were live.
+- **Old mobile app versions did not block the release.** They keep using the original login routes. Updated apps use new versioned routes that return an access and refresh pair.
+- **Old sessions upgrade in place.** An updated app exchanges its old token for a new session once. The new session's `sid` is derived from a hash of the old token, so each old token can be upgraded only once.
+- **The legacy verifier is deleted** once the old tokens have aged out.
+
+## What was left for the browser
+
+The backend now issues sessions that can be trusted, renewed and ended. One thing was still the same for every client: the refresh token arrived in the JSON response body. That is the right answer for one client and the wrong one for the other:
+
+| Client                   | Where the refresh token should live                | Why                                                           |
+| ------------------------ | -------------------------------------------------- | ------------------------------------------------------------- |
+| Mobile app _(this note)_ | The response body, then the phone's secure storage | There is no web page for an injected script to run in         |
+| Website _(Part 2)_       | An HttpOnly cookie that page scripts cannot read   | Anything JavaScript can read, an injected script can read too |
+
+[Part 2](/work/session-management-website) picks up from there: moving the website's refresh token into an HttpOnly cookie, and everything that change forced - a real CORS allowlist, an origin check on refresh, and keeping a shopper signed in across tabs without a backend outage ever logging them out.
+
+## Why this mattered
+
+- **Sessions can be ended.** Logout, bans and password changes take effect on the server, for one device or for all of them.
+- **A stolen token has a short life.** An access token is useful for minutes. A copied refresh token is detected the moment both copies are used.
+- **Only one service can sign a token.** A leak from any service that verifies tokens cannot be used to forge one.
+- **Roles take effect on the next request.** Nothing about permissions is frozen into a token.
+- **One account per person.** MO's internal staff use the same account for the admin panel and for shopping, and a shopping session gets no admin permissions.
+- **Logouts can be explained.** Every ended session records why, so the reason for any logout is one query away.
+
+It shipped without a forced mobile app update and without a mass logout.

@@ -10,30 +10,30 @@ type CapabilityMatrixProps = {
 
 export default function CapabilityMatrix({ rows }: CapabilityMatrixProps) {
   return (
-    <div>
-      <div className="hidden grid-cols-[0.8fr_1.45fr_1.35fr] border-b border-gl-border pb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-gl-text-faint sm:grid">
+    <div className="card overflow-hidden">
+      <div className="hidden grid-cols-[0.8fr_1.45fr_1.2fr] gap-4 border-b border-gl-border px-5 py-3 font-sans text-[12px] font-medium text-gl-text-faint sm:grid">
         <span>Domain</span>
         <span>Focus</span>
-        <span>Strategies</span>
+        <span>Strategy</span>
       </div>
-      <div className="divide-y divide-gl-border">
+      <dl className="divide-y divide-gl-border">
         {rows.map((row) => (
           <div
             key={row.domain}
-            className="grid gap-2 py-4 sm:grid-cols-[0.8fr_1.45fr_1.35fr] sm:gap-3"
+            className="grid gap-1.5 px-5 py-4 sm:grid-cols-[0.8fr_1.45fr_1.2fr] sm:gap-4"
           >
-            <p className="text-[14px] font-semibold text-gl-text">
+            <dt className="font-sans text-[14px] font-semibold text-gl-text">
               {row.domain}
-            </p>
-            <p className="text-[14px] font-semibold text-gl-text">
+            </dt>
+            <dd className="text-[15px] leading-[1.5] text-gl-text-muted">
               {row.focus}
-            </p>
-            <p className="font-mono text-[12px] font-semibold text-gl-primary">
+            </dd>
+            <dd className="font-sans text-[13px] leading-[1.5] text-gl-primary">
               {row.signal}
-            </p>
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
     </div>
   );
 }

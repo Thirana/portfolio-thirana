@@ -1,0 +1,104 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "o",
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 116,
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 3.5,
+      "roughness": 1.8,
+      "seed": 1005,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "i",
+      "x": 9,
+      "y": 9,
+      "width": 182,
+      "height": 98,
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 1.8,
+      "roughness": 1.6,
+      "seed": 1006,
+      "roundness": {
+        "type": 3
+      }
+    },
+    {
+      "type": "text",
+      "id": "n",
+      "x": 9,
+      "y": 16,
+      "width": 182,
+      "height": 37.5,
+      "text": "Certified",
+      "originalText": "Certified",
+      "fontSize": 30,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1007,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "s",
+      "x": 9,
+      "y": 58,
+      "width": 182,
+      "height": 18.75,
+      "text": "part 2",
+      "originalText": "part 2",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1008,
+      "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "d",
+      "x": 9,
+      "y": 79,
+      "width": 182,
+      "height": 18.75,
+      "text": "12 Nov 2026",
+      "originalText": "12 Nov 2026",
+      "fontSize": 15,
+      "fontFamily": 5,
+      "textAlign": "center",
+      "verticalAlign": "top",
+      "strokeColor": "#9a5574",
+      "backgroundColor": "transparent",
+      "roughness": 1,
+      "seed": 1009,
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20,
+    "exportBackground": false
+  },
+  "files": {}
+}

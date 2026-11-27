@@ -24,9 +24,7 @@ const DialogOverlay = React.forwardRef<
       className,
     )}
     style={{
-      background: "rgba(2, 6, 23, 0.52)",
-      backdropFilter: "blur(7px)",
-      WebkitBackdropFilter: "blur(7px)",
+      background: "rgba(23, 21, 15, 0.28)",
       ...style,
     }}
     {...props}
@@ -43,7 +41,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 m-auto h-fit max-h-[85vh] w-[92vw] grid gap-4 rounded-2xl border border-white/10 bg-panel/95 p-0 shadow-[0_24px_80px_rgba(2,6,23,0.45)]",
+        "fixed inset-0 z-50 m-auto h-fit max-h-[85vh] w-[92vw] grid gap-4 rounded-2xl border border-gl-border bg-gl-bg p-0 shadow-gl-lg",
         "sm:w-[80vw] sm:max-w-[80rem]",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0",
@@ -54,7 +52,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-md border border-white/10 bg-panel/65 p-1.5 text-gl-text-muted transition-colors hover:border-white/20 hover:text-gl-text focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none">
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full border border-gl-border bg-gl-surface p-1.5 text-gl-text-muted transition-colors hover:border-gl-border-strong hover:text-gl-text focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -69,7 +67,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-sm font-semibold text-neutral-100", className)}
+    className={cn("text-sm font-semibold text-gl-text", className)}
     {...props}
   />
 ));
